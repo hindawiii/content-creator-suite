@@ -1,6 +1,7 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
+import { useKeysStatus } from "@/hooks/useKeysStatus";
 
 const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
@@ -11,7 +12,7 @@ const nav = [
   { to: "/settings", label: "إعدادات", icon: Settings },
 ] as const;
 
-function NavItem({ to, label, Icon, active }: { to: string; label: string; Icon: typeof LayoutDashboard; active: boolean }) {
+function NavItem({ to, label, Icon, active, dot }: { to: string; label: string; Icon: typeof LayoutDashboard; active: boolean; dot?: string }) {
   return (
     <Link
       to={to}
@@ -22,13 +23,16 @@ function NavItem({ to, label, Icon, active }: { to: string; label: string; Icon:
       }`}
     >
       <Icon className="h-5 w-5" />
-      <span>{label}</span>
+      <span className="flex-1">{label}</span>
+      {dot && <span className={`h-2 w-2 rounded-full ${dot} shadow-[0_0_6px_currentColor]`} />}
     </Link>
   );
 }
 
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const keys = useKeysStatus();
+  const dot = keys.health === "ok" ? "bg-success" : keys.health === "failed" ? "bg-warning" : "bg-destructive";
 
   return (
     <div dir="rtl" className="min-h-screen gradient-mesh">
@@ -45,7 +49,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         </div>
         <nav className="mt-4 space-y-1 px-3">
           {nav.map((n) => (
-            <NavItem key={n.to} to={n.to} label={n.label} Icon={n.icon} active={pathname === n.to} />
+            <NavItem key={n.to} to={n.to} label={n.label} Icon={n.icon} active={pathname === n.to} dot={n.to === "/settings" ? dot : undefined} />
           ))}
         </nav>
         <div className="absolute inset-x-3 bottom-4 rounded-xl border border-border bg-surface-elevated p-4">
