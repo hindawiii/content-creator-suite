@@ -67,6 +67,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const keys = useKeysStatus();
   const dot = keys.health === "ok" ? "bg-success" : keys.health === "failed" ? "bg-warning" : "bg-destructive";
+  useScheduleNotifier();
 
   return (
     <div dir="rtl" className="min-h-screen gradient-mesh">
