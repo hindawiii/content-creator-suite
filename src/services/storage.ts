@@ -6,7 +6,25 @@ export const KEYS = {
   schedules: "poston_schedules",
   settings: "poston_settings",
   analytics: "poston_analytics",
+  publishes: "poston_publishes",
+  previewDraft: "poston_preview_draft",
 } as const;
+
+export interface PublishRecord {
+  id: string;
+  contentId: string;
+  platform: string;
+  publishedAt: string;
+  manual: boolean;
+}
+
+export interface PreviewDraft {
+  id: string;
+  text: string;
+  hashtags: string[];
+  imageUrl?: string;
+  createdAt: string;
+}
 
 export interface PostRecord {
   id: string;
