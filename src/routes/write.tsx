@@ -1,14 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, useStore, type Platform, type Tone } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Hash, Send } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { AIOutput } from "@/components/AIOutput";
 import { HashtagList } from "@/components/HashtagList";
 import { RateLimitBar } from "@/components/RateLimitBar";
-import { postsStore, analyticsStore } from "@/services/storage";
+import { postsStore, analyticsStore, setPreviewDraft } from "@/services/storage";
 
 export const Route = createFileRoute("/write")({
   head: () => ({
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/write")({
 
 function WritePage() {
   const { addPost } = useStore();
+  const navigate = useNavigate();
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [tone, setTone] = useState<Tone>("professional");
   const [topic, setTopic] = useState("");
@@ -59,6 +60,13 @@ function WritePage() {
     analyticsStore.bumpPost(platform);
     setSaved(true);
   };
+
+  const handlePublish = () => {
+    if (!output) return;
+    setPreviewDraft({ text: output, hashtags: tags });
+    navigate({ to: "/publish" });
+  };
+
 
   return (
     <AppLayout>
@@ -136,7 +144,14 @@ function WritePage() {
             <span className="font-semibold">النتيجة</span>
           </div>
           {output ? (
-            <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+            <>
+              <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+              <div className="mt-3">
+                <Button onClick={handlePublish} className="w-full">
+                  <Send className="h-4 w-4" /> نشر الآن
+                </Button>
+              </div>
+            </>
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
               <Sparkles className="h-8 w-8 opacity-40" />

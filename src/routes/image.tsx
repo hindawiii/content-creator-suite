@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label } from "@/components/ui";
 import { useStore } from "@/lib/store";
-import { Image as ImageIcon, Sparkles, RefreshCw, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Sparkles, RefreshCw, Trash2, Send } from "lucide-react";
 import { useImageGenerator } from "@/hooks/useAI";
 import { ImageGrid, type GridImage } from "@/components/ImageGrid";
 import { RateLimitBar } from "@/components/RateLimitBar";
-import { imagesStore, analyticsStore } from "@/services/storage";
+import { imagesStore, analyticsStore, setPreviewDraft } from "@/services/storage";
 
 const ASPECTS = [
   { key: "1:1", label: "مربع", w: 1024, h: 1024 },
@@ -31,6 +31,7 @@ export const Route = createFileRoute("/image")({
 
 function ImagePage() {
   const { images, addImage, removeImage } = useStore();
+  const navigate = useNavigate();
   const [prompt, setPrompt] = useState("");
   const [aspect, setAspect] = useState<AspectKey>("1:1");
   const [batch, setBatch] = useState<GridImage[]>([]);
@@ -98,7 +99,23 @@ function ImagePage() {
             <span className="font-semibold">الدفعة الحالية (4 بذرات)</span>
           </div>
           {batch.length ? (
-            <ImageGrid images={batch} />
+            <>
+              <ImageGrid images={batch} />
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {batch.map((b, i) => (
+                  <Button
+                    key={b.url}
+                    variant="outline"
+                    onClick={() => {
+                      setPreviewDraft({ text: prompt, hashtags: [], imageUrl: b.url });
+                      navigate({ to: "/publish" });
+                    }}
+                  >
+                    <Send className="h-4 w-4" /> نشر الصورة {i + 1}
+                  </Button>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-sm text-muted-foreground">
               <ImageIcon className="h-8 w-8 opacity-40" />

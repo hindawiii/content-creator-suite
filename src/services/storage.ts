@@ -6,7 +6,25 @@ export const KEYS = {
   schedules: "poston_schedules",
   settings: "poston_settings",
   analytics: "poston_analytics",
+  publishes: "poston_publishes",
+  previewDraft: "poston_preview_draft",
 } as const;
+
+export interface PublishRecord {
+  id: string;
+  contentId: string;
+  platform: string;
+  publishedAt: string;
+  manual: boolean;
+}
+
+export interface PreviewDraft {
+  id: string;
+  text: string;
+  hashtags: string[];
+  imageUrl?: string;
+  createdAt: string;
+}
 
 export interface PostRecord {
   id: string;
@@ -156,3 +174,36 @@ export function exportAllStorage(): string {
   });
   return JSON.stringify(dump, null, 2);
 }
+
+// Publishes (manual tracking)
+export const publishesStore = {
+  list: (): PublishRecord[] => read(KEYS.publishes, []),
+  listByContent: (contentId: string): PublishRecord[] =>
+    publishesStore.list().filter((r) => r.contentId === contentId),
+  add: (r: Omit<PublishRecord, "id">): PublishRecord => {
+    const rec: PublishRecord = { ...r, id: crypto.randomUUID() };
+    write(KEYS.publishes, [rec, ...publishesStore.list()]);
+    return rec;
+  },
+  remove: (id: string) => write(KEYS.publishes, publishesStore.list().filter((r) => r.id !== id)),
+};
+
+// Preview draft (content passed to /publish)
+export function setPreviewDraft(d: Omit<PreviewDraft, "id" | "createdAt"> & { id?: string }): PreviewDraft {
+  const rec: PreviewDraft = {
+    id: d.id ?? crypto.randomUUID(),
+    text: d.text,
+    hashtags: d.hashtags,
+    imageUrl: d.imageUrl,
+    createdAt: new Date().toISOString(),
+  };
+  write(KEYS.previewDraft, rec);
+  return rec;
+}
+export function getPreviewDraft(): PreviewDraft | null {
+  return read<PreviewDraft | null>(KEYS.previewDraft, null);
+}
+export function clearPreviewDraft() {
+  if (typeof localStorage !== "undefined") localStorage.removeItem(KEYS.previewDraft);
+}
+
