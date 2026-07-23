@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
-import { Card, PageHeader, Button, Badge } from "@/components/ui";
+import { Card, PageHeader, Button, Badge, Input, Label } from "@/components/ui";
 import { useStore, PLATFORM_META, type Platform } from "@/lib/store";
-import { Check, Link2, User } from "lucide-react";
+import { getApiKeys, setApiKeys } from "@/services/ai";
+import { Check, Link2, User, Key, Eye, EyeOff } from "lucide-react";
+
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -43,6 +47,23 @@ const PLANS = [
 
 function SettingsPage() {
   const { connectedAccounts, toggleAccount, plan, setPlan } = useStore();
+  const [groq, setGroq] = useState("");
+  const [together, setTogether] = useState("");
+  const [showGroq, setShowGroq] = useState(false);
+  const [showTogether, setShowTogether] = useState(false);
+
+  useEffect(() => {
+    const k = getApiKeys();
+    setGroq(k.groq ?? "");
+    setTogether(k.together ?? "");
+  }, []);
+
+  const saveKeys = () => {
+    setApiKeys({ groq: groq.trim() || undefined, together: together.trim() || undefined });
+    toast.success("تم حفظ المفاتيح");
+  };
+
+
 
   return (
     <AppLayout>
