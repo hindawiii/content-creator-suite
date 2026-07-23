@@ -3,7 +3,11 @@ import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label } from "@/components/ui";
 import { useStore } from "@/lib/store";
-import { Image as ImageIcon, Sparkles, RefreshCw, Download, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Sparkles, RefreshCw, Trash2 } from "lucide-react";
+import { useImageGenerator } from "@/hooks/useAI";
+import { ImageGrid, type GridImage } from "@/components/ImageGrid";
+import { RateLimitBar } from "@/components/RateLimitBar";
+import { imagesStore, analyticsStore } from "@/services/storage";
 
 const ASPECTS = [
   { key: "1:1", label: "مربع", w: 1024, h: 1024 },
@@ -16,10 +20,10 @@ type AspectKey = (typeof ASPECTS)[number]["key"];
 export const Route = createFileRoute("/image")({
   head: () => ({
     meta: [
-      { title: "PostMind — تصميم صور بالذكاء" },
-      { name: "description", content: "توليد صور احترافية بأبعاد مختلفة لكل المنصات." },
-      { property: "og:title", content: "تصميم صور بالذكاء — PostMind" },
-      { property: "og:description", content: "صور مولّدة بالذكاء لجميع منصات التواصل." },
+      { title: "Post On — تصميم صور بالذكاء" },
+      { name: "description", content: "توليد صور احترافية بأبعاد مختلفة عبر Pollinations.ai مباشرة من المتصفح." },
+      { property: "og:title", content: "تصميم صور — Post On" },
+      { property: "og:description", content: "أربع صور بذرات مختلفة لكل توليد." },
     ],
   }),
   component: ImagePage,
@@ -29,30 +33,28 @@ function ImagePage() {
   const { images, addImage, removeImage } = useStore();
   const [prompt, setPrompt] = useState("");
   const [aspect, setAspect] = useState<AspectKey>("1:1");
-  const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [batch, setBatch] = useState<GridImage[]>([]);
+  const { generate, loading } = useImageGenerator();
 
   const dims = ASPECTS.find((a) => a.key === aspect)!;
 
   const handleGenerate = () => {
     if (!prompt.trim()) return;
-    setLoading(true);
-    const seed = Math.floor(Math.random() * 100000);
-    // Pollinations-compatible URL; works out of the box
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${dims.w}&height=${dims.h}&seed=${seed}&nologo=true`;
-    const img = new Image();
-    img.onload = () => {
-      setPreview(url);
-      addImage({ prompt, aspectRatio: aspect, url });
-      setLoading(false);
-    };
-    img.onerror = () => setLoading(false);
-    img.src = url;
+    const results = generate(prompt, { width: dims.w, height: dims.h });
+    setBatch(results);
+    // persist all four
+    results.forEach((r) => {
+      addImage({ prompt, aspectRatio: aspect, url: r.url });
+      imagesStore.add({ prompt, url: r.url });
+      analyticsStore.bumpImage();
+    });
   };
 
   return (
     <AppLayout>
-      <PageHeader title="تصميم صور بالذكاء" subtitle="اوصف الصورة التي تريدها، اختر الأبعاد، ودع الذكاء يبدع" />
+      <PageHeader title="تصميم صور بالذكاء" subtitle="Pollinations.ai مباشرة من المتصفح — بدون مفاتيح" />
+
+      <div className="mb-4"><RateLimitBar kind="image" /></div>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>
@@ -85,7 +87,7 @@ function ImagePage() {
             </div>
             <Button onClick={handleGenerate} disabled={!prompt.trim() || loading} className="w-full">
               {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {loading ? "جاري التوليد..." : "توليد الصورة"}
+              {loading ? "جاري التوليد..." : "توليد 4 صور"}
             </Button>
           </div>
         </Card>
@@ -93,23 +95,14 @@ function ImagePage() {
         <Card>
           <div className="mb-3 flex items-center gap-2">
             <ImageIcon className="h-4 w-4 text-accent" />
-            <span className="font-semibold">المعاينة</span>
+            <span className="font-semibold">الدفعة الحالية (4 بذرات)</span>
           </div>
-          {preview ? (
-            <div className="space-y-3">
-              <div className="overflow-hidden rounded-xl border border-border">
-                <img src={preview} alt="generated" className="h-auto w-full" />
-              </div>
-              <a href={preview} download target="_blank" rel="noreferrer">
-                <Button variant="outline" className="w-full">
-                  <Download className="h-4 w-4" /> تنزيل الصورة
-                </Button>
-              </a>
-            </div>
+          {batch.length ? (
+            <ImageGrid images={batch} />
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-sm text-muted-foreground">
               <ImageIcon className="h-8 w-8 opacity-40" />
-              <div>ستظهر الصورة هنا</div>
+              <div>ستظهر 4 صور هنا (seeds 1-4)</div>
             </div>
           )}
         </Card>
@@ -121,7 +114,7 @@ function ImagePage() {
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {images.map((img) => (
               <div key={img.id} className="group relative overflow-hidden rounded-xl border border-border">
-                <img src={img.url} alt={img.prompt} className="aspect-square w-full object-cover" />
+                <img src={img.url} alt={img.prompt} className="aspect-square w-full object-cover" loading="lazy" />
                 <button
                   onClick={() => removeImage(img.id)}
                   className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-lg bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
