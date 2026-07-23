@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WriteRouteImport } from './routes/write'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as ImageRouteImport } from './routes/image'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const WriteRoute = WriteRouteImport.update({
   id: '/write',
   path: '/write',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/image': typeof ImageRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/write': typeof WriteRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/image': typeof ImageRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/write': typeof WriteRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/image': typeof ImageRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/write': typeof WriteRoute
 }
 export interface FileRouteTypes {
@@ -80,9 +89,17 @@ export interface FileRouteTypes {
     | '/image'
     | '/schedule'
     | '/settings'
+    | '/sitemap.xml'
     | '/write'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/image' | '/schedule' | '/settings' | '/write'
+  to:
+    | '/'
+    | '/analytics'
+    | '/image'
+    | '/schedule'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/write'
   id:
     | '__root__'
     | '/'
@@ -90,6 +107,7 @@ export interface FileRouteTypes {
     | '/image'
     | '/schedule'
     | '/settings'
+    | '/sitemap.xml'
     | '/write'
   fileRoutesById: FileRoutesById
 }
@@ -99,6 +117,7 @@ export interface RootRouteChildren {
   ImageRoute: typeof ImageRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WriteRoute: typeof WriteRoute
 }
 
@@ -109,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/write'
       fullPath: '/write'
       preLoaderRoute: typeof WriteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -155,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImageRoute: ImageRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   WriteRoute: WriteRoute,
 }
 export const routeTree = rootRouteImport
