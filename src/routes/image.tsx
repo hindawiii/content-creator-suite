@@ -99,7 +99,23 @@ function ImagePage() {
             <span className="font-semibold">الدفعة الحالية (4 بذرات)</span>
           </div>
           {batch.length ? (
-            <ImageGrid images={batch} />
+            <>
+              <ImageGrid images={batch} />
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {batch.map((b, i) => (
+                  <Button
+                    key={b.url}
+                    variant="outline"
+                    onClick={() => {
+                      setPreviewDraft({ text: prompt, hashtags: [], imageUrl: b.url });
+                      navigate({ to: "/publish" });
+                    }}
+                  >
+                    <Send className="h-4 w-4" /> نشر الصورة {i + 1}
+                  </Button>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-sm text-muted-foreground">
               <ImageIcon className="h-8 w-8 opacity-40" />
