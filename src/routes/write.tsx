@@ -61,6 +61,13 @@ function WritePage() {
     setSaved(true);
   };
 
+  const handlePublish = () => {
+    if (!output) return;
+    setPreviewDraft({ text: output, hashtags: tags });
+    navigate({ to: "/publish" });
+  };
+
+
   return (
     <AppLayout>
       <PageHeader title="كتابة منشور بالذكاء" subtitle="Groq → Together AI → قالب محلي — كلها من متصفحك مباشرة" />
