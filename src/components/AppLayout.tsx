@@ -116,7 +116,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Bottom nav mobile */}
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/90 backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-6">
+        <div className="grid grid-cols-7">
           {nav.map((n) => {
             const active = pathname === n.to;
             const Icon = n.icon;
