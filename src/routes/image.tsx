@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label } from "@/components/ui";
 import { useStore } from "@/lib/store";
-import { Image as ImageIcon, Sparkles, RefreshCw, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Sparkles, RefreshCw, Trash2, Send } from "lucide-react";
 import { useImageGenerator } from "@/hooks/useAI";
 import { ImageGrid, type GridImage } from "@/components/ImageGrid";
 import { RateLimitBar } from "@/components/RateLimitBar";
-import { imagesStore, analyticsStore } from "@/services/storage";
+import { imagesStore, analyticsStore, setPreviewDraft } from "@/services/storage";
 
 const ASPECTS = [
   { key: "1:1", label: "مربع", w: 1024, h: 1024 },
