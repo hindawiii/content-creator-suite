@@ -82,6 +82,85 @@ function SettingsPage() {
         </div>
       </Card>
 
+      <Card className="mb-6">
+        <div className="mb-3 flex items-center gap-2">
+          <Key className="h-4 w-4 text-accent" />
+          <h2 className="text-lg font-bold">مفاتيح الذكاء الاصطناعي</h2>
+        </div>
+        <p className="mb-4 text-xs text-muted-foreground">
+          أضف مفاتيحك لتفعيل التوليد الحقيقي. تُخزَّن محلياً في متصفحك فقط ولا تُرسل لأي خادم آخر غير مزوّد الـ AI.
+        </p>
+
+        <div className="space-y-4">
+          <div>
+            <Label>Groq API Key (أساسي — مجاني 8K/يوم)</Label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Input
+                  type={showGroq ? "text" : "password"}
+                  value={groq}
+                  onChange={(e) => setGroq(e.target.value)}
+                  placeholder="gsk_..."
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowGroq((v) => !v)}
+                  className="absolute inset-y-0 left-3 flex items-center text-muted-foreground hover:text-foreground"
+                  aria-label="toggle"
+                >
+                  {showGroq ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <a
+              href="https://console.groq.com/keys"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-block text-[11px] text-accent hover:underline"
+            >
+              احصل على مفتاح مجاني من console.groq.com/keys ←
+            </a>
+          </div>
+
+          <div>
+            <Label>Together AI Key (احتياطي — اختياري)</Label>
+            <div className="relative">
+              <Input
+                type={showTogether ? "text" : "password"}
+                value={together}
+                onChange={(e) => setTogether(e.target.value)}
+                placeholder="tgp_..."
+              />
+              <button
+                type="button"
+                onClick={() => setShowTogether((v) => !v)}
+                className="absolute inset-y-0 left-3 flex items-center text-muted-foreground hover:text-foreground"
+                aria-label="toggle"
+              >
+                {showTogether ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+            <a
+              href="https://api.together.xyz/settings/api-keys"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-block text-[11px] text-accent hover:underline"
+            >
+              احصل على مفتاح من api.together.xyz ←
+            </a>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button onClick={saveKeys}>حفظ المفاتيح</Button>
+            <Badge tone={groq || together ? "success" : "warning"}>
+              {groq && together ? "مفتاحان نشطان" : groq || together ? "مفتاح واحد نشط" : "لا يوجد مفاتيح — سيتم استخدام القوالب المحلية"}
+            </Badge>
+          </div>
+        </div>
+      </Card>
+
+
+
       <div className="mb-6">
         <h2 className="mb-3 text-lg font-bold">حسابات التواصل الاجتماعي</h2>
         <div className="grid gap-2 md:grid-cols-2">
