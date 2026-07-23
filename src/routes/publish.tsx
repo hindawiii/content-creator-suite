@@ -145,7 +145,6 @@ function PublishPage() {
     try {
       const res = await fetch(imageUrl);
       const blob = await res.blob();
-      // @ts-expect-error - ClipboardItem may not be in lib.dom types
       await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
       toast.success("نُسخت الصورة");
     } catch {
