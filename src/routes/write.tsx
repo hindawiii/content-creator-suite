@@ -1,14 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, useStore, type Platform, type Tone } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Hash, Send } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { AIOutput } from "@/components/AIOutput";
 import { HashtagList } from "@/components/HashtagList";
 import { RateLimitBar } from "@/components/RateLimitBar";
-import { postsStore, analyticsStore } from "@/services/storage";
+import { postsStore, analyticsStore, setPreviewDraft } from "@/services/storage";
 
 export const Route = createFileRoute("/write")({
   head: () => ({
