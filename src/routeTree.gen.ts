@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WriteRouteImport } from './routes/write'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ScheduleRouteImport } from './routes/schedule'
+import { Route as ImageRouteImport } from './routes/image'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
 
+const WriteRoute = WriteRouteImport.update({
+  id: '/write',
+  path: '/write',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduleRoute = ScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImageRoute = ImageRouteImport.update({
+  id: '/image',
+  path: '/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,96 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/image': typeof ImageRoute
+  '/schedule': typeof ScheduleRoute
+  '/settings': typeof SettingsRoute
+  '/write': typeof WriteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/image': typeof ImageRoute
+  '/schedule': typeof ScheduleRoute
+  '/settings': typeof SettingsRoute
+  '/write': typeof WriteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/analytics': typeof AnalyticsRoute
+  '/image': typeof ImageRoute
+  '/schedule': typeof ScheduleRoute
+  '/settings': typeof SettingsRoute
+  '/write': typeof WriteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/analytics'
+    | '/image'
+    | '/schedule'
+    | '/settings'
+    | '/write'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/analytics' | '/image' | '/schedule' | '/settings' | '/write'
+  id:
+    | '__root__'
+    | '/'
+    | '/analytics'
+    | '/image'
+    | '/schedule'
+    | '/settings'
+    | '/write'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnalyticsRoute: typeof AnalyticsRoute
+  ImageRoute: typeof ImageRoute
+  ScheduleRoute: typeof ScheduleRoute
+  SettingsRoute: typeof SettingsRoute
+  WriteRoute: typeof WriteRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/write': {
+      id: '/write'
+      path: '/write'
+      fullPath: '/write'
+      preLoaderRoute: typeof WriteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule': {
+      id: '/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof ScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/image': {
+      id: '/image'
+      path: '/image'
+      fullPath: '/image'
+      preLoaderRoute: typeof ImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +151,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnalyticsRoute: AnalyticsRoute,
+  ImageRoute: ImageRoute,
+  ScheduleRoute: ScheduleRoute,
+  SettingsRoute: SettingsRoute,
+  WriteRoute: WriteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
