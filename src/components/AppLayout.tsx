@@ -1,16 +1,50 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles } from "lucide-react";
-import type { ReactNode } from "react";
+import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send } from "lucide-react";
+import { useEffect, type ReactNode } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
+import { schedulesStore } from "@/services/storage";
 
 const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
   { to: "/write", label: "كتابة", icon: PenSquare },
   { to: "/image", label: "صور", icon: ImageIcon },
+  { to: "/publish", label: "نشر", icon: Send },
   { to: "/schedule", label: "جدولة", icon: Calendar },
   { to: "/analytics", label: "تحليلات", icon: BarChart3 },
   { to: "/settings", label: "إعدادات", icon: Settings },
 ] as const;
+
+function useScheduleNotifier() {
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof Notification === "undefined") return;
+    const firedKey = "poston_notified_ids";
+    const check = () => {
+      if (Notification.permission !== "granted") return;
+      const now = Date.now();
+      const fired: string[] = JSON.parse(localStorage.getItem(firedKey) ?? "[]");
+      const items = schedulesStore.list().filter((s) => s.status === "pending");
+      for (const s of items) {
+        const t = new Date(s.scheduledTime).getTime();
+        if (t <= now && !fired.includes(s.id)) {
+          try {
+            const n = new Notification("PostMind — حان وقت النشر!", {
+              body: `حان وقت نشر منشورك على ${s.platform}`,
+              icon: "/favicon.ico",
+              tag: s.id,
+            });
+            n.onclick = () => { window.focus(); window.location.href = "/publish"; };
+          } catch { /* ignore */ }
+          fired.push(s.id);
+        }
+      }
+      localStorage.setItem(firedKey, JSON.stringify(fired));
+    };
+    check();
+    const id = setInterval(check, 30000);
+    return () => clearInterval(id);
+  }, []);
+}
+
 
 function NavItem({ to, label, Icon, active, dot }: { to: string; label: string; Icon: typeof LayoutDashboard; active: boolean; dot?: string }) {
   return (
