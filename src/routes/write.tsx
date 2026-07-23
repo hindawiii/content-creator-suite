@@ -144,7 +144,14 @@ function WritePage() {
             <span className="font-semibold">النتيجة</span>
           </div>
           {output ? (
-            <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+            <>
+              <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+              <div className="mt-3">
+                <Button onClick={handlePublish} className="w-full">
+                  <Send className="h-4 w-4" /> نشر الآن
+                </Button>
+              </div>
+            </>
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
               <Sparkles className="h-8 w-8 opacity-40" />
