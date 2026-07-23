@@ -49,7 +49,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         </div>
         <nav className="mt-4 space-y-1 px-3">
           {nav.map((n) => (
-            <NavItem key={n.to} to={n.to} label={n.label} Icon={n.icon} active={pathname === n.to} />
+            <NavItem key={n.to} to={n.to} label={n.label} Icon={n.icon} active={pathname === n.to} dot={n.to === "/settings" ? dot : undefined} />
           ))}
         </nav>
         <div className="absolute inset-x-3 bottom-4 rounded-xl border border-border bg-surface-elevated p-4">
