@@ -31,6 +31,7 @@ export const Route = createFileRoute("/image")({
 
 function ImagePage() {
   const { images, addImage, removeImage } = useStore();
+  const navigate = useNavigate();
   const [prompt, setPrompt] = useState("");
   const [aspect, setAspect] = useState<AspectKey>("1:1");
   const [batch, setBatch] = useState<GridImage[]>([]);
