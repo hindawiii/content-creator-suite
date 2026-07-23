@@ -24,6 +24,7 @@ export const Route = createFileRoute("/write")({
 
 function WritePage() {
   const { addPost } = useStore();
+  const navigate = useNavigate();
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [tone, setTone] = useState<Tone>("professional");
   const [topic, setTopic] = useState("");
