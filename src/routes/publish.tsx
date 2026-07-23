@@ -101,7 +101,7 @@ function PublishPage() {
     // Preload existing publish state for this content id
     const existing = publishesStore.listByContent(contentId);
     const map: Partial<Record<Platform, boolean>> = {};
-    existing.forEach((r) => { map[r.platform] = true; });
+    existing.forEach((r) => { map[r.platform as Platform] = true; });
     setPublished(map);
   }, [contentId]);
 
