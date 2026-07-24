@@ -67,6 +67,13 @@ function WritePage() {
     navigate({ to: "/publish" });
   };
 
+  const handleGenImage = () => {
+    const seed = topic || output.slice(0, 120);
+    setPreviewDraft({ text: output, hashtags: tags });
+    try { sessionStorage.setItem("poston_image_prompt", seed); } catch { /* ignore */ }
+    navigate({ to: "/image" });
+  };
+
 
   return (
     <AppLayout>
