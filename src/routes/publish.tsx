@@ -175,8 +175,17 @@ function PublishPage() {
 
   const copyAndOpen = async (p: Platform) => {
     await navigator.clipboard.writeText(fullText);
-    toast.success(`نُسخ! افتح ${PLATFORM_META[p].label} والصق`);
-    window.open(PLATFORM_LINKS[p], "_blank", "noopener");
+    const url = platformShareUrl(p, fullText, imageUrl);
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win) {
+      toast.info("انسخ المنشور يدوياً وافتح التطبيق");
+      return;
+    }
+    if (NEEDS_MANUAL_PASTE[p]) {
+      toast.success(`نُسخ! افتح ${PLATFORM_META[p].label} والصق`);
+    } else {
+      toast.success(`تم فتح ${PLATFORM_META[p].label} مع النص جاهز`);
+    }
   };
 
   const markPublished = (p: Platform) => {
