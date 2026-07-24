@@ -131,8 +131,12 @@ export const PLATFORM_META: Record<Platform, { label: string; color: string; emo
 };
 
 export const TONE_META: Record<Tone, string> = {
+  youthful: "شبابي",
+  powerful: "قوي وحماسي",
   professional: "احترافي",
-  friendly: "ودّي",
   humorous: "فكاهي",
+  dramatic: "درامي",
+  calm: "مسالم",
+  friendly: "ودّي",
   motivational: "تحفيزي",
 };
