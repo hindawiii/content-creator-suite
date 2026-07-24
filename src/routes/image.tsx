@@ -143,18 +143,26 @@ function ImagePage() {
           {batch.length ? (
             <>
               <ImageGrid images={batch} />
-              <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="mt-3 space-y-2">
                 {batch.map((b, i) => (
-                  <Button
-                    key={b.url}
-                    variant="outline"
-                    onClick={() => {
+                  <div key={b.url} className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-surface-elevated p-2">
+                    <span className="ml-1 text-xs font-semibold text-muted-foreground">صورة {i + 1}</span>
+                    <Button variant="outline" onClick={() => downloadImg(b.url)}>
+                      <Download className="h-4 w-4" /> تنزيل
+                    </Button>
+                    <Button variant="outline" onClick={() => copyLink(b.url)}>
+                      <LinkIcon className="h-4 w-4" /> نسخ الرابط
+                    </Button>
+                    <Button variant="outline" onClick={() => useInPost(b.url)}>
+                      <Wand2 className="h-4 w-4" /> استخدم في المنشور
+                    </Button>
+                    <Button onClick={() => {
                       setPreviewDraft({ text: prompt, hashtags: [], imageUrl: b.url });
                       navigate({ to: "/publish" });
-                    }}
-                  >
-                    <Send className="h-4 w-4" /> نشر الصورة {i + 1}
-                  </Button>
+                    }}>
+                      <Send className="h-4 w-4" /> نشر
+                    </Button>
+                  </div>
                 ))}
               </div>
             </>
