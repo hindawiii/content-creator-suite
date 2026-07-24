@@ -33,15 +33,24 @@ export const Route = createFileRoute("/publish")({
   component: PublishPage,
 });
 
-const PLATFORM_LINKS: Record<Platform, string> = {
-  instagram: "https://www.instagram.com/",
-  twitter: "https://twitter.com/intent/tweet",
-  facebook: "https://www.facebook.com/",
-  linkedin: "https://www.linkedin.com/feed/?shareActive=true",
-  tiktok: "https://www.tiktok.com/upload",
-  youtube: "https://www.youtube.com/upload",
-  whatsapp: "https://web.whatsapp.com/",
-  telegram: "https://web.telegram.org/",
+// Share-intent URLs that accept prefilled text — safer than platform home pages.
+function platformShareUrl(p: Platform, text: string, imageUrl?: string): string {
+  const t = encodeURIComponent(text);
+  const link = encodeURIComponent(imageUrl ?? "https://postmind.app");
+  switch (p) {
+    case "instagram": return "https://www.instagram.com/";
+    case "twitter":   return `https://twitter.com/intent/tweet?text=${t}`;
+    case "facebook":  return `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}`;
+    case "linkedin":  return `https://www.linkedin.com/sharing/share-offsite/?url=${link}`;
+    case "tiktok":    return "https://www.tiktok.com/upload";
+    case "youtube":   return "https://studio.youtube.com/";
+    case "whatsapp":  return `https://wa.me/?text=${t}`;
+    case "telegram":  return `https://t.me/share/url?url=${link}&text=${t}`;
+  }
+}
+
+const NEEDS_MANUAL_PASTE: Partial<Record<Platform, boolean>> = {
+  instagram: true, tiktok: true, youtube: true,
 };
 
 const TIPS = [
