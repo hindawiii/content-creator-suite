@@ -153,9 +153,12 @@ function WritePage() {
           {output ? (
             <>
               <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
-              <div className="mt-3">
-                <Button onClick={handlePublish} className="w-full">
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <Button onClick={handlePublish}>
                   <Send className="h-4 w-4" /> نشر الآن
+                </Button>
+                <Button variant="outline" onClick={handleGenImage}>
+                  <ImageIcon className="h-4 w-4" /> 🎨 ولّد صورة لهذا المنشور
                 </Button>
               </div>
             </>
