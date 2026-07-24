@@ -38,18 +38,59 @@ function ImagePage() {
   const [batch, setBatch] = useState<GridImage[]>([]);
   const { generate, loading } = useImageGenerator();
 
+  useEffect(() => {
+    try {
+      const seed = sessionStorage.getItem("poston_image_prompt");
+      if (seed) {
+        setPrompt(seed);
+        sessionStorage.removeItem("poston_image_prompt");
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   const dims = ASPECTS.find((a) => a.key === aspect)!;
 
   const handleGenerate = () => {
     if (!prompt.trim()) return;
     const results = generate(prompt, { width: dims.w, height: dims.h });
     setBatch(results);
-    // persist all four
     results.forEach((r) => {
       addImage({ prompt, aspectRatio: aspect, url: r.url });
       imagesStore.add({ prompt, url: r.url });
       analyticsStore.bumpImage();
     });
+  };
+
+  const downloadImg = async (url: string) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const u = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = u;
+      a.download = `postmind-${Date.now()}.png`;
+      a.click();
+      URL.revokeObjectURL(u);
+      toast.success("تم التنزيل");
+    } catch {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const copyLink = async (url: string) => {
+    await navigator.clipboard.writeText(url);
+    toast.success("نُسخ رابط الصورة");
+  };
+
+  const useInPost = (url: string) => {
+    const existing = getPreviewDraft();
+    setPreviewDraft({
+      text: existing?.text ?? "",
+      hashtags: existing?.hashtags ?? [],
+      imageUrl: url,
+    });
+    toast.success("أُضيفت الصورة إلى المنشور");
+    navigate({ to: "/publish" });
   };
 
   return (
