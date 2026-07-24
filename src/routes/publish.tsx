@@ -33,15 +33,24 @@ export const Route = createFileRoute("/publish")({
   component: PublishPage,
 });
 
-const PLATFORM_LINKS: Record<Platform, string> = {
-  instagram: "https://www.instagram.com/",
-  twitter: "https://twitter.com/intent/tweet",
-  facebook: "https://www.facebook.com/",
-  linkedin: "https://www.linkedin.com/feed/?shareActive=true",
-  tiktok: "https://www.tiktok.com/upload",
-  youtube: "https://www.youtube.com/upload",
-  whatsapp: "https://web.whatsapp.com/",
-  telegram: "https://web.telegram.org/",
+// Share-intent URLs that accept prefilled text — safer than platform home pages.
+function platformShareUrl(p: Platform, text: string, imageUrl?: string): string {
+  const t = encodeURIComponent(text);
+  const link = encodeURIComponent(imageUrl ?? "https://postmind.app");
+  switch (p) {
+    case "instagram": return "https://www.instagram.com/";
+    case "twitter":   return `https://twitter.com/intent/tweet?text=${t}`;
+    case "facebook":  return `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}`;
+    case "linkedin":  return `https://www.linkedin.com/sharing/share-offsite/?url=${link}`;
+    case "tiktok":    return "https://www.tiktok.com/upload";
+    case "youtube":   return "https://studio.youtube.com/";
+    case "whatsapp":  return `https://wa.me/?text=${t}`;
+    case "telegram":  return `https://t.me/share/url?url=${link}&text=${t}`;
+  }
+}
+
+const NEEDS_MANUAL_PASTE: Partial<Record<Platform, boolean>> = {
+  instagram: true, tiktok: true, youtube: true,
 };
 
 const TIPS = [
@@ -166,8 +175,17 @@ function PublishPage() {
 
   const copyAndOpen = async (p: Platform) => {
     await navigator.clipboard.writeText(fullText);
-    toast.success(`نُسخ! افتح ${PLATFORM_META[p].label} والصق`);
-    window.open(PLATFORM_LINKS[p], "_blank", "noopener");
+    const url = platformShareUrl(p, fullText, imageUrl);
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (!win) {
+      toast.info("انسخ المنشور يدوياً وافتح التطبيق");
+      return;
+    }
+    if (NEEDS_MANUAL_PASTE[p]) {
+      toast.success(`نُسخ! افتح ${PLATFORM_META[p].label} والصق`);
+    } else {
+      toast.success(`تم فتح ${PLATFORM_META[p].label} مع النص جاهز`);
+    }
   };
 
   const markPublished = (p: Platform) => {
@@ -256,7 +274,34 @@ function PublishPage() {
           </div>
 
           <Label>النص</Label>
-          <Textarea rows={6} value={text} onChange={(e) => setText(e.target.value)} />
+          <Textarea
+            rows={10}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            style={{ minHeight: 300, fontSize: 16, lineHeight: 1.8 }}
+          />
+          {(() => {
+            const chars = fullText.length;
+            const words = fullText.trim().split(/\s+/).filter(Boolean).length;
+            const mins = Math.max(1, Math.round(words / 180));
+            const twitterOk = chars <= 280;
+            const igOk = chars <= 2200;
+            return (
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                <span>⏱ {mins} د قراءة</span>
+                <span>·</span>
+                <span>{words} كلمة</span>
+                <span>·</span>
+                <span className={twitterOk ? "text-success" : "text-destructive"}>
+                  🐦 {chars}/280 {twitterOk ? "✓" : "✗"}
+                </span>
+                <span className={igOk ? "text-success" : "text-destructive"}>
+                  📷 {chars}/2200 {igOk ? "✓" : "✗"}
+                </span>
+                <span>💼 نبرة مناسبة للينكدإن</span>
+              </div>
+            );
+          })()}
 
           {tags.length > 0 && (
             <div className="mt-3">

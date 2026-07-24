@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label } from "@/components/ui";
 import { useStore } from "@/lib/store";
-import { Image as ImageIcon, Sparkles, RefreshCw, Trash2, Send } from "lucide-react";
+import { Image as ImageIcon, Sparkles, RefreshCw, Trash2, Send, Download, Link as LinkIcon, Wand2 } from "lucide-react";
 import { useImageGenerator } from "@/hooks/useAI";
 import { ImageGrid, type GridImage } from "@/components/ImageGrid";
 import { RateLimitBar } from "@/components/RateLimitBar";
-import { imagesStore, analyticsStore, setPreviewDraft } from "@/services/storage";
+import { imagesStore, analyticsStore, setPreviewDraft, getPreviewDraft } from "@/services/storage";
 
 const ASPECTS = [
   { key: "1:1", label: "مربع", w: 1024, h: 1024 },
@@ -37,18 +38,59 @@ function ImagePage() {
   const [batch, setBatch] = useState<GridImage[]>([]);
   const { generate, loading } = useImageGenerator();
 
+  useEffect(() => {
+    try {
+      const seed = sessionStorage.getItem("poston_image_prompt");
+      if (seed) {
+        setPrompt(seed);
+        sessionStorage.removeItem("poston_image_prompt");
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   const dims = ASPECTS.find((a) => a.key === aspect)!;
 
   const handleGenerate = () => {
     if (!prompt.trim()) return;
     const results = generate(prompt, { width: dims.w, height: dims.h });
     setBatch(results);
-    // persist all four
     results.forEach((r) => {
       addImage({ prompt, aspectRatio: aspect, url: r.url });
       imagesStore.add({ prompt, url: r.url });
       analyticsStore.bumpImage();
     });
+  };
+
+  const downloadImg = async (url: string) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const u = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = u;
+      a.download = `postmind-${Date.now()}.png`;
+      a.click();
+      URL.revokeObjectURL(u);
+      toast.success("تم التنزيل");
+    } catch {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const copyLink = async (url: string) => {
+    await navigator.clipboard.writeText(url);
+    toast.success("نُسخ رابط الصورة");
+  };
+
+  const useInPost = (url: string) => {
+    const existing = getPreviewDraft();
+    setPreviewDraft({
+      text: existing?.text ?? "",
+      hashtags: existing?.hashtags ?? [],
+      imageUrl: url,
+    });
+    toast.success("أُضيفت الصورة إلى المنشور");
+    navigate({ to: "/publish" });
   };
 
   return (
@@ -101,18 +143,26 @@ function ImagePage() {
           {batch.length ? (
             <>
               <ImageGrid images={batch} />
-              <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="mt-3 space-y-2">
                 {batch.map((b, i) => (
-                  <Button
-                    key={b.url}
-                    variant="outline"
-                    onClick={() => {
+                  <div key={b.url} className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-surface-elevated p-2">
+                    <span className="ml-1 text-xs font-semibold text-muted-foreground">صورة {i + 1}</span>
+                    <Button variant="outline" onClick={() => downloadImg(b.url)}>
+                      <Download className="h-4 w-4" /> تنزيل
+                    </Button>
+                    <Button variant="outline" onClick={() => copyLink(b.url)}>
+                      <LinkIcon className="h-4 w-4" /> نسخ الرابط
+                    </Button>
+                    <Button variant="outline" onClick={() => useInPost(b.url)}>
+                      <Wand2 className="h-4 w-4" /> استخدم في المنشور
+                    </Button>
+                    <Button onClick={() => {
                       setPreviewDraft({ text: prompt, hashtags: [], imageUrl: b.url });
                       navigate({ to: "/publish" });
-                    }}
-                  >
-                    <Send className="h-4 w-4" /> نشر الصورة {i + 1}
-                  </Button>
+                    }}>
+                      <Send className="h-4 w-4" /> نشر
+                    </Button>
+                  </div>
                 ))}
               </div>
             </>

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 export type Platform = "instagram" | "twitter" | "facebook" | "linkedin" | "tiktok" | "youtube" | "whatsapp" | "telegram";
-export type Tone = "professional" | "friendly" | "humorous" | "motivational";
+export type Tone = "youthful" | "powerful" | "professional" | "humorous" | "dramatic" | "calm" | "friendly" | "motivational";
 
 export interface Post {
   id: string;
@@ -131,8 +131,12 @@ export const PLATFORM_META: Record<Platform, { label: string; color: string; emo
 };
 
 export const TONE_META: Record<Tone, string> = {
+  youthful: "شبابي",
+  powerful: "قوي وحماسي",
   professional: "احترافي",
-  friendly: "ودّي",
   humorous: "فكاهي",
+  dramatic: "درامي",
+  calm: "مسالم",
+  friendly: "ودّي",
   motivational: "تحفيزي",
 };
