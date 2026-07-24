@@ -274,7 +274,34 @@ function PublishPage() {
           </div>
 
           <Label>النص</Label>
-          <Textarea rows={6} value={text} onChange={(e) => setText(e.target.value)} />
+          <Textarea
+            rows={10}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            style={{ minHeight: 300, fontSize: 16, lineHeight: 1.8 }}
+          />
+          {(() => {
+            const chars = fullText.length;
+            const words = fullText.trim().split(/\s+/).filter(Boolean).length;
+            const mins = Math.max(1, Math.round(words / 180));
+            const twitterOk = chars <= 280;
+            const igOk = chars <= 2200;
+            return (
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                <span>⏱ {mins} د قراءة</span>
+                <span>·</span>
+                <span>{words} كلمة</span>
+                <span>·</span>
+                <span className={twitterOk ? "text-success" : "text-destructive"}>
+                  🐦 {chars}/280 {twitterOk ? "✓" : "✗"}
+                </span>
+                <span className={igOk ? "text-success" : "text-destructive"}>
+                  📷 {chars}/2200 {igOk ? "✓" : "✗"}
+                </span>
+                <span>💼 نبرة مناسبة للينكدإن</span>
+              </div>
+            );
+          })()}
 
           {tags.length > 0 && (
             <div className="mt-3">
