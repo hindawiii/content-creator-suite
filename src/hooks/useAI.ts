@@ -22,7 +22,7 @@ async function callChain(userPrompt: string, system?: string): Promise<{ text: s
       } catch (err) {
         if (attempt === 0) continue;
         console.warn("Groq failed:", err);
-        toast.message("تم تفعيل الاحتياطي — Together AI");
+        if (togetherKey) toast.message("تم تفعيل الاحتياطي — Together AI");
       }
     }
   }
