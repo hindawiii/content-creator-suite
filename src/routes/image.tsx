@@ -50,9 +50,9 @@ function ImagePage() {
 
   const dims = ASPECTS.find((a) => a.key === aspect)!;
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) return;
-    const results = generate(prompt, { width: dims.w, height: dims.h });
+    const results = await generate(prompt, { width: dims.w, height: dims.h });
     setBatch(results);
     results.forEach((r) => {
       addImage({ prompt, aspectRatio: aspect, url: r.url });

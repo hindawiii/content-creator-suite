@@ -6,8 +6,12 @@ const LIMITS = {
 } as const;
 
 function today(): string {
-  // UTC-based day key to avoid timezone drift
-  return new Date().toISOString().slice(0, 10);
+  // Local-timezone day key — resets at user's midnight, not UTC
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 function resetIfNeeded() {

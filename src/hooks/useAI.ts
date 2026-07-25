@@ -22,7 +22,7 @@ async function callChain(userPrompt: string, system?: string): Promise<{ text: s
       } catch (err) {
         if (attempt === 0) continue;
         console.warn("Groq failed:", err);
-        toast.message("تم تفعيل الاحتياطي — Together AI");
+        if (togetherKey) toast.message("تم تفعيل الاحتياطي — Together AI");
       }
     }
   }
@@ -137,16 +137,30 @@ export function useRewrite() {
 export function useImageGenerator() {
   const [loading, setLoading] = useState(false);
   const generate = useCallback(
-    (prompt: string, dims?: { width: number; height: number }) => {
+    async (prompt: string, dims?: { width: number; height: number }) => {
       if (!canGenerate("image")) {
         toast.error("تم استهلاك حصة الصور اليومية — قم بالترقية للخطة Pro");
         return [];
       }
       setLoading(true);
       const batch = pollinationsBatch(prompt, 4, dims);
-      consume("image");
-      // Loading is visual only — <img> tags handle load state
-      setTimeout(() => setLoading(false), 300);
+      // Wait for all 4 images to actually load before clearing spinner
+      try {
+        await Promise.all(
+          batch.map(
+            (b) =>
+              new Promise<void>((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve();
+                img.onerror = () => resolve();
+                img.src = b.url;
+              }),
+          ),
+        );
+        consume("image");
+      } finally {
+        setLoading(false);
+      }
       return batch;
     },
     [],
