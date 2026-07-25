@@ -1,7 +1,7 @@
 import { SYSTEM_PROMPT } from "@/utils/prompts";
 
 const TOGETHER_URL = "https://api.together.xyz/v1/chat/completions";
-const MODEL = "meta-llama/Llama-3-8B-Instruct";
+const MODEL = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
 
 export interface ChatOptions {
   apiKey: string;
