@@ -78,7 +78,7 @@ export function usePostGenerator() {
       } catch (err) {
         const fb = localFallback(opts.topic, opts.tone, opts.platform);
         toast.error("تعذر الاتصال بمزودي الذكاء — استُخدم القالب المحلي", { id: toastId });
-        consume("post");
+        // Do NOT consume quota when AI providers failed — user gets local template only
         return { ...fb, source: "fallback" };
       } finally {
         setLoading(false);
