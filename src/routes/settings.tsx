@@ -8,7 +8,7 @@ import { Check, Link2, User, KeyRound, Download, Trash2, Zap, ShieldCheck, Copy,
 import { APIKeyInput } from "@/components/APIKeyInput";
 import { settingsStore, exportAllStorage, resetAllStorage } from "@/services/storage";
 import { toast } from "sonner";
-import { groqChat } from "@/services/groq";
+
 import { useKeysStatus, setKeysHealth, emitKeysChanged } from "@/hooks/useKeysStatus";
 
 export const Route = createFileRoute("/settings")({
@@ -70,8 +70,13 @@ function SettingsPage() {
       setTesting(true);
       const toastId = toast.loading("جاري اختبار الاتصال بـ Groq...");
       try {
-        await groqChat({ apiKey: g, userPrompt: "ping", system: "Reply with: ok" });
+        // Lightweight check — GET /models doesn't consume token credits
+        const res = await fetch("https://api.groq.com/openai/v1/models", {
+          headers: { Authorization: `Bearer ${g}` },
+        });
+        if (!res.ok) throw new Error(`groq_${res.status}`);
         setKeysHealth("ok");
+        emitKeysChanged();
         toast.success("✅ الاتصال ناجح — تم حفظ المفاتيح", { id: toastId });
         setEditing(false);
       } catch (err) {

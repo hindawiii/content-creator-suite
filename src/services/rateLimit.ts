@@ -6,6 +6,7 @@ const LIMITS = {
 } as const;
 
 function today(): string {
+  // UTC-based day key to avoid timezone drift
   return new Date().toISOString().slice(0, 10);
 }
 
