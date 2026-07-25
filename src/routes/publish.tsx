@@ -34,18 +34,18 @@ export const Route = createFileRoute("/publish")({
 });
 
 // Share-intent URLs that accept prefilled text — safer than platform home pages.
-function platformShareUrl(p: Platform, text: string, imageUrl?: string): string {
+function platformShareUrl(p: Platform, text: string, imageUrl?: string): string | null {
   const t = encodeURIComponent(text);
-  const link = encodeURIComponent(imageUrl ?? "https://postmind.app");
+  const link = imageUrl ? encodeURIComponent(imageUrl) : null;
   switch (p) {
     case "instagram": return "https://www.instagram.com/";
     case "twitter":   return `https://twitter.com/intent/tweet?text=${t}`;
-    case "facebook":  return `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}`;
-    case "linkedin":  return `https://www.linkedin.com/sharing/share-offsite/?url=${link}`;
+    case "facebook":  return link ? `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}` : null;
+    case "linkedin":  return link ? `https://www.linkedin.com/sharing/share-offsite/?url=${link}` : null;
     case "tiktok":    return "https://www.tiktok.com/upload";
     case "youtube":   return "https://studio.youtube.com/";
     case "whatsapp":  return `https://wa.me/?text=${t}`;
-    case "telegram":  return `https://t.me/share/url?url=${link}&text=${t}`;
+    case "telegram":  return link ? `https://t.me/share/url?url=${link}&text=${t}` : `https://t.me/share/url?url=${encodeURIComponent("https://poston.app")}&text=${t}`;
   }
 }
 
@@ -176,6 +176,10 @@ function PublishPage() {
   const copyAndOpen = async (p: Platform) => {
     await navigator.clipboard.writeText(fullText);
     const url = platformShareUrl(p, fullText, imageUrl);
+    if (!url) {
+      toast.warning(`📋 نُسخ المنشور — افتح ${PLATFORM_META[p].label} يدوياً والصقه (يحتاج صورة/رابط للمشاركة المباشرة)`);
+      return;
+    }
     const win = window.open(url, "_blank", "noopener,noreferrer");
     if (!win) {
       toast.info("انسخ المنشور يدوياً وافتح التطبيق");
