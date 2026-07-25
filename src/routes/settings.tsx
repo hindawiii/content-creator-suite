@@ -8,7 +8,7 @@ import { Check, Link2, User, KeyRound, Download, Trash2, Zap, ShieldCheck, Copy,
 import { APIKeyInput } from "@/components/APIKeyInput";
 import { settingsStore, exportAllStorage, resetAllStorage } from "@/services/storage";
 import { toast } from "sonner";
-import { groqChat } from "@/services/groq";
+
 import { useKeysStatus, setKeysHealth, emitKeysChanged } from "@/hooks/useKeysStatus";
 
 export const Route = createFileRoute("/settings")({
