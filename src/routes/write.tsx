@@ -23,7 +23,6 @@ export const Route = createFileRoute("/write")({
 });
 
 function WritePage() {
-  const { addPost } = useStore();
   const navigate = useNavigate();
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [tone, setTone] = useState<Tone>("professional");
@@ -54,12 +53,11 @@ function WritePage() {
 
   const handleSave = () => {
     if (!output) return;
-    // Both stores (legacy compat + new poston store)
-    addPost({ content: output, platform, tone, topic, status: "draft" });
     postsStore.add({ content: output, platform, tone, aiGenerated: source !== "fallback", hashtags: tags });
     analyticsStore.bumpPost(platform);
     setSaved(true);
   };
+
 
   const handlePublish = () => {
     if (!output) return;
