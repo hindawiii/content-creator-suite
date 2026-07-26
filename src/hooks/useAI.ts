@@ -93,6 +93,10 @@ export function usePostGenerator() {
 export function useHashtags() {
   const [loading, setLoading] = useState(false);
   const suggest = useCallback(async (topic: string): Promise<string[]> => {
+    if (!canGenerate("hashtag")) {
+      toast.error("تم استهلاك الحصة اليومية — قم بالترقية للخطة Pro");
+      return [];
+    }
     setLoading(true);
     const toastId = toast.loading("جاري توليد الهاشتاقات...");
     try {
@@ -103,6 +107,7 @@ export function useHashtags() {
         .filter(Boolean)
         .map((t) => (t.startsWith("#") ? t : `#${t.replace(/\s+/g, "_")}`))
         .slice(0, 15);
+      consume("hashtag");
       toast.success("جاهزة!", { id: toastId });
       return tags;
     } catch {
@@ -114,6 +119,7 @@ export function useHashtags() {
   }, []);
   return { suggest, loading };
 }
+
 
 export function useRewrite() {
   const [loading, setLoading] = useState(false);

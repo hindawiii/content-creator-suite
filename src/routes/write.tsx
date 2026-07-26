@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
-import { PLATFORM_META, TONE_META, useStore, type Platform, type Tone } from "@/lib/store";
+import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
 import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { AIOutput } from "@/components/AIOutput";
@@ -23,7 +23,6 @@ export const Route = createFileRoute("/write")({
 });
 
 function WritePage() {
-  const { addPost } = useStore();
   const navigate = useNavigate();
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [tone, setTone] = useState<Tone>("professional");
@@ -54,12 +53,11 @@ function WritePage() {
 
   const handleSave = () => {
     if (!output) return;
-    // Both stores (legacy compat + new poston store)
-    addPost({ content: output, platform, tone, topic, status: "draft" });
     postsStore.add({ content: output, platform, tone, aiGenerated: source !== "fallback", hashtags: tags });
     analyticsStore.bumpPost(platform);
     setSaved(true);
   };
+
 
   const handlePublish = () => {
     if (!output) return;
