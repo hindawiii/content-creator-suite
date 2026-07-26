@@ -8,9 +8,9 @@ import { Calendar as CalIcon, Plus, Trash2, ChevronRight, ChevronLeft } from "lu
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
-      { title: "PostMind — جدولة المحتوى" },
+      { title: "Post On — جدولة المحتوى" },
       { name: "description", content: "خطط لمنشوراتك ونظّم تقويم المحتوى بسهولة." },
-      { property: "og:title", content: "جدولة المحتوى — PostMind" },
+      { property: "og:title", content: "جدولة المحتوى — Post On" },
       { property: "og:description", content: "تقويم شهري لإدارة كل منشوراتك المجدولة." },
     ],
   }),

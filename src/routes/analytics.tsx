@@ -8,9 +8,9 @@ import { Heart, MessageCircle, Share2, Eye } from "lucide-react";
 export const Route = createFileRoute("/analytics")({
   head: () => ({
     meta: [
-      { title: "PostMind — تحليلات الأداء" },
+      { title: "Post On — تحليلات الأداء" },
       { name: "description", content: "تحليلات مفصلة لأداء منشوراتك على كل المنصات." },
-      { property: "og:title", content: "تحليلات الأداء — PostMind" },
+      { property: "og:title", content: "تحليلات الأداء — Post On" },
       { property: "og:description", content: "قِس وحسّن أداء محتواك على كل منصات التواصل." },
     ],
   }),

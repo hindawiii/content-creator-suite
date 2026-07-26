@@ -79,9 +79,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PostMind — مساعد المحتوى بالذكاء" },
-      { name: "description", content: "PostMind: مساعد محتوى بالذكاء الاصطناعي لصناع المحتوى والمسوقين — اكتب، صمّم، وجدول محتواك عبر كل المنصات." },
-      { property: "og:title", content: "PostMind — مساعد المحتوى بالذكاء" },
+      { title: "Post On — مساعد المحتوى بالذكاء" },
+      { name: "description", content: "Post On: مساعد محتوى بالذكاء الاصطناعي لصناع المحتوى والمسوقين — اكتب، صمّم، وجدول محتواك عبر كل المنصات." },
+      { property: "og:title", content: "Post On — مساعد المحتوى بالذكاء" },
       { property: "og:description", content: "اكتب، صمّم، وجدول محتواك عبر كل المنصات." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

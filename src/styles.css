@@ -40,7 +40,7 @@
 :root {
   --radius: 0.875rem;
 
-  /* PostMind dark theme */
+  /* Post On dark theme */
   --background: oklch(0.14 0.03 280);        /* #0f0f1a */
   --foreground: oklch(0.99 0 0);              /* white */
   --surface: oklch(0.19 0.03 280);

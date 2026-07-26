@@ -27,7 +27,7 @@ function useScheduleNotifier() {
         const t = new Date(s.scheduledTime).getTime();
         if (t <= now && !fired.includes(s.id)) {
           try {
-            const n = new Notification("PostMind — حان وقت النشر!", {
+            const n = new Notification("Post On — حان وقت النشر!", {
               body: `حان وقت نشر منشورك على ${s.platform}`,
               icon: "/favicon.ico",
               tag: s.id,
@@ -78,7 +78,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
-            <div className="text-lg font-bold">PostMind</div>
+            <div className="text-lg font-bold">Post On</div>
             <div className="text-[10px] text-muted-foreground">مساعد المحتوى بالذكاء</div>
           </div>
         </div>
@@ -102,7 +102,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="font-bold">PostMind</span>
+          <span className="font-bold">Post On</span>
         </div>
       </header>
 

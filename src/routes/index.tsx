@@ -7,9 +7,9 @@ import { FileText, Image as ImageIcon, CalendarClock, TrendingUp, PenSquare, Spa
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PostMind — لوحة التحكم" },
+      { title: "Post On — لوحة التحكم" },
       { name: "description", content: "مساعد محتوى بالذكاء الاصطناعي لصناع المحتوى والمسوقين." },
-      { property: "og:title", content: "PostMind — مساعد المحتوى بالذكاء" },
+      { property: "og:title", content: "Post On — مساعد المحتوى بالذكاء" },
       { property: "og:description", content: "اكتب، صمّم، وجدول محتواك عبر كل المنصات." },
     ],
   }),
@@ -41,7 +41,7 @@ function Dashboard() {
   return (
     <AppLayout>
       <PageHeader
-        title="أهلاً بك في PostMind 👋"
+        title="أهلاً بك في Post On 👋"
         subtitle="مساعدك الذكي لصناعة محتوى استثنائي عبر كل المنصات"
       />
 

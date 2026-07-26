@@ -24,9 +24,9 @@ import {
 export const Route = createFileRoute("/publish")({
   head: () => ({
     meta: [
-      { title: "PostMind — النشر" },
+      { title: "Post On — النشر" },
       { name: "description", content: "الخطوة الأخيرة: انسخ المحتوى وافتح المنصة مباشرة، أو جدوله لاحقاً بتذكير من المتصفح." },
-      { property: "og:title", content: "النشر — PostMind" },
+      { property: "og:title", content: "النشر — Post On" },
       { property: "og:description", content: "انسخ، افتح، انشر — بدون خوادم." },
     ],
   }),
