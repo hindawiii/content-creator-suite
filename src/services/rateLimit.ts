@@ -32,15 +32,18 @@ export function getQuota(): { plan: "free" | "pro"; posts: { used: number; max: 
   };
 }
 
-export function canGenerate(kind: "post" | "image"): boolean {
+export function canGenerate(kind: "post" | "image" | "hashtag"): boolean {
   resetIfNeeded();
   const q = getQuota();
-  return kind === "post" ? q.posts.used < q.posts.max : q.images.used < q.images.max;
+  // Hashtags share the same daily budget as posts (both are AI text calls).
+  if (kind === "image") return q.images.used < q.images.max;
+  return q.posts.used < q.posts.max;
 }
 
-export function consume(kind: "post" | "image") {
+export function consume(kind: "post" | "image" | "hashtag") {
   resetIfNeeded();
   const s = settingsStore.get();
-  if (kind === "post") settingsStore.set({ postsUsed: s.postsUsed + 1 });
-  else settingsStore.set({ imagesUsed: s.imagesUsed + 1 });
+  if (kind === "image") settingsStore.set({ imagesUsed: s.imagesUsed + 1 });
+  else settingsStore.set({ postsUsed: s.postsUsed + 1 });
 }
+
