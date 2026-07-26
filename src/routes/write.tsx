@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
-import { PLATFORM_META, TONE_META, useStore, type Platform, type Tone } from "@/lib/store";
+import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
 import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { AIOutput } from "@/components/AIOutput";
