@@ -162,16 +162,21 @@ function PublishPage() {
   };
 
   const nativeShare = async () => {
-    if (!navigator.share) {
-      toast.info("المشاركة السريعة غير مدعومة — استخدم زر النسخ");
-      return;
-    }
     try {
+      if (typeof navigator === "undefined" || !navigator.share) {
+        toast.info("المشاركة السريعة غير مدعومة — استخدم زر النسخ");
+        return;
+      }
       await navigator.share({ text: fullText, url: imageUrl });
-    } catch {
-      // user cancelled
+    } catch (err) {
+      // AbortError = user cancelled; anything else = surface a hint
+      const name = (err as { name?: string } | null)?.name;
+      if (name && name !== "AbortError") {
+        toast.info("تعذّرت المشاركة السريعة — استخدم زر النسخ");
+      }
     }
   };
+
 
   const copyAndOpen = async (p: Platform) => {
     await navigator.clipboard.writeText(fullText);
