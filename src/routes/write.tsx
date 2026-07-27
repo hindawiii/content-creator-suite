@@ -173,19 +173,31 @@ function WritePage() {
         </Card>
 
         <Card>
-          <div className="mb-3 flex items-center gap-2">
-            <Wand2 className="h-4 w-4 text-accent" />
-            <span className="font-semibold">النتيجة</span>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4 text-accent" />
+              <span className="font-semibold">النتيجة</span>
+            </div>
+            {output && (
+              <div className="flex items-center gap-2 text-[11px]">
+                <span className={overLimit ? "text-destructive font-semibold" : "text-muted-foreground"}>
+                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗ يتجاوز الحد" : "✓"}
+                </span>
+              </div>
+            )}
           </div>
           {output ? (
             <>
               <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <Button onClick={handlePublish}>
                   <Send className="h-4 w-4" /> نشر الآن
                 </Button>
+                <Button variant="outline" onClick={handleGenerate} disabled={loading}>
+                  <RotateCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> توليد مرة أخرى
+                </Button>
                 <Button variant="outline" onClick={handleGenImage}>
-                  <ImageIcon className="h-4 w-4" /> 🎨 ولّد صورة لهذا المنشور
+                  <ImageIcon className="h-4 w-4" /> صورة للمنشور
                 </Button>
               </div>
             </>
