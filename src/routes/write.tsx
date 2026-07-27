@@ -3,23 +3,16 @@ import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw, Scissors, Maximize2 } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
+import { useSmartResize } from "@/hooks/useSmartResize";
 import { AIOutput } from "@/components/AIOutput";
 import { HashtagList } from "@/components/HashtagList";
 import { RateLimitBar } from "@/components/RateLimitBar";
+import { SmartResizeModal } from "@/components/SmartResizeModal";
+import { Badge } from "@/components/ui";
 import { postsStore, analyticsStore, setPreviewDraft } from "@/services/storage";
-
-const PLATFORM_LIMITS: Record<Platform, number> = {
-  twitter: 280,
-  instagram: 2200,
-  facebook: 63206,
-  linkedin: 3000,
-  tiktok: 2200,
-  youtube: 5000,
-  whatsapp: 65536,
-  telegram: 4096,
-};
+import { PLATFORM_LIMITS, SWEET_SPOTS, sweetStatus } from "@/utils/platformLimits";
 
 const TIPS = [
   "افتح بسؤال أو رقم صادم — أول سطر يقرر إذا يكمل القارئ أم لا.",
