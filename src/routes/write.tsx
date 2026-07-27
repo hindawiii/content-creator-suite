@@ -52,6 +52,10 @@ function WritePage() {
   const [tags, setTags] = useState<string[]>([]);
   const [source, setSource] = useState<"groq" | "together" | "fallback" | undefined>();
   const [saved, setSaved] = useState(false);
+  const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
+  const limit = PLATFORM_LIMITS[platform];
+  const chars = output.length + (tags.length ? tags.join(" ").length + 2 : 0);
+  const overLimit = chars > limit;
 
   const { generate, loading } = usePostGenerator();
   const { suggest, loading: tagLoading } = useHashtags();
