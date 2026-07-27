@@ -109,6 +109,23 @@ function PublishPage() {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [schedPlatform, setSchedPlatform] = useState<Platform>("instagram");
   const [schedTime, setSchedTime] = useState("");
+  const { shorten, expand, loading: resizeLoading } = useSmartResize();
+  const [resizeOpen, setResizeOpen] = useState(false);
+  const [resizeMode, setResizeMode] = useState<"shorten" | "expand">("shorten");
+  const [resizePlatform, setResizePlatform] = useState<Platform>("twitter");
+  const [resizeResult, setResizeResult] = useState<string | null>(null);
+
+  const runResize = async (mode: "shorten" | "expand", p: Platform) => {
+    setResizeMode(mode); setResizePlatform(p); setResizeResult(null); setResizeOpen(true);
+    const res = mode === "shorten" ? await shorten(text, p) : await expand(text, p);
+    setResizeResult(res);
+  };
+  const retryResize = async () => {
+    setResizeResult(null);
+    const res = resizeMode === "shorten" ? await shorten(text, resizePlatform) : await expand(text, resizePlatform);
+    setResizeResult(res);
+  };
+  const applyResize = (v: string) => { setText(v); setResizeOpen(false); };
 
   useEffect(() => {
     // Preload existing publish state for this content id
