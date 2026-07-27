@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send } from "lucide-react";
+import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send, Library } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
 import { schedulesStore } from "@/services/storage";
@@ -8,6 +8,7 @@ const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
   { to: "/write", label: "كتابة", icon: PenSquare },
   { to: "/image", label: "صور", icon: ImageIcon },
+  { to: "/library", label: "المكتبة", icon: Library },
   { to: "/publish", label: "نشر", icon: Send },
   { to: "/schedule", label: "جدولة", icon: Calendar },
   { to: "/analytics", label: "تحليلات", icon: BarChart3 },

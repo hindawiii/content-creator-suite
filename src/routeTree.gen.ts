@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as PublishRouteImport } from './routes/publish'
+import { Route as LibraryRouteImport } from './routes/library'
 import { Route as ImageRouteImport } from './routes/image'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const PublishRoute = PublishRouteImport.update({
   path: '/publish',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImageRoute = ImageRouteImport.update({
   id: '/image',
   path: '/image',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/image': typeof ImageRoute
+  '/library': typeof LibraryRoute
   '/publish': typeof PublishRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/image': typeof ImageRoute
+  '/library': typeof LibraryRoute
   '/publish': typeof PublishRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/analytics': typeof AnalyticsRoute
   '/image': typeof ImageRoute
+  '/library': typeof LibraryRoute
   '/publish': typeof PublishRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/image'
+    | '/library'
     | '/publish'
     | '/schedule'
     | '/settings'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/image'
+    | '/library'
     | '/publish'
     | '/schedule'
     | '/settings'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/analytics'
     | '/image'
+    | '/library'
     | '/publish'
     | '/schedule'
     | '/settings'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsRoute: typeof AnalyticsRoute
   ImageRoute: typeof ImageRoute
+  LibraryRoute: typeof LibraryRoute
   PublishRoute: typeof PublishRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublishRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/image': {
       id: '/image'
       path: '/image'
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsRoute: AnalyticsRoute,
   ImageRoute: ImageRoute,
+  LibraryRoute: LibraryRoute,
   PublishRoute: PublishRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
@@ -208,13 +229,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
