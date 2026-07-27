@@ -13,13 +13,17 @@ import {
   Sparkles,
   Lightbulb,
   ArrowLeft,
+  Scissors,
+  Maximize2,
 } from "lucide-react";
 import {
   getPreviewDraft,
   publishesStore,
   schedulesStore,
-  type PublishRecord,
 } from "@/services/storage";
+import { useSmartResize } from "@/hooks/useSmartResize";
+import { SmartResizeModal } from "@/components/SmartResizeModal";
+import { sweetStatus, PLATFORM_LIMITS, SWEET_SPOTS } from "@/utils/platformLimits";
 
 export const Route = createFileRoute("/publish")({
   head: () => ({
@@ -105,6 +109,23 @@ function PublishPage() {
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [schedPlatform, setSchedPlatform] = useState<Platform>("instagram");
   const [schedTime, setSchedTime] = useState("");
+  const { shorten, expand, loading: resizeLoading } = useSmartResize();
+  const [resizeOpen, setResizeOpen] = useState(false);
+  const [resizeMode, setResizeMode] = useState<"shorten" | "expand">("shorten");
+  const [resizePlatform, setResizePlatform] = useState<Platform>("twitter");
+  const [resizeResult, setResizeResult] = useState<string | null>(null);
+
+  const runResize = async (mode: "shorten" | "expand", p: Platform) => {
+    setResizeMode(mode); setResizePlatform(p); setResizeResult(null); setResizeOpen(true);
+    const res = mode === "shorten" ? await shorten(text, p) : await expand(text, p);
+    setResizeResult(res);
+  };
+  const retryResize = async () => {
+    setResizeResult(null);
+    const res = resizeMode === "shorten" ? await shorten(text, resizePlatform) : await expand(text, resizePlatform);
+    setResizeResult(res);
+  };
+  const applyResize = (v: string) => { setText(v); setResizeOpen(false); };
 
   useEffect(() => {
     // Preload existing publish state for this content id
@@ -293,22 +314,50 @@ function PublishPage() {
             const chars = fullText.length;
             const words = fullText.trim().split(/\s+/).filter(Boolean).length;
             const mins = Math.max(1, Math.round(words / 180));
-            const twitterOk = chars <= 280;
-            const igOk = chars <= 2200;
+            const spotFor = (p: Platform) => {
+              const s = sweetStatus(fullText, p);
+              const tone = s === "ideal" ? "success" : s === "over" ? "warning" : "default";
+              const label = s === "ideal" ? "مثالي ✅" : s === "over" ? "يتجاوز ✗" : s === "short" ? "قصير" : "طويل";
+              return { tone, label } as const;
+            };
+            const tw = spotFor("twitter");
+            const ig = spotFor("instagram");
+            const li = spotFor("linkedin");
+            const overTw = chars > PLATFORM_LIMITS.twitter;
+            const overIg = chars > PLATFORM_LIMITS.instagram;
+            const liRange = SWEET_SPOTS.linkedin!;
+            const shortForLi = chars > 0 && chars < liRange[0];
             return (
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                <span>⏱ {mins} د قراءة</span>
-                <span>·</span>
-                <span>{words} كلمة</span>
-                <span>·</span>
-                <span className={twitterOk ? "text-success" : "text-destructive"}>
-                  🐦 {chars}/280 {twitterOk ? "✓" : "✗"}
-                </span>
-                <span className={igOk ? "text-success" : "text-destructive"}>
-                  📷 {chars}/2200 {igOk ? "✓" : "✗"}
-                </span>
-                <span>💼 نبرة مناسبة للينكدإن</span>
-              </div>
+              <>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                  <span>⏱ {mins} د قراءة</span>
+                  <span>·</span>
+                  <span>{words} كلمة</span>
+                  <span>·</span>
+                  <span className="inline-flex items-center gap-1">🐦 {chars}/280 <Badge tone={tw.tone}>{tw.label}</Badge></span>
+                  <span className="inline-flex items-center gap-1">📷 {chars}/2200 <Badge tone={ig.tone}>{ig.label}</Badge></span>
+                  <span className="inline-flex items-center gap-1">💼 <Badge tone={li.tone}>{li.label}</Badge></span>
+                </div>
+                {(overTw || overIg || shortForLi) && (
+                  <div className="mt-2 flex flex-wrap gap-2 rounded-xl border border-accent/30 bg-accent/5 p-2">
+                    {overTw && (
+                      <Button variant="outline" onClick={() => runResize("shorten", "twitter")} disabled={resizeLoading}>
+                        <Scissors className="h-4 w-4" /> 🪄 اختصر لتويتر
+                      </Button>
+                    )}
+                    {overIg && (
+                      <Button variant="outline" onClick={() => runResize("shorten", "instagram")} disabled={resizeLoading}>
+                        <Scissors className="h-4 w-4" /> 🪄 اختصر لإنستقرام
+                      </Button>
+                    )}
+                    {shortForLi && !overTw && !overIg && (
+                      <Button variant="outline" onClick={() => runResize("expand", "linkedin")} disabled={resizeLoading}>
+                        <Maximize2 className="h-4 w-4" /> 📖 أطول للينكدإن
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </>
             );
           })()}
 
@@ -446,6 +495,18 @@ function PublishPage() {
           </div>
         </div>
       )}
+
+      <SmartResizeModal
+        open={resizeOpen}
+        mode={resizeMode}
+        platform={resizePlatform}
+        original={text}
+        result={resizeResult}
+        loading={resizeLoading}
+        onRetry={retryResize}
+        onApply={applyResize}
+        onClose={() => setResizeOpen(false)}
+      />
     </AppLayout>
   );
 }

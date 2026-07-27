@@ -3,23 +3,16 @@ import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw, Scissors, Maximize2 } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
+import { useSmartResize } from "@/hooks/useSmartResize";
 import { AIOutput } from "@/components/AIOutput";
 import { HashtagList } from "@/components/HashtagList";
 import { RateLimitBar } from "@/components/RateLimitBar";
+import { SmartResizeModal } from "@/components/SmartResizeModal";
+import { Badge } from "@/components/ui";
 import { postsStore, analyticsStore, setPreviewDraft } from "@/services/storage";
-
-const PLATFORM_LIMITS: Record<Platform, number> = {
-  twitter: 280,
-  instagram: 2200,
-  facebook: 63206,
-  linkedin: 3000,
-  tiktok: 2200,
-  youtube: 5000,
-  whatsapp: 65536,
-  telegram: 4096,
-};
+import { PLATFORM_LIMITS, SWEET_SPOTS, sweetStatus } from "@/utils/platformLimits";
 
 const TIPS = [
   "افتح بسؤال أو رقم صادم — أول سطر يقرر إذا يكمل القارئ أم لا.",
@@ -59,6 +52,33 @@ function WritePage() {
 
   const { generate, loading } = usePostGenerator();
   const { suggest, loading: tagLoading } = useHashtags();
+  const { shorten, expand, loading: resizeLoading } = useSmartResize();
+  const [resizeOpen, setResizeOpen] = useState(false);
+  const [resizeMode, setResizeMode] = useState<"shorten" | "expand">("shorten");
+  const [resizeResult, setResizeResult] = useState<string | null>(null);
+
+  const openResize = async (mode: "shorten" | "expand") => {
+    if (!output.trim()) return;
+    setResizeMode(mode);
+    setResizeResult(null);
+    setResizeOpen(true);
+    const res = mode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
+    setResizeResult(res);
+  };
+  const retryResize = async () => {
+    setResizeResult(null);
+    const res = resizeMode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
+    setResizeResult(res);
+  };
+  const applyResize = (v: string) => {
+    setOutput(v);
+    setSaved(false);
+    setResizeOpen(false);
+  };
+
+  const status = output ? sweetStatus(output, platform) : null;
+  const spot = SWEET_SPOTS[platform];
+  const tooShortForExpand = !!spot && output.length > 0 && output.length < spot[0];
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
@@ -180,8 +200,11 @@ function WritePage() {
             </div>
             {output && (
               <div className="flex items-center gap-2 text-[11px]">
+                {status === "ideal" && <Badge tone="success">مثالي ✅</Badge>}
+                {status === "short" && <Badge tone="warning">قصير</Badge>}
+                {status === "long" && <Badge tone="warning">طويل</Badge>}
                 <span className={overLimit ? "text-destructive font-semibold" : "text-muted-foreground"}>
-                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗ يتجاوز الحد" : "✓"}
+                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗" : "✓"}
                 </span>
               </div>
             )}
@@ -189,6 +212,25 @@ function WritePage() {
           {output ? (
             <>
               <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+
+              {(overLimit || tooShortForExpand) && (
+                <div className="mt-3 flex flex-wrap gap-2 rounded-xl border border-accent/30 bg-accent/5 p-2.5">
+                  {overLimit && (
+                    <Button variant="outline" onClick={() => openResize("shorten")} disabled={resizeLoading}>
+                      <Scissors className="h-4 w-4" /> 🪄 اختصر ذكياً
+                    </Button>
+                  )}
+                  {tooShortForExpand && (
+                    <Button variant="outline" onClick={() => openResize("expand")} disabled={resizeLoading}>
+                      <Maximize2 className="h-4 w-4" /> 📖 أطول
+                    </Button>
+                  )}
+                  <span className="self-center text-[11px] text-muted-foreground">
+                    {overLimit ? `النص يتجاوز حد ${PLATFORM_META[platform].label}` : `أضف تفاصيل — النص أقصر من المثالي`}
+                  </span>
+                </div>
+              )}
+
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <Button onClick={handlePublish}>
                   <Send className="h-4 w-4" /> نشر الآن
@@ -219,6 +261,18 @@ function WritePage() {
       <div className="mt-6 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs text-muted-foreground">
         💡 <strong className="text-foreground">وضع العميل الكامل:</strong> كل الطلبات تذهب مباشرة من متصفحك إلى Groq / Together AI / Pollinations. لا توجد خوادم وسيطة. أضف مفاتيحك من صفحة <strong>الإعدادات</strong>.
       </div>
+
+      <SmartResizeModal
+        open={resizeOpen}
+        mode={resizeMode}
+        platform={platform}
+        original={output}
+        result={resizeResult}
+        loading={resizeLoading}
+        onRetry={retryResize}
+        onApply={applyResize}
+        onClose={() => setResizeOpen(false)}
+      />
     </AppLayout>
   );
 }
