@@ -1,14 +1,34 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { AIOutput } from "@/components/AIOutput";
 import { HashtagList } from "@/components/HashtagList";
 import { RateLimitBar } from "@/components/RateLimitBar";
 import { postsStore, analyticsStore, setPreviewDraft } from "@/services/storage";
+
+const PLATFORM_LIMITS: Record<Platform, number> = {
+  twitter: 280,
+  instagram: 2200,
+  facebook: 63206,
+  linkedin: 3000,
+  tiktok: 2200,
+  youtube: 5000,
+  whatsapp: 65536,
+  telegram: 4096,
+};
+
+const TIPS = [
+  "افتح بسؤال أو رقم صادم — أول سطر يقرر إذا يكمل القارئ أم لا.",
+  "استخدم إيموجي واحد كل 2-3 أسطر — لا تُفرط.",
+  "الجُمل القصيرة أقوى من الفقرات الطويلة على السوشيال.",
+  "أضف CTA واضح في النهاية: علّق، شارك، احفظ.",
+  "تويتر يحب الأرقام والقوائم. إنستقرام يحب القصص.",
+  "لينكدإن: ابدأ بقيمة عملية في أول 3 أسطر قبل 'المزيد'.",
+];
 
 export const Route = createFileRoute("/write")({
   head: () => ({
