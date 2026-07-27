@@ -13,13 +13,17 @@ import {
   Sparkles,
   Lightbulb,
   ArrowLeft,
+  Scissors,
+  Maximize2,
 } from "lucide-react";
 import {
   getPreviewDraft,
   publishesStore,
   schedulesStore,
-  type PublishRecord,
 } from "@/services/storage";
+import { useSmartResize } from "@/hooks/useSmartResize";
+import { SmartResizeModal } from "@/components/SmartResizeModal";
+import { sweetStatus, PLATFORM_LIMITS, SWEET_SPOTS } from "@/utils/platformLimits";
 
 export const Route = createFileRoute("/publish")({
   head: () => ({
