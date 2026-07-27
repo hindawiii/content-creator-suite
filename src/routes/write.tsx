@@ -103,6 +103,11 @@ function WritePage() {
 
       <div className="mb-4"><RateLimitBar kind="post" /></div>
 
+      <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-xs">
+        <Lightbulb className="h-4 w-4 shrink-0 text-accent" />
+        <div><strong className="text-foreground">هل تعلم؟</strong> {tip}</div>
+      </div>
+
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>
           <div className="space-y-4">
