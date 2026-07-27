@@ -276,23 +276,3 @@ function WritePage() {
     </AppLayout>
   );
 }
-            <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
-              <Sparkles className="h-8 w-8 opacity-40" />
-              <div>سيظهر المنشور المُولّد هنا</div>
-            </div>
-          )}
-
-          {tags.length > 0 && (
-            <div className="mt-4">
-              <HashtagList tags={tags} />
-            </div>
-          )}
-        </Card>
-      </div>
-
-      <div className="mt-6 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs text-muted-foreground">
-        💡 <strong className="text-foreground">وضع العميل الكامل:</strong> كل الطلبات تذهب مباشرة من متصفحك إلى Groq / Together AI / Pollinations. لا توجد خوادم وسيطة. أضف مفاتيحك من صفحة <strong>الإعدادات</strong>.
-      </div>
-    </AppLayout>
-  );
-}
