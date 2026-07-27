@@ -52,6 +52,33 @@ function WritePage() {
 
   const { generate, loading } = usePostGenerator();
   const { suggest, loading: tagLoading } = useHashtags();
+  const { shorten, expand, loading: resizeLoading } = useSmartResize();
+  const [resizeOpen, setResizeOpen] = useState(false);
+  const [resizeMode, setResizeMode] = useState<"shorten" | "expand">("shorten");
+  const [resizeResult, setResizeResult] = useState<string | null>(null);
+
+  const openResize = async (mode: "shorten" | "expand") => {
+    if (!output.trim()) return;
+    setResizeMode(mode);
+    setResizeResult(null);
+    setResizeOpen(true);
+    const res = mode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
+    setResizeResult(res);
+  };
+  const retryResize = async () => {
+    setResizeResult(null);
+    const res = resizeMode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
+    setResizeResult(res);
+  };
+  const applyResize = (v: string) => {
+    setOutput(v);
+    setSaved(false);
+    setResizeOpen(false);
+  };
+
+  const status = output ? sweetStatus(output, platform) : null;
+  const spot = SWEET_SPOTS[platform];
+  const tooShortForExpand = !!spot && output.length > 0 && output.length < spot[0];
 
   const handleGenerate = async () => {
     if (!topic.trim()) return;
