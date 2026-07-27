@@ -314,22 +314,50 @@ function PublishPage() {
             const chars = fullText.length;
             const words = fullText.trim().split(/\s+/).filter(Boolean).length;
             const mins = Math.max(1, Math.round(words / 180));
-            const twitterOk = chars <= 280;
-            const igOk = chars <= 2200;
+            const spotFor = (p: Platform) => {
+              const s = sweetStatus(fullText, p);
+              const tone = s === "ideal" ? "success" : s === "over" ? "warning" : "default";
+              const label = s === "ideal" ? "مثالي ✅" : s === "over" ? "يتجاوز ✗" : s === "short" ? "قصير" : "طويل";
+              return { tone, label } as const;
+            };
+            const tw = spotFor("twitter");
+            const ig = spotFor("instagram");
+            const li = spotFor("linkedin");
+            const overTw = chars > PLATFORM_LIMITS.twitter;
+            const overIg = chars > PLATFORM_LIMITS.instagram;
+            const liRange = SWEET_SPOTS.linkedin!;
+            const shortForLi = chars > 0 && chars < liRange[0];
             return (
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                <span>⏱ {mins} د قراءة</span>
-                <span>·</span>
-                <span>{words} كلمة</span>
-                <span>·</span>
-                <span className={twitterOk ? "text-success" : "text-destructive"}>
-                  🐦 {chars}/280 {twitterOk ? "✓" : "✗"}
-                </span>
-                <span className={igOk ? "text-success" : "text-destructive"}>
-                  📷 {chars}/2200 {igOk ? "✓" : "✗"}
-                </span>
-                <span>💼 نبرة مناسبة للينكدإن</span>
-              </div>
+              <>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                  <span>⏱ {mins} د قراءة</span>
+                  <span>·</span>
+                  <span>{words} كلمة</span>
+                  <span>·</span>
+                  <span className="inline-flex items-center gap-1">🐦 {chars}/280 <Badge tone={tw.tone}>{tw.label}</Badge></span>
+                  <span className="inline-flex items-center gap-1">📷 {chars}/2200 <Badge tone={ig.tone}>{ig.label}</Badge></span>
+                  <span className="inline-flex items-center gap-1">💼 <Badge tone={li.tone}>{li.label}</Badge></span>
+                </div>
+                {(overTw || overIg || shortForLi) && (
+                  <div className="mt-2 flex flex-wrap gap-2 rounded-xl border border-accent/30 bg-accent/5 p-2">
+                    {overTw && (
+                      <Button variant="outline" onClick={() => runResize("shorten", "twitter")} disabled={resizeLoading}>
+                        <Scissors className="h-4 w-4" /> 🪄 اختصر لتويتر
+                      </Button>
+                    )}
+                    {overIg && (
+                      <Button variant="outline" onClick={() => runResize("shorten", "instagram")} disabled={resizeLoading}>
+                        <Scissors className="h-4 w-4" /> 🪄 اختصر لإنستقرام
+                      </Button>
+                    )}
+                    {shortForLi && !overTw && !overIg && (
+                      <Button variant="outline" onClick={() => runResize("expand", "linkedin")} disabled={resizeLoading}>
+                        <Maximize2 className="h-4 w-4" /> 📖 أطول للينكدإن
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </>
             );
           })()}
 
