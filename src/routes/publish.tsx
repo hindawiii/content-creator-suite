@@ -495,6 +495,18 @@ function PublishPage() {
           </div>
         </div>
       )}
+
+      <SmartResizeModal
+        open={resizeOpen}
+        mode={resizeMode}
+        platform={resizePlatform}
+        original={text}
+        result={resizeResult}
+        loading={resizeLoading}
+        onRetry={retryResize}
+        onApply={applyResize}
+        onClose={() => setResizeOpen(false)}
+      />
     </AppLayout>
   );
 }
