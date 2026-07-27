@@ -200,8 +200,11 @@ function WritePage() {
             </div>
             {output && (
               <div className="flex items-center gap-2 text-[11px]">
+                {status === "ideal" && <Badge tone="success">مثالي ✅</Badge>}
+                {status === "short" && <Badge tone="warning">قصير</Badge>}
+                {status === "long" && <Badge tone="warning">طويل</Badge>}
                 <span className={overLimit ? "text-destructive font-semibold" : "text-muted-foreground"}>
-                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗ يتجاوز الحد" : "✓"}
+                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗" : "✓"}
                 </span>
               </div>
             )}
@@ -209,6 +212,25 @@ function WritePage() {
           {output ? (
             <>
               <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+
+              {(overLimit || tooShortForExpand) && (
+                <div className="mt-3 flex flex-wrap gap-2 rounded-xl border border-accent/30 bg-accent/5 p-2.5">
+                  {overLimit && (
+                    <Button variant="outline" onClick={() => openResize("shorten")} disabled={resizeLoading}>
+                      <Scissors className="h-4 w-4" /> 🪄 اختصر ذكياً
+                    </Button>
+                  )}
+                  {tooShortForExpand && (
+                    <Button variant="outline" onClick={() => openResize("expand")} disabled={resizeLoading}>
+                      <Maximize2 className="h-4 w-4" /> 📖 أطول
+                    </Button>
+                  )}
+                  <span className="self-center text-[11px] text-muted-foreground">
+                    {overLimit ? `النص يتجاوز حد ${PLATFORM_META[platform].label}` : `أضف تفاصيل — النص أقصر من المثالي`}
+                  </span>
+                </div>
+              )}
+
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <Button onClick={handlePublish}>
                   <Send className="h-4 w-4" /> نشر الآن
@@ -222,6 +244,38 @@ function WritePage() {
               </div>
             </>
           ) : (
+            <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
+              <Sparkles className="h-8 w-8 opacity-40" />
+              <div>سيظهر المنشور المُولّد هنا</div>
+            </div>
+          )}
+
+          {tags.length > 0 && (
+            <div className="mt-4">
+              <HashtagList tags={tags} />
+            </div>
+          )}
+        </Card>
+      </div>
+
+      <div className="mt-6 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs text-muted-foreground">
+        💡 <strong className="text-foreground">وضع العميل الكامل:</strong> كل الطلبات تذهب مباشرة من متصفحك إلى Groq / Together AI / Pollinations. لا توجد خوادم وسيطة. أضف مفاتيحك من صفحة <strong>الإعدادات</strong>.
+      </div>
+
+      <SmartResizeModal
+        open={resizeOpen}
+        mode={resizeMode}
+        platform={platform}
+        original={output}
+        result={resizeResult}
+        loading={resizeLoading}
+        onRetry={retryResize}
+        onApply={applyResize}
+        onClose={() => setResizeOpen(false)}
+      />
+    </AppLayout>
+  );
+}
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
               <Sparkles className="h-8 w-8 opacity-40" />
               <div>سيظهر المنشور المُولّد هنا</div>
