@@ -1,14 +1,34 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon } from "lucide-react";
+import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { AIOutput } from "@/components/AIOutput";
 import { HashtagList } from "@/components/HashtagList";
 import { RateLimitBar } from "@/components/RateLimitBar";
 import { postsStore, analyticsStore, setPreviewDraft } from "@/services/storage";
+
+const PLATFORM_LIMITS: Record<Platform, number> = {
+  twitter: 280,
+  instagram: 2200,
+  facebook: 63206,
+  linkedin: 3000,
+  tiktok: 2200,
+  youtube: 5000,
+  whatsapp: 65536,
+  telegram: 4096,
+};
+
+const TIPS = [
+  "افتح بسؤال أو رقم صادم — أول سطر يقرر إذا يكمل القارئ أم لا.",
+  "استخدم إيموجي واحد كل 2-3 أسطر — لا تُفرط.",
+  "الجُمل القصيرة أقوى من الفقرات الطويلة على السوشيال.",
+  "أضف CTA واضح في النهاية: علّق، شارك، احفظ.",
+  "تويتر يحب الأرقام والقوائم. إنستقرام يحب القصص.",
+  "لينكدإن: ابدأ بقيمة عملية في أول 3 أسطر قبل 'المزيد'.",
+];
 
 export const Route = createFileRoute("/write")({
   head: () => ({
@@ -32,6 +52,10 @@ function WritePage() {
   const [tags, setTags] = useState<string[]>([]);
   const [source, setSource] = useState<"groq" | "together" | "fallback" | undefined>();
   const [saved, setSaved] = useState(false);
+  const tip = useMemo(() => TIPS[Math.floor(Math.random() * TIPS.length)], []);
+  const limit = PLATFORM_LIMITS[platform];
+  const chars = output.length + (tags.length ? tags.join(" ").length + 2 : 0);
+  const overLimit = chars > limit;
 
   const { generate, loading } = usePostGenerator();
   const { suggest, loading: tagLoading } = useHashtags();
@@ -78,6 +102,11 @@ function WritePage() {
       <PageHeader title="كتابة منشور بالذكاء" subtitle="Groq → Together AI → قالب محلي — كلها من متصفحك مباشرة" />
 
       <div className="mb-4"><RateLimitBar kind="post" /></div>
+
+      <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-xs">
+        <Lightbulb className="h-4 w-4 shrink-0 text-accent" />
+        <div><strong className="text-foreground">هل تعلم؟</strong> {tip}</div>
+      </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card>
@@ -144,19 +173,31 @@ function WritePage() {
         </Card>
 
         <Card>
-          <div className="mb-3 flex items-center gap-2">
-            <Wand2 className="h-4 w-4 text-accent" />
-            <span className="font-semibold">النتيجة</span>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Wand2 className="h-4 w-4 text-accent" />
+              <span className="font-semibold">النتيجة</span>
+            </div>
+            {output && (
+              <div className="flex items-center gap-2 text-[11px]">
+                <span className={overLimit ? "text-destructive font-semibold" : "text-muted-foreground"}>
+                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗ يتجاوز الحد" : "✓"}
+                </span>
+              </div>
+            )}
           </div>
           {output ? (
             <>
               <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <Button onClick={handlePublish}>
                   <Send className="h-4 w-4" /> نشر الآن
                 </Button>
+                <Button variant="outline" onClick={handleGenerate} disabled={loading}>
+                  <RotateCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> توليد مرة أخرى
+                </Button>
                 <Button variant="outline" onClick={handleGenImage}>
-                  <ImageIcon className="h-4 w-4" /> 🎨 ولّد صورة لهذا المنشور
+                  <ImageIcon className="h-4 w-4" /> صورة للمنشور
                 </Button>
               </div>
             </>

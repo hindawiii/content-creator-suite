@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send } from "lucide-react";
+import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send, Library } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
 import { schedulesStore } from "@/services/storage";
@@ -8,6 +8,7 @@ const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
   { to: "/write", label: "كتابة", icon: PenSquare },
   { to: "/image", label: "صور", icon: ImageIcon },
+  { to: "/library", label: "المكتبة", icon: Library },
   { to: "/publish", label: "نشر", icon: Send },
   { to: "/schedule", label: "جدولة", icon: Calendar },
   { to: "/analytics", label: "تحليلات", icon: BarChart3 },
@@ -116,7 +117,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Bottom nav mobile */}
       <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/90 backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-8">
           {nav.map((n) => {
             const active = pathname === n.to;
             const Icon = n.icon;
