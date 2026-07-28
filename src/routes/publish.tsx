@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label, Input, Badge } from "@/components/ui";
@@ -15,6 +15,10 @@ import {
   ArrowLeft,
   Scissors,
   Maximize2,
+  ImageIcon,
+  Upload,
+  X,
+  Wand2,
 } from "lucide-react";
 import {
   getPreviewDraft,
