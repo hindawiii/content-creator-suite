@@ -392,17 +392,13 @@ function PublishPage() {
           )}
 
           {imageUrl && (
-            <div className="mt-4">
-              <Label>الصورة</Label>
-              <div className="overflow-hidden rounded-xl border border-border">
-                <img src={imageUrl} alt="preview" className="w-full object-cover" />
-              </div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Button variant="outline" onClick={downloadImage}><Download className="h-4 w-4" /> تنزيل الصورة</Button>
-                <Button variant="outline" onClick={copyImage}><Copy className="h-4 w-4" /> نسخ الصورة</Button>
-              </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button variant="outline" onClick={downloadImage}><Download className="h-4 w-4" /> تنزيل الصورة</Button>
+              <Button variant="outline" onClick={copyImage}><Copy className="h-4 w-4" /> نسخ الصورة</Button>
             </div>
           )}
+
+
 
           <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-3">
             <Button onClick={copyText}><Copy className="h-4 w-4" /> نسخ النص</Button>
