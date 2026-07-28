@@ -101,7 +101,7 @@ function PublishPage() {
   const draft = useMemo(() => getPreviewDraft(), []);
   const [text, setText] = useState(draft?.text ?? "");
   const [tags, setTags] = useState<string[]>(draft?.hashtags ?? []);
-  const [imageUrl] = useState<string | undefined>(draft?.imageUrl);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(draft?.imageUrl);
   const contentId = useMemo(() => draft?.id ?? crypto.randomUUID(), [draft]);
   const [published, setPublished] = useState<Partial<Record<Platform, boolean>>>({});
   const [confetti, setConfetti] = useState(false);
