@@ -1,6 +1,7 @@
 import { Copy, RefreshCw, Scissors, Maximize2, Megaphone, Save } from "lucide-react";
 import { toast } from "sonner";
-import { Button, Textarea, Badge } from "@/components/ui";
+import { Button, Badge } from "@/components/ui";
+import { RichEditor } from "@/components/RichEditor";
 import { useRewrite } from "@/hooks/useAI";
 
 export function AIOutput({
