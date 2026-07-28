@@ -518,3 +518,94 @@ function PublishPage() {
     </AppLayout>
   );
 }
+
+function HeroImage({
+  imageUrl,
+  onChange,
+  onRemove,
+}: {
+  imageUrl?: string;
+  onChange: (url: string) => void;
+  onRemove: () => void;
+}) {
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const onFile = (f: File | null) => {
+    if (!f) return;
+    if (!f.type.startsWith("image/")) {
+      toast.error("يرجى اختيار صورة");
+      return;
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      toast.error("حجم الصورة يجب أن يكون أقل من 5MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => onChange(String(reader.result));
+    reader.readAsDataURL(f);
+  };
+
+  if (imageUrl) {
+    return (
+      <div className="group relative mb-4 overflow-hidden rounded-xl border border-border">
+        <img src={imageUrl} alt="preview" className="w-full max-h-[380px] object-cover" />
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/70 to-transparent p-2 opacity-0 transition group-hover:opacity-100">
+          <div className="flex gap-1.5">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[11px] font-semibold text-black hover:bg-white"
+            >
+              <Upload className="h-3 w-3" /> تغيير
+            </button>
+            <Link
+              to="/image"
+              className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[11px] font-semibold text-black hover:bg-white"
+            >
+              <Wand2 className="h-3 w-3" /> توليد جديدة
+            </Link>
+          </div>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="inline-flex items-center gap-1 rounded-lg bg-destructive/90 px-2 py-1 text-[11px] font-semibold text-white hover:bg-destructive"
+          >
+            <X className="h-3 w-3" /> إزالة
+          </button>
+        </div>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4 rounded-xl border-2 border-dashed border-border bg-surface-elevated p-6 text-center">
+      <ImageIcon className="mx-auto mb-2 h-8 w-8 text-muted-foreground opacity-60" />
+      <p className="mb-3 text-xs text-muted-foreground">أضف صورة رئيسية لجذب الانتباه (يزيد التفاعل بنسبة 2x)</p>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Button variant="outline" onClick={() => fileRef.current?.click()}>
+          <Upload className="h-4 w-4" /> ارفع صورة
+        </Button>
+        <Link to="/image">
+          <Button variant="outline">
+            <Wand2 className="h-4 w-4" /> ولّد بالذكاء
+          </Button>
+        </Link>
+      </div>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+      />
+    </div>
+  );
+}
+
