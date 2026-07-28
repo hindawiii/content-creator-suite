@@ -37,7 +37,7 @@ export function AIOutput({
         </div>
       </div>
 
-      <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={10} />
+      <RichEditor value={value} onChange={onChange} rows={10} />
 
       <div className="flex flex-wrap gap-2">
         <Button variant="outline" onClick={() => { navigator.clipboard.writeText(value); toast.success("نُسخ النص"); }}>
