@@ -307,6 +307,14 @@ function PublishPage() {
             <span className="font-semibold">معاينة المنشور</span>
           </div>
 
+          <HeroImage
+            imageUrl={imageUrl}
+            onChange={setImageUrl}
+            onRemove={() => setImageUrl(undefined)}
+          />
+
+
+
           <Label>النص</Label>
           <Textarea
             rows={10}
