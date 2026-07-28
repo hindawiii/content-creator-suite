@@ -1,6 +1,7 @@
 import { Copy, RefreshCw, Scissors, Maximize2, Megaphone, Save } from "lucide-react";
 import { toast } from "sonner";
-import { Button, Textarea, Badge } from "@/components/ui";
+import { Button, Badge } from "@/components/ui";
+import { RichEditor } from "@/components/RichEditor";
 import { useRewrite } from "@/hooks/useAI";
 
 export function AIOutput({
@@ -36,7 +37,7 @@ export function AIOutput({
         </div>
       </div>
 
-      <Textarea value={value} onChange={(e) => onChange(e.target.value)} rows={10} />
+      <RichEditor value={value} onChange={onChange} rows={10} />
 
       <div className="flex flex-wrap gap-2">
         <Button variant="outline" onClick={() => { navigator.clipboard.writeText(value); toast.success("نُسخ النص"); }}>
