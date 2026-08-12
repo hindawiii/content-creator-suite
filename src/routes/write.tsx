@@ -39,8 +39,22 @@ function WritePage() {
   const navigate = useNavigate();
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [tone, setTone] = useState<Tone>("professional");
+  const [dialect, setDialect] = useState<Dialect>("msa");
   const [topic, setTopic] = useState("");
   const [audience, setAudience] = useState("");
+
+  // remember last dialect choice (client-side only)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("poston_dialect") as Dialect | null;
+      if (saved && saved in DIALECT_META) setDialect(saved);
+    } catch { /* ignore */ }
+  }, []);
+  const pickDialect = (d: Dialect) => {
+    setDialect(d);
+    try { localStorage.setItem("poston_dialect", d); } catch { /* ignore */ }
+  };
+
   const [output, setOutput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [source, setSource] = useState<"groq" | "together" | "fallback" | undefined>();
