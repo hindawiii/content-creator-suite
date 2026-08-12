@@ -185,7 +185,6 @@ export function useImageGenerator() {
         toast.success("تم توليد الصور", { id: toastId });
       } finally {
         setLoading(false);
-        toast.dismiss(toastId);
       }
       return batch;
     },
