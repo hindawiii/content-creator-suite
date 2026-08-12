@@ -185,6 +185,30 @@ function WritePage() {
             </div>
 
             <div>
+              <Label>اللهجة</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {(Object.keys(DIALECT_META) as Dialect[]).map((d) => {
+                  const m = DIALECT_META[d];
+                  const active = d === dialect;
+                  return (
+                    <button
+                      key={d}
+                      onClick={() => pickDialect(d)}
+                      title={m.hint}
+                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[11px] transition ${
+                        active ? "border-accent bg-accent/10 text-foreground" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                      }`}
+                    >
+                      <span className="text-lg">{m.emoji}</span>
+                      <span>{m.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">{DIALECT_META[dialect].hint}</p>
+            </div>
+
+            <div>
               <Label>الموضوع</Label>
               <Input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="مثال: أهمية التسويق بالمحتوى للشركات الناشئة" />
             </div>
