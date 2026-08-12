@@ -97,7 +97,7 @@ function WritePage() {
   const handleGenerate = async () => {
     if (!topic.trim()) return;
     setSaved(false);
-    const res = await generate({ topic, platform, tone, audience });
+    const res = await generate({ topic, platform, tone, audience, dialect });
     setOutput(res.content);
     setTags(res.hashtags);
     setSource(res.source);
