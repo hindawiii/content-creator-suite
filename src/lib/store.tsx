@@ -140,3 +140,14 @@ export const TONE_META: Record<Tone, string> = {
   friendly: "ودّي",
   motivational: "تحفيزي",
 };
+
+export type Dialect = "msa" | "sudanese" | "egyptian" | "gulf" | "levantine" | "maghrebi";
+
+export const DIALECT_META: Record<Dialect, { label: string; emoji: string; hint: string }> = {
+  msa: { label: "الفصحى (البيضاء)", emoji: "🕊️", hint: "عربية فصحى مبسطة مفهومة لكل العرب، بلا مفردات محلية" },
+  sudanese: { label: "سودانية", emoji: "🇸🇩", hint: "لهجة سودانية أصيلة" },
+  egyptian: { label: "مصرية", emoji: "🇪🇬", hint: "لهجة مصرية عامية خفيفة" },
+  gulf: { label: "خليجية", emoji: "🇸🇦", hint: "لهجة خليجية" },
+  levantine: { label: "شامية", emoji: "🇸🇾", hint: "لهجة شامية" },
+  maghrebi: { label: "مغاربية", emoji: "🇲🇦", hint: "لهجة مغاربية مفهومة" },
+};
