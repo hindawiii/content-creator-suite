@@ -21,20 +21,34 @@ const CTA_LIBRARY = [
   "اكتب لنا في التعليقات 💬",
 ];
 
+const DIALECT_HINTS: Record<string, string> = {
+  msa: "اكتب بالعربية الفصحى المبسطة (اللهجة البيضاء): مفهومة لكل العرب، بدون مفردات محلية أو عامية.",
+  sudanese:
+    "اكتب باللهجة السودانية العامية الأصيلة (مثل: شديد، كيفن، زول، ياخي، سمح، كتير، دايراً، بالساكت، جدع). حافظ على روح الحديث السوداني الطبيعي وتجنّب الفصحى الجافة.",
+  egyptian:
+    "اكتب باللهجة المصرية العامية (مثل: يعني، خلاص، جامد، بجد، ازاي، عشان، كده، مفيش). أسلوب خفيف وقريب من الشارع المصري.",
+  gulf: "اكتب باللهجة الخليجية (مثل: وايد، شنو، عشان، زين، مره، تراك). أسلوب طبيعي غير متكلف.",
+  levantine: "اكتب باللهجة الشامية (مثل: هلق، كتير، شو، منيح، ليش، بدي). أسلوب ودود وقريب.",
+  maghrebi: "اكتب باللهجة المغاربية المفهومة (مثل: بزاف، دابا، واخا، مزيان) مع إبقاء النص مفهوماً لبقية العرب.",
+};
+
 export function buildPostPrompt(opts: {
   topic: string;
   platform: string;
   tone: string;
   audience?: string;
   cta?: string;
+  dialect?: string;
 }): string {
-  const { topic, platform, tone, audience, cta } = opts;
+  const { topic, platform, tone, audience, cta, dialect } = opts;
   const toneHint = TONE_HINTS[tone] ?? tone;
+  const dialectLine = dialect ? DIALECT_HINTS[dialect] ?? "" : "";
   const ctaLine = cta
     ? `استخدم هذا الـ CTA حرفياً في النهاية: "${cta}".`
     : `اختر CTA مناسباً من: ${CTA_LIBRARY.join(" | ")}.`;
   return [
     `اكتب منشوراً لمنصة ${platform} بنبرة ${tone} (${toneHint}).`,
+    dialectLine ? `اللهجة المطلوبة (إلزامية): ${dialectLine} اكتب النص بالكامل — الـ HOOK والمتن والـ CTA — بهذه اللهجة.` : "",
     `الموضوع: ${topic}.`,
     audience ? `الجمهور المستهدف: ${audience}.` : "",
     "الصيغة المطلوبة:",

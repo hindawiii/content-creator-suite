@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
-import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
+import { PLATFORM_META, TONE_META, DIALECT_META, type Platform, type Tone, type Dialect } from "@/lib/store";
 import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw, Scissors, Maximize2 } from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { useSmartResize } from "@/hooks/useSmartResize";
@@ -39,8 +39,22 @@ function WritePage() {
   const navigate = useNavigate();
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [tone, setTone] = useState<Tone>("professional");
+  const [dialect, setDialect] = useState<Dialect>("msa");
   const [topic, setTopic] = useState("");
   const [audience, setAudience] = useState("");
+
+  // remember last dialect choice (client-side only)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("poston_dialect") as Dialect | null;
+      if (saved && saved in DIALECT_META) setDialect(saved);
+    } catch { /* ignore */ }
+  }, []);
+  const pickDialect = (d: Dialect) => {
+    setDialect(d);
+    try { localStorage.setItem("poston_dialect", d); } catch { /* ignore */ }
+  };
+
   const [output, setOutput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [source, setSource] = useState<"groq" | "together" | "fallback" | undefined>();
@@ -83,7 +97,7 @@ function WritePage() {
   const handleGenerate = async () => {
     if (!topic.trim()) return;
     setSaved(false);
-    const res = await generate({ topic, platform, tone, audience });
+    const res = await generate({ topic, platform, tone, audience, dialect });
     setOutput(res.content);
     setTags(res.hashtags);
     setSource(res.source);
@@ -168,6 +182,30 @@ function WritePage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div>
+              <Label>اللهجة</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {(Object.keys(DIALECT_META) as Dialect[]).map((d) => {
+                  const m = DIALECT_META[d];
+                  const active = d === dialect;
+                  return (
+                    <button
+                      key={d}
+                      onClick={() => pickDialect(d)}
+                      title={m.hint}
+                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[11px] transition ${
+                        active ? "border-accent bg-accent/10 text-foreground" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                      }`}
+                    >
+                      <span className="text-lg">{m.emoji}</span>
+                      <span>{m.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">{DIALECT_META[dialect].hint}</p>
             </div>
 
             <div>

@@ -7,7 +7,7 @@ import { settingsStore } from "@/services/storage";
 import { canGenerate, consume } from "@/services/rateLimit";
 import { buildHashtagPrompt, buildPostPrompt, buildRewritePrompt } from "@/utils/prompts";
 import { localFallback } from "@/utils/fallbacks";
-import type { Platform, Tone } from "@/lib/store";
+import type { Platform, Tone, Dialect } from "@/lib/store";
 
 async function callChain(userPrompt: string, system?: string): Promise<{ text: string; source: "groq" | "together" | "fallback" }> {
   const groqKey = settingsStore.getGroqKey();
@@ -58,7 +58,7 @@ export function usePostGenerator() {
   const [loading, setLoading] = useState(false);
 
   const generate = useCallback(
-    async (opts: { topic: string; platform: Platform; tone: Tone; audience?: string }): Promise<
+    async (opts: { topic: string; platform: Platform; tone: Tone; audience?: string; dialect?: Dialect }): Promise<
       { content: string; hashtags: string[]; source: "groq" | "together" | "fallback" }
     > => {
       if (!canGenerate("post")) {
