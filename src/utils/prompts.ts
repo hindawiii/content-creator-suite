@@ -2,15 +2,16 @@ export const SYSTEM_PROMPT =
   "You are a viral Arabic content creator. Write in a youthful, energetic style (شبابي) unless the requested tone says otherwise. Open with a strong hook in the first line. Use power words. Add strategic emojis. End with a clear call-to-action (CTA). Keep it punchy, shareable, and human — write as if talking to a friend, not a robot. Never repeat yourself.";
 
 const TONE_HINTS: Record<string, string> = {
-  youthful: "شبابي، طاقة عالية، لغة عامية خفيفة، جُمل قصيرة",
-  powerful: "قوي، حماسي، تحفيزي، عبارات ضربات قوية",
-  professional: "احترافي، هادئ، مبني على قيمة واضحة",
-  humorous: "فكاهي، خفيف الظل، مع مفاجأة في النهاية",
-  dramatic: "درامي، سرد قصصي، جملة أولى تشدّ القارئ",
-  calm: "مسالم، هادئ، تأمّلي، بلا ضجيج",
-  friendly: "ودّي، قريب من القارئ، كأنك تحكي مع صديق",
-  motivational: "تحفيزي، إيجابي، يحث على الفعل الآن",
+  youthful: "شبابي، طاقة عالية، لغة عامية خفيفة، جُمل قصيرة جداً، ترند وميمز",
+  powerful: "قوي وحادّ ومتحدّي: عبارات ضربات قوية، مقارنة صادمة، أسلوب صارم بلا مجاملة. لا تستخدم أسلوب التشجيع الدافئ",
+  professional: "احترافي، هادئ، مبني على قيمة عملية وأرقام أو خطوات واضحة",
+  humorous: "فكاهي، خفيف الظل، مبالغة طريفة، ومفاجأة/قفلة مضحكة في آخر سطر",
+  dramatic: "درامي وسردي: ابدأ بقصة أو مشهد، صور بلاغية، تصعيد ثم انفراج",
+  calm: "مسالم وهادئ وتأمّلي: إيقاع بطيء، بلا علامات تعجب، بلا صخب أو حماس",
+  friendly: "ودّي ومحاوِر: خاطب القارئ مباشرة بصيغة المتكلم، اسأله سؤالاً، كأنك تحكي مع صديق على القهوة",
+  motivational: "تحفيزي دافئ وإيجابي: تعاطف مع صعوبة البداية ثم دفعة أمل وخطوة عملية صغيرة تُنفَّذ اليوم",
 };
+
 
 const CTA_LIBRARY = [
   "شاركنا رأيك 👇",
@@ -81,3 +82,16 @@ export function buildRewritePrompt(kind: "rewrite" | "shorten" | "expand" | "cta
 }
 
 export const CTA_OPTIONS = CTA_LIBRARY;
+
+// Turns an Arabic (or mixed) description into a clean English image prompt,
+// because image models understand English far better than Arabic.
+export function buildImagePromptRequest(userPrompt: string): string {
+  return [
+    "You are a prompt engineer for text-to-image models.",
+    "Translate and rewrite the following description into ONE short English image prompt (max 40 words).",
+    "Describe only visual elements: subject, setting, composition, lighting, colors, style.",
+    "Do NOT include any words to be written in the image. Do NOT add explanations or quotes.",
+    "Return the prompt only.",
+    `Description: ${userPrompt}`,
+  ].join("\n");
+}
