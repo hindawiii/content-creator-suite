@@ -82,3 +82,16 @@ export function buildRewritePrompt(kind: "rewrite" | "shorten" | "expand" | "cta
 }
 
 export const CTA_OPTIONS = CTA_LIBRARY;
+
+// Turns an Arabic (or mixed) description into a clean English image prompt,
+// because image models understand English far better than Arabic.
+export function buildImagePromptRequest(userPrompt: string): string {
+  return [
+    "You are a prompt engineer for text-to-image models.",
+    "Translate and rewrite the following description into ONE short English image prompt (max 40 words).",
+    "Describe only visual elements: subject, setting, composition, lighting, colors, style.",
+    "Do NOT include any words to be written in the image. Do NOT add explanations or quotes.",
+    "Return the prompt only.",
+    `Description: ${userPrompt}`,
+  ].join("\n");
+}
