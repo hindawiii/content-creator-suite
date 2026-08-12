@@ -58,7 +58,7 @@ export function usePostGenerator() {
   const [loading, setLoading] = useState(false);
 
   const generate = useCallback(
-    async (opts: { topic: string; platform: Platform; tone: Tone; audience?: string }): Promise<
+    async (opts: { topic: string; platform: Platform; tone: Tone; audience?: string; dialect?: Dialect }): Promise<
       { content: string; hashtags: string[]; source: "groq" | "together" | "fallback" }
     > => {
       if (!canGenerate("post")) {
