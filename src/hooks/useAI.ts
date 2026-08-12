@@ -149,7 +149,25 @@ export function useImageGenerator() {
         return [];
       }
       setLoading(true);
-      const batch = pollinationsBatch(prompt, 4, dims);
+      const toastId = toast.loading("جاري تحسين الوصف وتوليد الصور...");
+
+      // Image models understand English much better than Arabic — translate first.
+      let finalPrompt = prompt.trim();
+      const hasArabic = /[\u0600-\u06FF]/.test(finalPrompt);
+      if (hasArabic) {
+        try {
+          const { text } = await callChain(
+            buildImagePromptRequest(finalPrompt),
+            "You are a concise text-to-image prompt engineer. Reply with the English prompt only.",
+          );
+          const cleaned = text.replace(/^["'\s]+|["'\s]+$/g, "").split("\n")[0].trim();
+          if (cleaned && /[a-zA-Z]/.test(cleaned)) finalPrompt = cleaned.slice(0, 400);
+        } catch {
+          // keep the original prompt if translation fails
+        }
+      }
+
+      const batch = pollinationsBatch(finalPrompt, 4, dims);
       // Wait for all 4 images to actually load before clearing spinner
       try {
         await Promise.all(
@@ -164,8 +182,10 @@ export function useImageGenerator() {
           ),
         );
         consume("image");
+        toast.success("تم توليد الصور", { id: toastId });
       } finally {
         setLoading(false);
+        toast.dismiss(toastId);
       }
       return batch;
     },
@@ -173,3 +193,4 @@ export function useImageGenerator() {
   );
   return { generate, loading };
 }
+
