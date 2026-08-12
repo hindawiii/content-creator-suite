@@ -5,7 +5,7 @@ import { togetherChat } from "@/services/together";
 import { pollinationsBatch } from "@/services/pollinations";
 import { settingsStore } from "@/services/storage";
 import { canGenerate, consume } from "@/services/rateLimit";
-import { buildHashtagPrompt, buildPostPrompt, buildRewritePrompt } from "@/utils/prompts";
+import { buildHashtagPrompt, buildPostPrompt, buildRewritePrompt, buildImagePromptRequest } from "@/utils/prompts";
 import { localFallback } from "@/utils/fallbacks";
 import type { Platform, Tone, Dialect } from "@/lib/store";
 
