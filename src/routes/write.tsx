@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
 import { PLATFORM_META, TONE_META, DIALECT_META, type Platform, type Tone, type Dialect } from "@/lib/store";
