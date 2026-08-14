@@ -15,21 +15,36 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "../lib/store";
 
 function NotFoundComponent() {
+  const links = [
+    { to: "/", label: "لوحة التحكم", emoji: "🏠" },
+    { to: "/write", label: "كتابة منشور", emoji: "✍️" },
+    { to: "/image", label: "توليد صور", emoji: "🎨" },
+    { to: "/library", label: "المكتبة", emoji: "📚" },
+  ];
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12">
+      <div className="w-full max-w-md text-center">
+        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/15 text-4xl">
+          🧭
+        </div>
+        <h1 className="bg-gradient-to-l from-primary to-accent bg-clip-text text-6xl font-extrabold text-transparent">
+          404
+        </h1>
+        <h2 className="mt-4 text-xl font-bold text-foreground">الصفحة غير موجودة</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          الرابط الذي طلبته غير صحيح أو تم نقله. جرّب أحد الأقسام التالية:
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
+        <div className="mt-6 grid grid-cols-2 gap-2">
+          {links.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary/10"
+            >
+              <span>{l.emoji}</span>
+              {l.label}
+            </Link>
+          ))}
         </div>
       </div>
     </div>
