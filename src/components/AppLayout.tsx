@@ -4,6 +4,16 @@ import { type ReactNode } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
 import { useScheduleAlerts } from "@/hooks/useScheduleAlerts";
 
+const nav = [
+  { to: "/", label: "الرئيسية", icon: LayoutDashboard },
+  { to: "/write", label: "كتابة", icon: PenSquare },
+  { to: "/image", label: "صور", icon: ImageIcon },
+  { to: "/library", label: "المكتبة", icon: Library },
+  { to: "/publish", label: "نشر", icon: Send },
+  { to: "/schedule", label: "جدولة", icon: Calendar },
+  { to: "/analytics", label: "تحليلات", icon: BarChart3 },
+  { to: "/settings", label: "إعدادات", icon: Settings },
+] as const;
 
 
 function NavItem({ to, label, Icon, active, dot }: { to: string; label: string; Icon: typeof LayoutDashboard; active: boolean; dot?: string }) {
