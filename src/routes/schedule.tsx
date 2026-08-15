@@ -19,14 +19,18 @@ export const Route = createFileRoute("/schedule")({
 });
 
 function SchedulePage() {
-  const { posts, addPost, removePost } = useStore();
+  const { posts, addPost, removePost, updatePost } = useStore();
   const [month, setMonth] = useState(() => new Date());
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [datetime, setDatetime] = useState("");
+  const { permission, request } = useNotifPermission();
 
-  const scheduled = posts.filter((p) => p.status === "scheduled" && p.scheduledAt);
+  const scheduled = posts
+    .filter((p) => p.status === "scheduled" && p.scheduledAt)
+    .sort((a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime());
+  const missedCount = scheduled.filter((p) => new Date(p.scheduledAt!).getTime() <= Date.now()).length;
 
   const grid = useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
