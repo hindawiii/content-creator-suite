@@ -1,8 +1,8 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send, Library } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
-import { schedulesStore } from "@/services/storage";
+import { useScheduleAlerts } from "@/hooks/useScheduleAlerts";
 
 const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
@@ -14,37 +14,6 @@ const nav = [
   { to: "/analytics", label: "تحليلات", icon: BarChart3 },
   { to: "/settings", label: "إعدادات", icon: Settings },
 ] as const;
-
-function useScheduleNotifier() {
-  useEffect(() => {
-    if (typeof window === "undefined" || typeof Notification === "undefined") return;
-    const firedKey = "poston_notified_ids";
-    const check = () => {
-      if (Notification.permission !== "granted") return;
-      const now = Date.now();
-      const fired: string[] = JSON.parse(localStorage.getItem(firedKey) ?? "[]");
-      const items = schedulesStore.list().filter((s) => s.status === "pending");
-      for (const s of items) {
-        const t = new Date(s.scheduledTime).getTime();
-        if (t <= now && !fired.includes(s.id)) {
-          try {
-            const n = new Notification("Post On — حان وقت النشر!", {
-              body: `حان وقت نشر منشورك على ${s.platform}`,
-              icon: "/favicon.ico",
-              tag: s.id,
-            });
-            n.onclick = () => { window.focus(); window.location.href = "/publish"; };
-          } catch { /* ignore */ }
-          fired.push(s.id);
-        }
-      }
-      localStorage.setItem(firedKey, JSON.stringify(fired));
-    };
-    check();
-    const id = setInterval(check, 30000);
-    return () => clearInterval(id);
-  }, []);
-}
 
 
 function NavItem({ to, label, Icon, active, dot }: { to: string; label: string; Icon: typeof LayoutDashboard; active: boolean; dot?: string }) {
@@ -68,7 +37,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const keys = useKeysStatus();
   const dot = keys.health === "ok" ? "bg-success" : keys.health === "failed" ? "bg-warning" : "bg-destructive";
-  useScheduleNotifier();
+  useScheduleAlerts();
 
   return (
     <div dir="rtl" className="min-h-screen gradient-mesh">

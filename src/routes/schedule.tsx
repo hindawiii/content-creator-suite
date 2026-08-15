@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Select, Label, Input, Badge, EmptyState } from "@/components/ui";
 import { PLATFORM_META, useStore, type Platform } from "@/lib/store";
-import { Calendar as CalIcon, Plus, Trash2, ChevronRight, ChevronLeft } from "lucide-react";
+import { Calendar as CalIcon, Plus, Trash2, ChevronRight, ChevronLeft, Bell, BellOff, CheckCircle2 } from "lucide-react";
+import { useNotifPermission } from "@/hooks/useScheduleAlerts";
 
 export const Route = createFileRoute("/schedule")({
   head: () => ({
@@ -18,14 +19,18 @@ export const Route = createFileRoute("/schedule")({
 });
 
 function SchedulePage() {
-  const { posts, addPost, removePost } = useStore();
+  const { posts, addPost, removePost, updatePost } = useStore();
   const [month, setMonth] = useState(() => new Date());
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [datetime, setDatetime] = useState("");
+  const { permission, request } = useNotifPermission();
 
-  const scheduled = posts.filter((p) => p.status === "scheduled" && p.scheduledAt);
+  const scheduled = posts
+    .filter((p) => p.status === "scheduled" && p.scheduledAt)
+    .sort((a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime());
+  const missedCount = scheduled.filter((p) => new Date(p.scheduledAt!).getTime() <= Date.now()).length;
 
   const grid = useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -62,6 +67,40 @@ function SchedulePage() {
         subtitle="خطط لمنشوراتك على كل المنصات من مكان واحد"
         action={<Button onClick={() => setOpen(true)}><Plus className="h-4 w-4" /> منشور مجدول</Button>}
       />
+
+      <Card className="!p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm">
+            {permission === "granted" ? (
+              <>
+                <Bell className="h-4 w-4 text-success" />
+                <span>التنبيهات مفعّلة — سنذكّرك عند موعد كل منشور مجدول.</span>
+              </>
+            ) : (
+              <>
+                <BellOff className="h-4 w-4 text-warning" />
+                <span>
+                  {permission === "denied"
+                    ? "التنبيهات محجوبة من المتصفح — فعّلها من إعدادات الموقع لتصلك التذكيرات."
+                    : "فعّل تنبيهات المتصفح لتصلك تذكيرات عند موعد النشر (حتى لو كان التطبيق مفتوحاً في تبويب آخر)."}
+                </span>
+              </>
+            )}
+          </div>
+          {permission !== "granted" && permission !== "denied" && (
+            <Button variant="outline" onClick={request}>
+              <Bell className="h-4 w-4" /> تفعيل التنبيهات
+            </Button>
+          )}
+        </div>
+        {missedCount > 0 && (
+          <p className="mt-2 text-xs text-warning">⏰ لديك {missedCount} منشوراً حان وقته ولم يُنشر بعد — راجع القائمة أدناه.</p>
+        )}
+      </Card>
+
+      <div className="mt-5" />
+
+
 
       <Card>
         <div className="mb-4 flex items-center justify-between">
@@ -113,22 +152,37 @@ function SchedulePage() {
             {scheduled.map((p) => {
               const meta = PLATFORM_META[p.platform];
               const d = new Date(p.scheduledAt!);
+              const isMissed = d.getTime() <= Date.now();
               return (
-                <Card key={p.id} className="!p-3">
+                <Card key={p.id} className={`!p-3 ${isMissed ? "border-warning/60" : ""}`}>
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg text-lg" style={{ background: `${meta.color}22` }}>
                       {meta.emoji}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold">{meta.label}</span>
                         <Badge tone="accent">{d.toLocaleString("ar", { dateStyle: "medium", timeStyle: "short" })}</Badge>
+                        {isMissed && (
+                          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">حان وقته</span>
+                        )}
                       </div>
                       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{p.content}</p>
                     </div>
-                    <button onClick={() => removePost(p.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      {isMissed && (
+                        <button
+                          onClick={() => updatePost(p.id, { status: "published" })}
+                          title="تم النشر"
+                          className="rounded-lg p-2 text-muted-foreground hover:bg-success/10 hover:text-success"
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button onClick={() => removePost(p.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </Card>
               );
