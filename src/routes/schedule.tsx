@@ -68,6 +68,40 @@ function SchedulePage() {
         action={<Button onClick={() => setOpen(true)}><Plus className="h-4 w-4" /> منشور مجدول</Button>}
       />
 
+      <Card className="!p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm">
+            {permission === "granted" ? (
+              <>
+                <Bell className="h-4 w-4 text-success" />
+                <span>التنبيهات مفعّلة — سنذكّرك عند موعد كل منشور مجدول.</span>
+              </>
+            ) : (
+              <>
+                <BellOff className="h-4 w-4 text-warning" />
+                <span>
+                  {permission === "denied"
+                    ? "التنبيهات محجوبة من المتصفح — فعّلها من إعدادات الموقع لتصلك التذكيرات."
+                    : "فعّل تنبيهات المتصفح لتصلك تذكيرات عند موعد النشر (حتى لو كان التطبيق مفتوحاً في تبويب آخر)."}
+                </span>
+              </>
+            )}
+          </div>
+          {permission !== "granted" && permission !== "denied" && (
+            <Button variant="outline" onClick={request}>
+              <Bell className="h-4 w-4" /> تفعيل التنبيهات
+            </Button>
+          )}
+        </div>
+        {missedCount > 0 && (
+          <p className="mt-2 text-xs text-warning">⏰ لديك {missedCount} منشوراً حان وقته ولم يُنشر بعد — راجع القائمة أدناه.</p>
+        )}
+      </Card>
+
+      <div className="mt-5" />
+
+
+
       <Card>
         <div className="mb-4 flex items-center justify-between">
           <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="rounded-lg p-2 hover:bg-surface-elevated">
