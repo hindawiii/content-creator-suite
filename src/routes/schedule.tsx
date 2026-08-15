@@ -152,22 +152,37 @@ function SchedulePage() {
             {scheduled.map((p) => {
               const meta = PLATFORM_META[p.platform];
               const d = new Date(p.scheduledAt!);
+              const isMissed = d.getTime() <= Date.now();
               return (
-                <Card key={p.id} className="!p-3">
+                <Card key={p.id} className={`!p-3 ${isMissed ? "border-warning/60" : ""}`}>
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg text-lg" style={{ background: `${meta.color}22` }}>
                       {meta.emoji}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold">{meta.label}</span>
                         <Badge tone="accent">{d.toLocaleString("ar", { dateStyle: "medium", timeStyle: "short" })}</Badge>
+                        {isMissed && (
+                          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">حان وقته</span>
+                        )}
                       </div>
                       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{p.content}</p>
                     </div>
-                    <button onClick={() => removePost(p.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      {isMissed && (
+                        <button
+                          onClick={() => updatePost(p.id, { status: "published" })}
+                          title="تم النشر"
+                          className="rounded-lg p-2 text-muted-foreground hover:bg-success/10 hover:text-success"
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button onClick={() => removePost(p.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </Card>
               );
