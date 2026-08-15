@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Select, Label, Input, Badge, EmptyState } from "@/components/ui";
 import { PLATFORM_META, useStore, type Platform } from "@/lib/store";
-import { Calendar as CalIcon, Plus, Trash2, ChevronRight, ChevronLeft } from "lucide-react";
+import { Calendar as CalIcon, Plus, Trash2, ChevronRight, ChevronLeft, Bell, BellOff, CheckCircle2 } from "lucide-react";
+import { useNotifPermission } from "@/hooks/useScheduleAlerts";
 
 export const Route = createFileRoute("/schedule")({
   head: () => ({
