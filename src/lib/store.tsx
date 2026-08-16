@@ -40,31 +40,10 @@ interface StoreState {
 const StoreCtx = createContext<StoreState | null>(null);
 const KEY = "postmind:v1";
 
-function seedPosts(): Post[] {
-  const now = Date.now();
-  const platforms: Platform[] = ["instagram", "twitter", "linkedin", "facebook"];
-  return Array.from({ length: 6 }).map((_, i) => ({
-    id: `seed-${i}`,
-    content: `منشور تجريبي رقم ${i + 1} — محتوى جاهز للنشر بأسلوب احترافي 🚀`,
-    platform: platforms[i % platforms.length],
-    tone: "professional" as Tone,
-    topic: "تسويق رقمي",
-    createdAt: new Date(now - i * 86400000).toISOString(),
-    scheduledAt: i < 3 ? new Date(now + (i + 1) * 86400000).toISOString() : undefined,
-    status: i < 3 ? "scheduled" : "published",
-    engagement: {
-      likes: Math.floor(50 + Math.random() * 500),
-      comments: Math.floor(5 + Math.random() * 80),
-      shares: Math.floor(2 + Math.random() * 40),
-      views: Math.floor(500 + Math.random() * 5000),
-    },
-  }));
-}
-
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [images, setImages] = useState<GeneratedImage[]>([]);
-  const [connectedAccounts, setConnected] = useState<Partial<Record<Platform, boolean>>>({ instagram: true, twitter: true });
+  const [connectedAccounts, setConnected] = useState<Partial<Record<Platform, boolean>>>({});
   const [plan, setPlan] = useState<"free" | "pro" | "business">("free");
   const [hydrated, setHydrated] = useState(false);
 
@@ -73,18 +52,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const s = JSON.parse(raw);
-        setPosts(s.posts ?? seedPosts());
+        // Drop legacy demo/seed records so the app only shows real user data.
+        const clean: Post[] = (s.posts ?? []).filter((p: Post) => !String(p.id).startsWith("seed-"));
+        setPosts(clean);
         setImages(s.images ?? []);
-        setConnected(s.connectedAccounts ?? { instagram: true, twitter: true });
+        setConnected(s.connectedAccounts ?? {});
         setPlan(s.plan ?? "free");
-      } else {
-        setPosts(seedPosts());
       }
     } catch {
-      setPosts(seedPosts());
+      setPosts([]);
     }
     setHydrated(true);
   }, []);
+
 
   useEffect(() => {
     if (!hydrated) return;
