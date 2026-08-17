@@ -58,7 +58,13 @@ export interface SettingsRecord {
   lastResetDate: string; // YYYY-MM-DD
   groqKey: string; // obfuscated
   togetherKey: string; // obfuscated
+  geminiKey: string; // obfuscated — Google AI Studio (Gemini image)
+  pollinationsKey: string; // obfuscated — Pollinations video credits
   useOwnKeys: boolean;
+  textModel: string;
+  animeMode: boolean;
+  imageProvider: "pollinations" | "gemini" | "puter";
+  modelUsage: Record<string, number>;
 }
 
 export interface AnalyticsRecord {
@@ -75,7 +81,13 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   lastResetDate: new Date().toISOString().slice(0, 10),
   groqKey: "",
   togetherKey: "",
+  geminiKey: "",
+  pollinationsKey: "",
   useOwnKeys: true,
+  textModel: "llama-3.3-70b-versatile",
+  animeMode: false,
+  imageProvider: "pollinations",
+  modelUsage: {},
 };
 
 const DEFAULT_ANALYTICS: AnalyticsRecord = {
