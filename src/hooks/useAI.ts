@@ -123,7 +123,7 @@ export function useHashtags() {
     setLoading(true);
     const toastId = toast.loading("جاري توليد الهاشتاقات...");
     try {
-      const { text } = await callChain(buildHashtagPrompt(topic));
+      const { text } = await callChain(buildHashtagPrompt(topic), undefined, "hashtag");
       const tags = text
         .split(/[,\n]/)
         .map((t) => t.trim())
