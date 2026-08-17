@@ -157,6 +157,15 @@ export const settingsStore = {
   setGroqKey: (raw: string) => settingsStore.set({ groqKey: raw ? obfuscate(raw) : "" }),
   getTogetherKey: (): string => deobfuscate(settingsStore.get().togetherKey),
   setTogetherKey: (raw: string) => settingsStore.set({ togetherKey: raw ? obfuscate(raw) : "" }),
+  getGeminiKey: (): string => deobfuscate(settingsStore.get().geminiKey),
+  setGeminiKey: (raw: string) => settingsStore.set({ geminiKey: raw ? obfuscate(raw) : "" }),
+  getPollinationsKey: (): string => deobfuscate(settingsStore.get().pollinationsKey),
+  setPollinationsKey: (raw: string) => settingsStore.set({ pollinationsKey: raw ? obfuscate(raw) : "" }),
+  bumpModel: (model: string) => {
+    const usage = { ...settingsStore.get().modelUsage };
+    usage[model] = (usage[model] ?? 0) + 1;
+    settingsStore.set({ modelUsage: usage });
+  },
 };
 
 // Analytics
