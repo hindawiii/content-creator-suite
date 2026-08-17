@@ -3,35 +3,58 @@ import { toast } from "sonner";
 import { groqChat } from "@/services/groq";
 import { togetherChat } from "@/services/together";
 import { pollinationsBatch } from "@/services/pollinations";
+import { geminiImage } from "@/services/gemini";
+import { puterImage } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
 import { canGenerate, consume } from "@/services/rateLimit";
+import { FALLBACK_CHAIN, findModel, routeModel, DEFAULT_TEXT_MODEL, type Task } from "@/services/models";
 import { buildHashtagPrompt, buildPostPrompt, buildRewritePrompt, buildImagePromptRequest } from "@/utils/prompts";
 import { localFallback } from "@/utils/fallbacks";
 import type { Platform, Tone, Dialect } from "@/lib/store";
 
-async function callChain(userPrompt: string, system?: string): Promise<{ text: string; source: "groq" | "together" | "fallback" }> {
-  const groqKey = settingsStore.getGroqKey();
-  const togetherKey = settingsStore.getTogetherKey();
+async function runModel(modelId: string, userPrompt: string, system: string | undefined): Promise<string> {
+  const model = findModel(modelId);
+  const provider = model?.provider ?? "groq";
+  if (provider === "together") {
+    const key = settingsStore.getTogetherKey();
+    if (!key) throw new Error("missing_together_key");
+    return togetherChat({ apiKey: key, userPrompt, system, model: modelId });
+  }
+  const key = settingsStore.getGroqKey();
+  if (!key) throw new Error("missing_groq_key");
+  return groqChat({ apiKey: key, userPrompt, system, model: modelId });
+}
 
-  // Groq with one retry
-  if (groqKey) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const text = await groqChat({ apiKey: groqKey, userPrompt, system });
-        return { text, source: "groq" };
-      } catch (err) {
-        if (attempt === 0) continue;
-        console.warn("Groq failed:", err);
-        if (togetherKey) toast.message("تم تفعيل الاحتياطي — Together AI");
-      }
+/**
+ * Smart router + fallback chain: selected model → Llama 3.3 70B → Llama 3.1 8B → Together.
+ */
+async function callChain(
+  userPrompt: string,
+  system?: string,
+  task: Task = "post",
+): Promise<{ text: string; source: "groq" | "together" | "fallback"; model: string }> {
+  const preferred = settingsStore.get().textModel || DEFAULT_TEXT_MODEL;
+  const primary = routeModel(task, preferred);
+  const chain = [primary, ...FALLBACK_CHAIN.filter((m) => m !== primary)];
+
+  for (let i = 0; i < chain.length; i++) {
+    const modelId = chain[i];
+    try {
+      const text = await runModel(modelId, userPrompt, system);
+      settingsStore.bumpModel(modelId);
+      return { text, source: findModel(modelId)?.provider === "together" ? "together" : "groq", model: modelId };
+    } catch (err) {
+      console.warn(`model ${modelId} failed:`, err);
+      if (i < chain.length - 1) toast.message("جاري التبديل إلى موديل احتياطي...");
     }
   }
 
-  // Together fallback
+  // Last resort: Together AI default model
+  const togetherKey = settingsStore.getTogetherKey();
   if (togetherKey) {
     try {
       const text = await togetherChat({ apiKey: togetherKey, userPrompt, system });
-      return { text, source: "together" };
+      return { text, source: "together", model: "together-default" };
     } catch (err) {
       console.warn("Together failed:", err);
     }
