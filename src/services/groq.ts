@@ -1,16 +1,17 @@
 import { SYSTEM_PROMPT } from "@/utils/prompts";
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const MODEL = "llama-3.1-8b-instant";
+const DEFAULT_MODEL = "llama-3.1-8b-instant";
 
 export interface ChatOptions {
   apiKey: string;
   userPrompt: string;
   system?: string;
   temperature?: number;
+  model?: string;
 }
 
-export async function groqChat({ apiKey, userPrompt, system, temperature = 0.8 }: ChatOptions): Promise<string> {
+export async function groqChat({ apiKey, userPrompt, system, temperature = 0.8, model }: ChatOptions): Promise<string> {
   if (!apiKey) throw new Error("missing_groq_key");
   const res = await fetch(GROQ_URL, {
     method: "POST",
@@ -19,7 +20,7 @@ export async function groqChat({ apiKey, userPrompt, system, temperature = 0.8 }
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: model ?? DEFAULT_MODEL,
       temperature,
       messages: [
         { role: "system", content: system ?? SYSTEM_PROMPT },

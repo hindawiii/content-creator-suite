@@ -1,16 +1,17 @@
 import { SYSTEM_PROMPT } from "@/utils/prompts";
 
 const TOGETHER_URL = "https://api.together.xyz/v1/chat/completions";
-const MODEL = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
+const DEFAULT_MODEL = "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo";
 
 export interface ChatOptions {
   apiKey: string;
   userPrompt: string;
   system?: string;
   temperature?: number;
+  model?: string;
 }
 
-export async function togetherChat({ apiKey, userPrompt, system, temperature = 0.8 }: ChatOptions): Promise<string> {
+export async function togetherChat({ apiKey, userPrompt, system, temperature = 0.8, model }: ChatOptions): Promise<string> {
   if (!apiKey) throw new Error("missing_together_key");
   const res = await fetch(TOGETHER_URL, {
     method: "POST",
@@ -19,7 +20,7 @@ export async function togetherChat({ apiKey, userPrompt, system, temperature = 0
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: model ?? DEFAULT_MODEL,
       temperature,
       messages: [
         { role: "system", content: system ?? SYSTEM_PROMPT },

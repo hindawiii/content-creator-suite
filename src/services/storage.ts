@@ -58,7 +58,13 @@ export interface SettingsRecord {
   lastResetDate: string; // YYYY-MM-DD
   groqKey: string; // obfuscated
   togetherKey: string; // obfuscated
+  geminiKey: string; // obfuscated — Google AI Studio (Gemini image)
+  pollinationsKey: string; // obfuscated — Pollinations video credits
   useOwnKeys: boolean;
+  textModel: string;
+  animeMode: boolean;
+  imageProvider: "pollinations" | "gemini" | "puter";
+  modelUsage: Record<string, number>;
 }
 
 export interface AnalyticsRecord {
@@ -75,7 +81,13 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   lastResetDate: new Date().toISOString().slice(0, 10),
   groqKey: "",
   togetherKey: "",
+  geminiKey: "",
+  pollinationsKey: "",
   useOwnKeys: true,
+  textModel: "llama-3.3-70b-versatile",
+  animeMode: false,
+  imageProvider: "pollinations",
+  modelUsage: {},
 };
 
 const DEFAULT_ANALYTICS: AnalyticsRecord = {
@@ -145,6 +157,15 @@ export const settingsStore = {
   setGroqKey: (raw: string) => settingsStore.set({ groqKey: raw ? obfuscate(raw) : "" }),
   getTogetherKey: (): string => deobfuscate(settingsStore.get().togetherKey),
   setTogetherKey: (raw: string) => settingsStore.set({ togetherKey: raw ? obfuscate(raw) : "" }),
+  getGeminiKey: (): string => deobfuscate(settingsStore.get().geminiKey),
+  setGeminiKey: (raw: string) => settingsStore.set({ geminiKey: raw ? obfuscate(raw) : "" }),
+  getPollinationsKey: (): string => deobfuscate(settingsStore.get().pollinationsKey),
+  setPollinationsKey: (raw: string) => settingsStore.set({ pollinationsKey: raw ? obfuscate(raw) : "" }),
+  bumpModel: (model: string) => {
+    const usage = { ...settingsStore.get().modelUsage };
+    usage[model] = (usage[model] ?? 0) + 1;
+    settingsStore.set({ modelUsage: usage });
+  },
 };
 
 // Analytics
