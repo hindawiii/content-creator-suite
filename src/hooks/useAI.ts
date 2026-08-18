@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { groqChat } from "@/services/groq";
 import { togetherChat } from "@/services/together";
-import { pollinationsBatch } from "@/services/pollinations";
+import { pollinationsBatch, ANIME_SUFFIX } from "@/services/pollinations";
 import { geminiImage } from "@/services/gemini";
 import { puterImage } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
