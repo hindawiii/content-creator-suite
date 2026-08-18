@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { groqChat } from "@/services/groq";
 import { togetherChat } from "@/services/together";
-import { pollinationsBatch } from "@/services/pollinations";
+import { pollinationsBatch, ANIME_SUFFIX } from "@/services/pollinations";
 import { geminiImage } from "@/services/gemini";
 import { puterImage } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
@@ -150,7 +150,7 @@ export function useRewrite() {
     setLoading(true);
     const toastId = toast.loading("جاري التعديل...");
     try {
-      const { text } = await callChain(buildRewritePrompt(kind, content, differentTone));
+      const { text } = await callChain(buildRewritePrompt(kind, content, differentTone), undefined, "rewrite");
       toast.success("تم!", { id: toastId });
       return text.trim();
     } catch {
@@ -163,36 +163,73 @@ export function useRewrite() {
   return { run, loading };
 }
 
+export interface ImageGenOptions {
+  width?: number;
+  height?: number;
+  anime?: boolean;
+  styleModifier?: string;
+  referenceUrl?: string;
+  provider?: "pollinations" | "gemini" | "puter";
+  count?: number;
+}
+
+/** Translate an Arabic prompt to English — image models understand English far better. */
+async function toEnglishPrompt(prompt: string): Promise<string> {
+  const clean = prompt.trim();
+  if (!/[\u0600-\u06FF]/.test(clean)) return clean;
+  try {
+    const { text } = await callChain(
+      buildImagePromptRequest(clean),
+      "You are a concise text-to-image prompt engineer. Reply with the English prompt only.",
+      "translate",
+    );
+    const cleaned = text.replace(/^["'\s]+|["'\s]+$/g, "").split("\n")[0].trim();
+    if (cleaned && /[a-zA-Z]/.test(cleaned)) return cleaned.slice(0, 400);
+  } catch {
+    // keep the original prompt if translation fails
+  }
+  return clean;
+}
+
 export function useImageGenerator() {
   const [loading, setLoading] = useState(false);
   const generate = useCallback(
-    async (prompt: string, dims?: { width: number; height: number }) => {
+    async (prompt: string, opts?: ImageGenOptions) => {
       if (!canGenerate("image")) {
         toast.error("تم استهلاك حصة الصور اليومية — قم بالترقية للخطة Pro");
         return [];
       }
+      const settings = settingsStore.get();
+      const provider = opts?.provider ?? settings.imageProvider ?? "pollinations";
+      const anime = opts?.anime ?? settings.animeMode;
       setLoading(true);
       const toastId = toast.loading("جاري تحسين الوصف وتوليد الصور...");
 
-      // Image models understand English much better than Arabic — translate first.
-      let finalPrompt = prompt.trim();
-      const hasArabic = /[\u0600-\u06FF]/.test(finalPrompt);
-      if (hasArabic) {
-        try {
-          const { text } = await callChain(
-            buildImagePromptRequest(finalPrompt),
-            "You are a concise text-to-image prompt engineer. Reply with the English prompt only.",
-          );
-          const cleaned = text.replace(/^["'\s]+|["'\s]+$/g, "").split("\n")[0].trim();
-          if (cleaned && /[a-zA-Z]/.test(cleaned)) finalPrompt = cleaned.slice(0, 400);
-        } catch {
-          // keep the original prompt if translation fails
-        }
-      }
-
-      const batch = pollinationsBatch(finalPrompt, 4, dims);
-      // Wait for all 4 images to actually load before clearing spinner
       try {
+        const finalPrompt = await toEnglishPrompt(prompt);
+
+        // BYOK providers return a single image each
+        if (provider === "gemini" || provider === "puter") {
+          const styled = [finalPrompt, opts?.styleModifier, anime ? ANIME_SUFFIX : ""].filter(Boolean).join(", ");
+          try {
+            const url =
+              provider === "gemini"
+                ? await geminiImage({ apiKey: settingsStore.getGeminiKey(), prompt: styled })
+                : await puterImage(styled);
+            consume("image");
+            toast.success("تم توليد الصورة", { id: toastId });
+            return [{ url, seed: 0 }];
+          } catch (err) {
+            console.warn(`${provider} image failed:`, err);
+            toast.message("تعذر المزوّد المختار — جاري التبديل إلى Pollinations (مجاني)...");
+          }
+        }
+
+        const batch = pollinationsBatch(finalPrompt, opts?.count ?? 4, 
+          opts?.width && opts?.height ? { width: opts.width, height: opts.height } : undefined,
+          { anime, styleModifier: opts?.styleModifier, referenceUrl: opts?.referenceUrl },
+        );
+        // Wait for the images to actually load before clearing the spinner
         await Promise.all(
           batch.map(
             (b) =>
@@ -206,13 +243,18 @@ export function useImageGenerator() {
         );
         consume("image");
         toast.success("تم توليد الصور", { id: toastId });
+        return batch;
+      } catch (err) {
+        console.warn("image generation failed:", err);
+        toast.error("تعذر توليد الصور — حاول مرة أخرى", { id: toastId });
+        return [];
       } finally {
         setLoading(false);
       }
-      return batch;
     },
     [],
   );
   return { generate, loading };
 }
+
 
