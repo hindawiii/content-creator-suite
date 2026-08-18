@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
-import { Card, PageHeader, Button, Badge, Label } from "@/components/ui";
+import { Card, PageHeader, Button, Badge, Label, Select } from "@/components/ui";
+import { TEXT_MODELS, BADGE_LABEL, DEFAULT_TEXT_MODEL } from "@/services/models";
+import { testGeminiKey } from "@/services/gemini";
 import { useStore, PLATFORM_META, type Platform } from "@/lib/store";
 import { Check, Link2, User, KeyRound, Download, Trash2, Zap, ShieldCheck, Copy, Pencil, X, Loader2, AlertTriangle, CircleAlert } from "lucide-react";
 import { APIKeyInput } from "@/components/APIKeyInput";
@@ -43,6 +45,10 @@ function SettingsPage() {
   const [plan, setPlan] = useState<"free" | "pro">("free");
   const [editing, setEditing] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [textModel, setTextModel] = useState(DEFAULT_TEXT_MODEL);
+  const [geminiKey, setGeminiKey] = useState("");
+  const [pollinationsKey, setPollinationsKey] = useState("");
+  const [testingGemini, setTestingGemini] = useState(false);
 
   useEffect(() => {
     const s = settingsStore.get();
@@ -52,6 +58,9 @@ function SettingsPage() {
     setTogetherKey(t);
     setUseOwnKeys(s.useOwnKeys);
     setPlan(s.plan);
+    setTextModel(s.textModel || DEFAULT_TEXT_MODEL);
+    setGeminiKey(settingsStore.getGeminiKey());
+    setPollinationsKey(settingsStore.getPollinationsKey());
     setEditing(!g && !t);
   }, []);
 
@@ -111,6 +120,37 @@ function SettingsPage() {
     setKeysHealth("none");
     setEditing(true);
     toast.success("تم حذف المفاتيح");
+  };
+
+  const changeModel = (id: string) => {
+    setTextModel(id);
+    settingsStore.set({ textModel: id });
+    toast.success("تم اختيار الموديل — يُحفظ في متصفحك");
+  };
+
+  const saveGemini = async () => {
+    const k = geminiKey.trim();
+    settingsStore.setGeminiKey(k);
+    if (!k) {
+      toast.success("تم حذف مفتاح Gemini");
+      return;
+    }
+    setTestingGemini(true);
+    const id = toast.loading("جاري اختبار مفتاح Google AI Studio...");
+    try {
+      const ok = await testGeminiKey(k);
+      if (!ok) throw new Error("bad");
+      toast.success("✅ المفتاح يعمل — تم الحفظ", { id });
+    } catch {
+      toast.error("❌ فشل الاختبار — تأكد من المفتاح", { id });
+    } finally {
+      setTestingGemini(false);
+    }
+  };
+
+  const savePollinations = () => {
+    settingsStore.setPollinationsKey(pollinationsKey.trim());
+    toast.success("تم حفظ مفتاح Pollinations");
   };
 
   const changePlan = (p: "free" | "pro") => {
@@ -302,6 +342,86 @@ function SettingsPage() {
           <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
           <div>
             🔒 المفاتيح تُخزَّن محلياً في متصفحك فقط — لا تُرسل إلى أي خادم تابع لنا. الطلبات تذهب مباشرة من متصفحك إلى Groq / Together AI.
+          </div>
+        </div>
+      </Card>
+
+      <Card className="mb-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Zap className="h-4 w-4 text-accent" />
+          <h2 className="text-lg font-bold">موديل الذكاء للنصوص</h2>
+        </div>
+        <Label>الموديل المفضّل (يُحفظ محلياً)</Label>
+        <Select value={textModel} onChange={(e) => changeModel(e.target.value)}>
+          {TEXT_MODELS.map((m) => (
+            <option key={m.id} value={m.id} title={m.desc}>
+              {m.label} — {m.desc}
+            </option>
+          ))}
+        </Select>
+        <div className="mt-3 space-y-2">
+          {TEXT_MODELS.map((m) => (
+            <div
+              key={m.id}
+              title={m.desc}
+              className={`flex flex-wrap items-center gap-2 rounded-lg border p-2.5 text-xs ${
+                textModel === m.id ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"
+              }`}
+            >
+              <span className="font-semibold">{m.label}</span>
+              <span className="text-muted-foreground">{m.desc}</span>
+              <span className="mr-auto flex gap-1">
+                {m.badges.map((b) => (
+                  <Badge key={b} tone={BADGE_LABEL[b].tone}>{BADGE_LABEL[b].text}</Badge>
+                ))}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
+          🔁 عند فشل الموديل المختار (حد الاستخدام أو عدم توفره) يتم التبديل تلقائياً إلى Llama 3.3 70B ثم Llama 3.1 8B.
+          كذلك يوجّه التطبيق المهام تلقائياً: الهاشتاقات → 8B السريع، الترجمة ووصف الصور → Qwen 3.
+        </div>
+      </Card>
+
+      <Card className="mb-6">
+        <div className="mb-4 flex items-center gap-2">
+          <KeyRound className="h-4 w-4 text-accent" />
+          <h2 className="text-lg font-bold">مفاتيح الوسائط (اختيارية)</h2>
+        </div>
+        <div className="space-y-5">
+          <div>
+            <APIKeyInput
+              label="Google AI Studio Key — لصور Gemini"
+              value={geminiKey}
+              onChange={setGeminiKey}
+              placeholder="AIza..."
+              hint="الطبقة المجانية محدودة يومياً. احصل عليه من aistudio.google.com/apikey"
+            />
+            <Button variant="outline" className="mt-2" onClick={saveGemini} disabled={testingGemini}>
+              {testingGemini ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري الاختبار...</> : <><Check className="h-4 w-4" /> حفظ واختبار</>}
+            </Button>
+          </div>
+          <div>
+            <APIKeyInput
+              label="Pollinations Key (اختياري) — لرصيد الفيديو"
+              value={pollinationsKey}
+              onChange={setPollinationsKey}
+              placeholder="pollinations token"
+              hint="الصور مجانية دائماً بلا مفتاح. أضف مفتاحاً لمزيد من الفيديو."
+            />
+            <Button variant="outline" className="mt-2" onClick={savePollinations}>
+              <Check className="h-4 w-4" /> حفظ
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <Badge tone="success">الصور: Pollinations Flux مجاني</Badge>
+            <Badge tone="warning">الفيديو: يحتاج رصيد</Badge>
+            <Badge tone="accent">Puter.js: تدفع من حسابك</Badge>
+          </div>
+          <div className="flex items-start gap-2 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
+            <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
+            <div>🔒 المفاتيح تُخزَّن محلياً على جهازك فقط — لا تُرسل لأي خادم تابع لنا.</div>
           </div>
         </div>
       </Card>
