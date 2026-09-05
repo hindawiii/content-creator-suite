@@ -207,6 +207,18 @@ function SettingsPage() {
     toast.success("تم تصدير البيانات");
   };
 
+  const handleImport = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const count = importAllStorage(text);
+      toast.success(`تم استيراد النسخة الاحتياطية (${count} قسم) — يتم التحديث…`);
+      setTimeout(() => window.location.reload(), 800);
+    } catch {
+      toast.error("الملف غير صالح — اختر ملف نسخة احتياطية صدّرته من التطبيق");
+    }
+  };
+
   const handleReset = () => {
     if (!confirm("سيتم مسح كل البيانات المحلية. متأكد؟")) return;
     resetAllStorage();
