@@ -16,7 +16,10 @@ export function HashtagList({ tags, onCopyAll }: { tags: string[]; onCopyAll?: (
     <div className="rounded-xl border border-border bg-surface-elevated p-3">
       <div className="mb-2 flex items-center justify-between">
         <span className="text-xs font-semibold text-muted-foreground">الهاشتاقات المقترحة</span>
-        <button onClick={copyAll} className="inline-flex items-center gap-1 text-[11px] text-accent hover:underline">
+        <button
+          onClick={copyAll}
+          className="inline-flex items-center gap-1 text-[11px] text-accent hover:underline"
+        >
           <Copy className="h-3 w-3" /> نسخ الكل
         </button>
       </div>

@@ -40,7 +40,13 @@ export function AIOutput({
       <RichEditor value={value} onChange={onChange} rows={10} />
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" onClick={() => { navigator.clipboard.writeText(value); toast.success("نُسخ النص"); }}>
+        <Button
+          variant="outline"
+          onClick={() => {
+            navigator.clipboard.writeText(value);
+            toast.success("نُسخ النص");
+          }}
+        >
           <Copy className="h-4 w-4" /> نسخ
         </Button>
         <Button variant="outline" disabled={loading} onClick={() => apply("rewrite", "friendly")}>

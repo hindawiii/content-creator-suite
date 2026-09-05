@@ -1,9 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
-import { Card, PageHeader, Button, Textarea, Select, Label, Input, Badge, EmptyState } from "@/components/ui";
+import {
+  Card,
+  PageHeader,
+  Button,
+  Textarea,
+  Select,
+  Label,
+  Input,
+  Badge,
+  EmptyState,
+} from "@/components/ui";
 import { PLATFORM_META, useStore, type Platform } from "@/lib/store";
-import { Calendar as CalIcon, Plus, Trash2, ChevronRight, ChevronLeft, Bell, BellOff, CheckCircle2 } from "lucide-react";
+import {
+  Calendar as CalIcon,
+  Plus,
+  Trash2,
+  ChevronRight,
+  ChevronLeft,
+  Bell,
+  BellOff,
+  CheckCircle2,
+} from "lucide-react";
 import { useNotifPermission } from "@/hooks/useScheduleAlerts";
 
 export const Route = createFileRoute("/schedule")({
@@ -30,7 +49,9 @@ function SchedulePage() {
   const scheduled = posts
     .filter((p) => p.status === "scheduled" && p.scheduledAt)
     .sort((a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime());
-  const missedCount = scheduled.filter((p) => new Date(p.scheduledAt!).getTime() <= Date.now()).length;
+  const missedCount = scheduled.filter(
+    (p) => new Date(p.scheduledAt!).getTime() <= Date.now(),
+  ).length;
 
   const grid = useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -53,8 +74,17 @@ function SchedulePage() {
 
   const handleAdd = () => {
     if (!content.trim() || !datetime) return;
-    addPost({ content, platform, tone: "professional", topic: "", status: "scheduled", scheduledAt: new Date(datetime).toISOString() });
-    setContent(""); setDatetime(""); setOpen(false);
+    addPost({
+      content,
+      platform,
+      tone: "professional",
+      topic: "",
+      status: "scheduled",
+      scheduledAt: new Date(datetime).toISOString(),
+    });
+    setContent("");
+    setDatetime("");
+    setOpen(false);
   };
 
   const monthLabel = month.toLocaleDateString("ar", { month: "long", year: "numeric" });
@@ -65,7 +95,11 @@ function SchedulePage() {
       <PageHeader
         title="جدولة المحتوى"
         subtitle="خطط لمنشوراتك على كل المنصات من مكان واحد"
-        action={<Button onClick={() => setOpen(true)}><Plus className="h-4 w-4" /> منشور مجدول</Button>}
+        action={
+          <Button onClick={() => setOpen(true)}>
+            <Plus className="h-4 w-4" /> منشور مجدول
+          </Button>
+        }
       />
 
       <Card className="!p-3">
@@ -94,26 +128,36 @@ function SchedulePage() {
           )}
         </div>
         {missedCount > 0 && (
-          <p className="mt-2 text-xs text-warning">⏰ لديك {missedCount} منشوراً حان وقته ولم يُنشر بعد — راجع القائمة أدناه.</p>
+          <p className="mt-2 text-xs text-warning">
+            ⏰ لديك {missedCount} منشوراً حان وقته ولم يُنشر بعد — راجع القائمة أدناه.
+          </p>
         )}
       </Card>
 
       <div className="mt-5" />
 
-
-
       <Card>
         <div className="mb-4 flex items-center justify-between">
-          <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="rounded-lg p-2 hover:bg-surface-elevated">
+          <button
+            onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+            className="rounded-lg p-2 hover:bg-surface-elevated"
+          >
             <ChevronRight className="h-4 w-4" />
           </button>
           <div className="font-bold">{monthLabel}</div>
-          <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} className="rounded-lg p-2 hover:bg-surface-elevated">
+          <button
+            onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+            className="rounded-lg p-2 hover:bg-surface-elevated"
+          >
             <ChevronLeft className="h-4 w-4" />
           </button>
         </div>
         <div className="grid grid-cols-7 gap-1 text-center text-[11px] text-muted-foreground">
-          {dow.map((d) => <div key={d} className="py-1">{d}</div>)}
+          {dow.map((d) => (
+            <div key={d} className="py-1">
+              {d}
+            </div>
+          ))}
         </div>
         <div className="grid grid-cols-7 gap-1">
           {grid.map((d, i) => {
@@ -128,14 +172,24 @@ function SchedulePage() {
                   isToday ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"
                 }`}
               >
-                <div className={`mb-1 font-semibold ${isToday ? "text-accent" : "text-muted-foreground"}`}>{d.getDate()}</div>
+                <div
+                  className={`mb-1 font-semibold ${isToday ? "text-accent" : "text-muted-foreground"}`}
+                >
+                  {d.getDate()}
+                </div>
                 <div className="space-y-0.5">
                   {items.slice(0, 2).map((p) => (
-                    <div key={p.id} className="truncate rounded px-1 py-0.5 text-[10px]" style={{ background: `${PLATFORM_META[p.platform].color}33` }}>
+                    <div
+                      key={p.id}
+                      className="truncate rounded px-1 py-0.5 text-[10px]"
+                      style={{ background: `${PLATFORM_META[p.platform].color}33` }}
+                    >
                       {PLATFORM_META[p.platform].emoji} {p.content.slice(0, 20)}
                     </div>
                   ))}
-                  {items.length > 2 && <div className="text-[9px] text-muted-foreground">+{items.length - 2}</div>}
+                  {items.length > 2 && (
+                    <div className="text-[9px] text-muted-foreground">+{items.length - 2}</div>
+                  )}
                 </div>
               </div>
             );
@@ -146,7 +200,11 @@ function SchedulePage() {
       <div className="mt-6">
         <h2 className="mb-3 text-lg font-bold">قائمة المجدولة</h2>
         {scheduled.length === 0 ? (
-          <EmptyState icon={<CalIcon className="h-8 w-8 opacity-40" />} title="لا توجد منشورات مجدولة" hint="أضف منشوراً جديداً لتراه هنا" />
+          <EmptyState
+            icon={<CalIcon className="h-8 w-8 opacity-40" />}
+            title="لا توجد منشورات مجدولة"
+            hint="أضف منشوراً جديداً لتراه هنا"
+          />
         ) : (
           <div className="space-y-2">
             {scheduled.map((p) => {
@@ -156,15 +214,22 @@ function SchedulePage() {
               return (
                 <Card key={p.id} className={`!p-3 ${isMissed ? "border-warning/60" : ""}`}>
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg text-lg" style={{ background: `${meta.color}22` }}>
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
+                      style={{ background: `${meta.color}22` }}
+                    >
                       {meta.emoji}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold">{meta.label}</span>
-                        <Badge tone="accent">{d.toLocaleString("ar", { dateStyle: "medium", timeStyle: "short" })}</Badge>
+                        <Badge tone="accent">
+                          {d.toLocaleString("ar", { dateStyle: "medium", timeStyle: "short" })}
+                        </Badge>
                         {isMissed && (
-                          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">حان وقته</span>
+                          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">
+                            حان وقته
+                          </span>
                         )}
                       </div>
                       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{p.content}</p>
@@ -179,7 +244,10 @@ function SchedulePage() {
                           <CheckCircle2 className="h-4 w-4" />
                         </button>
                       )}
-                      <button onClick={() => removePost(p.id)} className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive">
+                      <button
+                        onClick={() => removePost(p.id)}
+                        className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -192,29 +260,50 @@ function SchedulePage() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-surface p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="mb-4 text-lg font-bold">إضافة منشور مجدول</h3>
             <div className="space-y-3">
               <div>
                 <Label>المنصة</Label>
                 <Select value={platform} onChange={(e) => setPlatform(e.target.value as Platform)}>
                   {(Object.keys(PLATFORM_META) as Platform[]).map((p) => (
-                    <option key={p} value={p}>{PLATFORM_META[p].emoji} {PLATFORM_META[p].label}</option>
+                    <option key={p} value={p}>
+                      {PLATFORM_META[p].emoji} {PLATFORM_META[p].label}
+                    </option>
                   ))}
                 </Select>
               </div>
               <div>
                 <Label>المحتوى</Label>
-                <Textarea rows={4} value={content} onChange={(e) => setContent(e.target.value)} placeholder="اكتب منشورك..." />
+                <Textarea
+                  rows={4}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="اكتب منشورك..."
+                />
               </div>
               <div>
                 <Label>التاريخ والوقت</Label>
-                <Input type="datetime-local" value={datetime} onChange={(e) => setDatetime(e.target.value)} />
+                <Input
+                  type="datetime-local"
+                  value={datetime}
+                  onChange={(e) => setDatetime(e.target.value)}
+                />
               </div>
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" onClick={() => setOpen(false)} className="flex-1">إلغاء</Button>
-                <Button onClick={handleAdd} className="flex-1">جدولة</Button>
+                <Button variant="outline" onClick={() => setOpen(false)} className="flex-1">
+                  إلغاء
+                </Button>
+                <Button onClick={handleAdd} className="flex-1">
+                  جدولة
+                </Button>
               </div>
             </div>
           </div>

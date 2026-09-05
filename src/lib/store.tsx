@@ -1,7 +1,23 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type Platform = "instagram" | "twitter" | "facebook" | "linkedin" | "tiktok" | "youtube" | "whatsapp" | "telegram";
-export type Tone = "youthful" | "powerful" | "professional" | "humorous" | "dramatic" | "calm" | "friendly" | "motivational";
+export type Platform =
+  | "instagram"
+  | "twitter"
+  | "facebook"
+  | "linkedin"
+  | "tiktok"
+  | "youtube"
+  | "whatsapp"
+  | "telegram";
+export type Tone =
+  | "youthful"
+  | "powerful"
+  | "professional"
+  | "humorous"
+  | "dramatic"
+  | "calm"
+  | "friendly"
+  | "motivational";
 
 export interface Post {
   id: string;
@@ -53,7 +69,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (raw) {
         const s = JSON.parse(raw);
         // Drop legacy demo/seed records so the app only shows real user data.
-        const clean: Post[] = (s.posts ?? []).filter((p: Post) => !String(p.id).startsWith("seed-"));
+        const clean: Post[] = (s.posts ?? []).filter(
+          (p: Post) => !String(p.id).startsWith("seed-"),
+        );
         setPosts(clean);
         setImages(s.images ?? []);
         setConnected(s.connectedAccounts ?? {});
@@ -65,23 +83,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
 
-
   useEffect(() => {
     if (!hydrated) return;
     localStorage.setItem(KEY, JSON.stringify({ posts, images, connectedAccounts, plan }));
   }, [posts, images, connectedAccounts, plan, hydrated]);
 
   const value: StoreState = {
-    posts, images, connectedAccounts, plan,
+    posts,
+    images,
+    connectedAccounts,
+    plan,
     addPost: (p) => {
       const post: Post = { ...p, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
       setPosts((prev) => [post, ...prev]);
       return post;
     },
-    updatePost: (id, patch) => setPosts((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p))),
+    updatePost: (id, patch) =>
+      setPosts((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p))),
     removePost: (id) => setPosts((prev) => prev.filter((p) => p.id !== id)),
     addImage: (i) => {
-      const img: GeneratedImage = { ...i, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+      const img: GeneratedImage = {
+        ...i,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+      };
       setImages((prev) => [img, ...prev]);
       return img;
     },
@@ -124,7 +149,11 @@ export const TONE_META: Record<Tone, string> = {
 export type Dialect = "msa" | "sudanese" | "egyptian" | "gulf" | "levantine" | "maghrebi";
 
 export const DIALECT_META: Record<Dialect, { label: string; emoji: string; hint: string }> = {
-  msa: { label: "الفصحى (البيضاء)", emoji: "🕊️", hint: "عربية فصحى مبسطة مفهومة لكل العرب، بلا مفردات محلية" },
+  msa: {
+    label: "الفصحى (البيضاء)",
+    emoji: "🕊️",
+    hint: "عربية فصحى مبسطة مفهومة لكل العرب، بلا مفردات محلية",
+  },
   sudanese: { label: "سودانية", emoji: "🇸🇩", hint: "لهجة سودانية أصيلة" },
   egyptian: { label: "مصرية", emoji: "🇪🇬", hint: "لهجة مصرية عامية خفيفة" },
   gulf: { label: "خليجية", emoji: "🇸🇦", hint: "لهجة خليجية" },

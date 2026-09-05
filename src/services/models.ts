@@ -74,7 +74,10 @@ export function routeModel(task: Task, preferred: string): string {
   }
 }
 
-export const BADGE_LABEL: Record<BadgeTone, { text: string; tone: "success" | "accent" | "warning" | "default" }> = {
+export const BADGE_LABEL: Record<
+  BadgeTone,
+  { text: string; tone: "success" | "accent" | "warning" | "default" }
+> = {
   free: { text: "مجاني", tone: "success" },
   fast: { text: "سريع", tone: "accent" },
   arabic: { text: "عربي", tone: "accent" },

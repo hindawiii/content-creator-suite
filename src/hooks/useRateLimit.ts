@@ -11,7 +11,3 @@ export function useQuota() {
   }, [refresh]);
   return { quota, refresh };
 }
-
-export function useCanGenerate() {
-  return { canGenerate, consume };
-}

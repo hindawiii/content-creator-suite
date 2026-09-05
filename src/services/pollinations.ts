@@ -4,7 +4,8 @@ const VIDEO_BASE = "https://video.pollinations.ai/prompt";
 const STYLE_SUFFIX =
   "high quality photograph, professional social media visual, cinematic lighting, sharp details, no text, no letters, no watermark, no logo";
 
-export const ANIME_SUFFIX = "anime style, studio ghibli, cel shaded, vibrant colors, detailed illustration";
+export const ANIME_SUFFIX =
+  "anime style, studio ghibli, cel shaded, vibrant colors, detailed illustration";
 
 export interface StylePreset {
   key: string;
@@ -13,14 +14,39 @@ export interface StylePreset {
 }
 
 export const STYLE_PRESETS: StylePreset[] = [
-  { key: "vangogh", label: "🎨 فان جوخ زيتي", modifier: "in the style of Van Gogh oil painting, thick expressive brush strokes, swirling impasto texture" },
-  { key: "cyberpunk", label: "🌆 سايبربنك نيون", modifier: "cyberpunk neon aesthetic, glowing magenta and cyan lights, rainy futuristic city mood, high contrast" },
-  { key: "anime-sketch", label: "✏️ رسم أنمي", modifier: "anime sketch, clean line art, manga inking, soft screentone shading" },
-  { key: "watercolor", label: "💧 ألوان مائية", modifier: "watercolor painting, soft bleeding pigments, textured paper, delicate washes" },
-  { key: "pixel", label: "🕹️ بكسل آرت", modifier: "pixel art, 16-bit retro game sprite, limited palette, crisp pixels" },
+  {
+    key: "vangogh",
+    label: "🎨 فان جوخ زيتي",
+    modifier:
+      "in the style of Van Gogh oil painting, thick expressive brush strokes, swirling impasto texture",
+  },
+  {
+    key: "cyberpunk",
+    label: "🌆 سايبربنك نيون",
+    modifier:
+      "cyberpunk neon aesthetic, glowing magenta and cyan lights, rainy futuristic city mood, high contrast",
+  },
+  {
+    key: "anime-sketch",
+    label: "✏️ رسم أنمي",
+    modifier: "anime sketch, clean line art, manga inking, soft screentone shading",
+  },
+  {
+    key: "watercolor",
+    label: "💧 ألوان مائية",
+    modifier: "watercolor painting, soft bleeding pigments, textured paper, delicate washes",
+  },
+  {
+    key: "pixel",
+    label: "🕹️ بكسل آرت",
+    modifier: "pixel art, 16-bit retro game sprite, limited palette, crisp pixels",
+  },
 ];
 
-export function enhancePrompt(prompt: string, opts?: { anime?: boolean; styleModifier?: string }): string {
+export function enhancePrompt(
+  prompt: string,
+  opts?: { anime?: boolean; styleModifier?: string },
+): string {
   const clean = prompt.replace(/\s+/g, " ").trim();
   const parts = [clean];
   if (opts?.styleModifier) parts.push(opts.styleModifier);
@@ -83,7 +109,8 @@ export async function pollinationsVideo(opts: {
   const res = await fetch(`${VIDEO_BASE}/${encodeURIComponent(opts.prompt)}?${params.toString()}`);
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    if (res.status === 401 || res.status === 402 || res.status === 403) throw new Error("video_needs_credits");
+    if (res.status === 401 || res.status === 402 || res.status === 403)
+      throw new Error("video_needs_credits");
     throw new Error(`video_${res.status}:${body.slice(0, 120)}`);
   }
   const blob = await res.blob();

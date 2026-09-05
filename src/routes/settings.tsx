@@ -6,7 +6,22 @@ import { Card, PageHeader, Button, Badge, Label, Select } from "@/components/ui"
 import { TEXT_MODELS, BADGE_LABEL, DEFAULT_TEXT_MODEL } from "@/services/models";
 import { testGeminiKey } from "@/services/gemini";
 import { useStore, PLATFORM_META, type Platform } from "@/lib/store";
-import { Check, Link2, User, KeyRound, Download, Trash2, Zap, ShieldCheck, Copy, Pencil, X, Loader2, AlertTriangle, CircleAlert } from "lucide-react";
+import {
+  Check,
+  Link2,
+  User,
+  KeyRound,
+  Download,
+  Trash2,
+  Zap,
+  ShieldCheck,
+  Copy,
+  Pencil,
+  X,
+  Loader2,
+  AlertTriangle,
+  CircleAlert,
+} from "lucide-react";
 import { APIKeyInput } from "@/components/APIKeyInput";
 import { settingsStore, exportAllStorage, resetAllStorage } from "@/services/storage";
 import { toast } from "sonner";
@@ -17,7 +32,10 @@ export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "Post On — الإعدادات والاشتراك" },
-      { name: "description", content: "إدارة مفاتيح Groq وTogether AI، الحصص، والاشتراك — كلها محلياً في المتصفح." },
+      {
+        name: "description",
+        content: "إدارة مفاتيح Groq وTogether AI، الحصص، والاشتراك — كلها محلياً في المتصفح.",
+      },
       { property: "og:title", content: "الإعدادات — Post On" },
       { property: "og:description", content: "خطط اشتراك مرنة وإدارة كاملة للمفاتيح والبيانات." },
     ],
@@ -26,8 +44,21 @@ export const Route = createFileRoute("/settings")({
 });
 
 const PLANS = [
-  { key: "free" as const, name: "المجانية", price: "0$", period: "دائم", features: ["10 منشورات / يوم", "5 صور / يوم", "منصة واحدة", "تحليلات أساسية"] },
-  { key: "pro" as const, name: "برو", price: "9$", period: "شهرياً", features: ["منشورات غير محدودة", "صور غير محدودة", "كل المنصات", "تحليلات متقدمة"], popular: true },
+  {
+    key: "free" as const,
+    name: "المجانية",
+    price: "0$",
+    period: "دائم",
+    features: ["10 منشورات / يوم", "5 صور / يوم", "منصة واحدة", "تحليلات أساسية"],
+  },
+  {
+    key: "pro" as const,
+    name: "برو",
+    price: "9$",
+    period: "شهرياً",
+    features: ["منشورات غير محدودة", "صور غير محدودة", "كل المنصات", "تحليلات متقدمة"],
+    popular: true,
+  },
 ];
 
 function fingerprint(key: string): string {
@@ -178,13 +209,20 @@ function SettingsPage() {
   };
 
   const dotColor =
-    status.health === "ok" ? "bg-success" : status.health === "failed" ? "bg-warning" : "bg-destructive";
+    status.health === "ok"
+      ? "bg-success"
+      : status.health === "failed"
+        ? "bg-warning"
+        : "bg-destructive";
   const dotLabel =
     status.health === "ok" ? "متصل" : status.health === "failed" ? "خطأ اتصال" : "وضع تجريبي";
 
   return (
     <AppLayout>
-      <PageHeader title="الإعدادات" subtitle="مفاتيح API، الاشتراك، وإدارة البيانات — كلها في متصفحك" />
+      <PageHeader
+        title="الإعدادات"
+        subtitle="مفاتيح API، الاشتراك، وإدارة البيانات — كلها في متصفحك"
+      />
 
       <Card className="mb-6">
         <div className="flex items-center gap-4">
@@ -205,7 +243,8 @@ function SettingsPage() {
           <div className="flex-1 text-sm">
             <div className="font-semibold text-warning">🟡 وضع تجريبي</div>
             <div className="mt-0.5 text-muted-foreground">
-              أضف مفتاح Groq أدناه لتفعيل التوليد بالذكاء الاصطناعي. حتى ذلك الحين ستُستخدم القوالب المحلية فقط.
+              أضف مفتاح Groq أدناه لتفعيل التوليد بالذكاء الاصطناعي. حتى ذلك الحين ستُستخدم القوالب
+              المحلية فقط.
             </div>
           </div>
         </div>
@@ -216,7 +255,10 @@ function SettingsPage() {
           <div className="flex items-center gap-2">
             <KeyRound className="h-4 w-4 text-accent" />
             <h2 className="text-lg font-bold">مفاتيح API</h2>
-            <span className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor} shadow-[0_0_8px_currentColor]`} aria-label={dotLabel} />
+            <span
+              className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor} shadow-[0_0_8px_currentColor]`}
+              aria-label={dotLabel}
+            />
             <span className="text-xs text-muted-foreground">{dotLabel}</span>
           </div>
         </div>
@@ -230,14 +272,19 @@ function SettingsPage() {
                 </div>
                 <div className="flex-1">
                   <div className="font-bold text-success">
-                    ✅ متصل بـ {groqKey && togetherKey ? "Groq + Together" : groqKey ? "Groq" : "Together"}
+                    ✅ متصل بـ{" "}
+                    {groqKey && togetherKey ? "Groq + Together" : groqKey ? "Groq" : "Together"}
                   </div>
-                  <div className="mt-0.5 text-xs text-muted-foreground">المفاتيح محفوظة بأمان في متصفحك</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    المفاتيح محفوظة بأمان في متصفحك
+                  </div>
                   <div className="mt-3 space-y-1.5 text-xs font-mono">
                     {groqKey && (
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Groq:</span>
-                        <span className="rounded bg-surface-elevated px-2 py-0.5">{fingerprint(groqKey)}</span>
+                        <span className="rounded bg-surface-elevated px-2 py-0.5">
+                          {fingerprint(groqKey)}
+                        </span>
                         <button
                           type="button"
                           onClick={() => copyKey(groqKey)}
@@ -251,7 +298,9 @@ function SettingsPage() {
                     {togetherKey && (
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Together:</span>
-                        <span className="rounded bg-surface-elevated px-2 py-0.5">{fingerprint(togetherKey)}</span>
+                        <span className="rounded bg-surface-elevated px-2 py-0.5">
+                          {fingerprint(togetherKey)}
+                        </span>
                         <button
                           type="button"
                           onClick={() => copyKey(togetherKey)}
@@ -295,7 +344,9 @@ function SettingsPage() {
               <div className="flex-1">
                 <div className="font-semibold">استخدم مفاتيحي الخاصة</div>
                 <div className="text-xs text-muted-foreground">
-                  {useOwnKeys ? "الطلبات تذهب من متصفحك مباشرة بمفاتيحك." : "وضع تجريبي — سيُستخدم القالب المحلي فقط."}
+                  {useOwnKeys
+                    ? "الطلبات تذهب من متصفحك مباشرة بمفاتيحك."
+                    : "وضع تجريبي — سيُستخدم القالب المحلي فقط."}
                 </div>
               </div>
             </label>
@@ -341,7 +392,8 @@ function SettingsPage() {
         <div className="mt-4 flex items-start gap-2 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
           <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
           <div>
-            🔒 المفاتيح تُخزَّن محلياً في متصفحك فقط — لا تُرسل إلى أي خادم تابع لنا. الطلبات تذهب مباشرة من متصفحك إلى Groq / Together AI.
+            🔒 المفاتيح تُخزَّن محلياً في متصفحك فقط — لا تُرسل إلى أي خادم تابع لنا. الطلبات تذهب
+            مباشرة من متصفحك إلى Groq / Together AI.
           </div>
         </div>
       </Card>
@@ -365,22 +417,27 @@ function SettingsPage() {
               key={m.id}
               title={m.desc}
               className={`flex flex-wrap items-center gap-2 rounded-lg border p-2.5 text-xs ${
-                textModel === m.id ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"
+                textModel === m.id
+                  ? "border-accent bg-accent/10"
+                  : "border-border bg-surface-elevated"
               }`}
             >
               <span className="font-semibold">{m.label}</span>
               <span className="text-muted-foreground">{m.desc}</span>
               <span className="mr-auto flex gap-1">
                 {m.badges.map((b) => (
-                  <Badge key={b} tone={BADGE_LABEL[b].tone}>{BADGE_LABEL[b].text}</Badge>
+                  <Badge key={b} tone={BADGE_LABEL[b].tone}>
+                    {BADGE_LABEL[b].text}
+                  </Badge>
                 ))}
               </span>
             </div>
           ))}
         </div>
         <div className="mt-3 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
-          🔁 عند فشل الموديل المختار (حد الاستخدام أو عدم توفره) يتم التبديل تلقائياً إلى Llama 3.3 70B ثم Llama 3.1 8B.
-          كذلك يوجّه التطبيق المهام تلقائياً: الهاشتاقات → 8B السريع، الترجمة ووصف الصور → Qwen 3.
+          🔁 عند فشل الموديل المختار (حد الاستخدام أو عدم توفره) يتم التبديل تلقائياً إلى Llama 3.3
+          70B ثم Llama 3.1 8B. كذلك يوجّه التطبيق المهام تلقائياً: الهاشتاقات → 8B السريع، الترجمة
+          ووصف الصور → Qwen 3.
         </div>
       </Card>
 
@@ -398,8 +455,21 @@ function SettingsPage() {
               placeholder="AIza..."
               hint="الطبقة المجانية محدودة يومياً. احصل عليه من aistudio.google.com/apikey"
             />
-            <Button variant="outline" className="mt-2" onClick={saveGemini} disabled={testingGemini}>
-              {testingGemini ? <><Loader2 className="h-4 w-4 animate-spin" /> جاري الاختبار...</> : <><Check className="h-4 w-4" /> حفظ واختبار</>}
+            <Button
+              variant="outline"
+              className="mt-2"
+              onClick={saveGemini}
+              disabled={testingGemini}
+            >
+              {testingGemini ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> جاري الاختبار...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" /> حفظ واختبار
+                </>
+              )}
             </Button>
           </div>
           <div>
@@ -435,15 +505,31 @@ function SettingsPage() {
             return (
               <Card key={p} className="!p-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg text-lg" style={{ background: `${m.color}22` }}>
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
+                    style={{ background: `${m.color}22` }}
+                  >
                     {m.emoji}
                   </div>
                   <div className="flex-1">
                     <div className="text-sm font-semibold">{m.label}</div>
-                    <div className="text-xs text-muted-foreground">{connected ? "متصل (محاكاة)" : "غير متصل"}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {connected ? "متصل (محاكاة)" : "غير متصل"}
+                    </div>
                   </div>
-                  <Button variant={connected ? "outline" : "primary"} onClick={() => toggleAccount(p)}>
-                    {connected ? <><Check className="h-4 w-4" /> متصل</> : <><Link2 className="h-4 w-4" /> ربط</>}
+                  <Button
+                    variant={connected ? "outline" : "primary"}
+                    onClick={() => toggleAccount(p)}
+                  >
+                    {connected ? (
+                      <>
+                        <Check className="h-4 w-4" /> متصل
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className="h-4 w-4" /> ربط
+                      </>
+                    )}
                   </Button>
                 </div>
               </Card>
@@ -482,7 +568,13 @@ function SettingsPage() {
                   onClick={() => changePlan(pl.key)}
                   disabled={active}
                 >
-                  {active ? "خطتك الحالية" : <><Zap className="h-4 w-4" /> اختيار الخطة</>}
+                  {active ? (
+                    "خطتك الحالية"
+                  ) : (
+                    <>
+                      <Zap className="h-4 w-4" /> اختيار الخطة
+                    </>
+                  )}
                 </Button>
               </Card>
             );

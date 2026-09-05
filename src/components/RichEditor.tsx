@@ -22,7 +22,9 @@ const ITALIC_MAP: Record<string, string> = (() => {
   return m;
 })();
 function transform(s: string, map: Record<string, string>) {
-  return Array.from(s).map((c) => map[c] ?? c).join("");
+  return Array.from(s)
+    .map((c) => map[c] ?? c)
+    .join("");
 }
 
 export const ARABIC_FONTS = [
@@ -34,11 +36,111 @@ export const ARABIC_FONTS = [
 ] as const;
 
 const EMOJI_GROUPS: { label: string; emojis: string[] }[] = [
-  { label: "شائع", emojis: ["🔥","✨","💡","🚀","🎯","💯","👏","🙌","❤️","🤍","⭐","✅","📌","🎉","💪","🧠"] },
-  { label: "مشاعر", emojis: ["😀","😂","🥹","😍","🤩","😎","🤔","😮","🤯","😴","🥳","😭","😅","😉","🙃","😇"] },
-  { label: "أعمال", emojis: ["💼","📈","📊","💰","💳","🏆","🎯","📅","📝","✍️","📚","🔗","📱","💻","⏰","🗓️"] },
-  { label: "تسويق", emojis: ["📣","📢","🎬","📸","🎨","🖌️","🌐","🔎","👀","🏷️","🛍️","🤝","💬","📩","🔔","🎁"] },
-  { label: "رموز", emojis: ["👉","👈","☑️","❌","➡️","⬅️","⬆️","⬇️","▶️","◀️","🔺","🔻","🟢","🟡","🔴","🔵"] },
+  {
+    label: "شائع",
+    emojis: [
+      "🔥",
+      "✨",
+      "💡",
+      "🚀",
+      "🎯",
+      "💯",
+      "👏",
+      "🙌",
+      "❤️",
+      "🤍",
+      "⭐",
+      "✅",
+      "📌",
+      "🎉",
+      "💪",
+      "🧠",
+    ],
+  },
+  {
+    label: "مشاعر",
+    emojis: [
+      "😀",
+      "😂",
+      "🥹",
+      "😍",
+      "🤩",
+      "😎",
+      "🤔",
+      "😮",
+      "🤯",
+      "😴",
+      "🥳",
+      "😭",
+      "😅",
+      "😉",
+      "🙃",
+      "😇",
+    ],
+  },
+  {
+    label: "أعمال",
+    emojis: [
+      "💼",
+      "📈",
+      "📊",
+      "💰",
+      "💳",
+      "🏆",
+      "🎯",
+      "📅",
+      "📝",
+      "✍️",
+      "📚",
+      "🔗",
+      "📱",
+      "💻",
+      "⏰",
+      "🗓️",
+    ],
+  },
+  {
+    label: "تسويق",
+    emojis: [
+      "📣",
+      "📢",
+      "🎬",
+      "📸",
+      "🎨",
+      "🖌️",
+      "🌐",
+      "🔎",
+      "👀",
+      "🏷️",
+      "🛍️",
+      "🤝",
+      "💬",
+      "📩",
+      "🔔",
+      "🎁",
+    ],
+  },
+  {
+    label: "رموز",
+    emojis: [
+      "👉",
+      "👈",
+      "☑️",
+      "❌",
+      "➡️",
+      "⬅️",
+      "⬆️",
+      "⬇️",
+      "▶️",
+      "◀️",
+      "🔺",
+      "🔻",
+      "🟢",
+      "🟡",
+      "🔴",
+      "🔵",
+    ],
+  },
 ];
 
 export function RichEditor({
@@ -91,8 +193,7 @@ export function RichEditor({
     withSelection((sel, b, a) => (sel ? b + transform(sel, BOLD_MAP) + a : value));
   const applyItalic = () =>
     withSelection((sel, b, a) => (sel ? b + transform(sel, ITALIC_MAP) + a : value));
-  const insertEmoji = (e: string) =>
-    withSelection((_sel, b, a) => b + e + a);
+  const insertEmoji = (e: string) => withSelection((_sel, b, a) => b + e + a);
 
   return (
     <div className="space-y-2">
@@ -100,7 +201,10 @@ export function RichEditor({
         <div ref={fontRef} className="relative">
           <button
             type="button"
-            onClick={() => { setFontOpen((v) => !v); setEmojiOpen(false); }}
+            onClick={() => {
+              setFontOpen((v) => !v);
+              setEmojiOpen(false);
+            }}
             className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs hover:bg-surface"
             title="الخط"
           >
@@ -113,7 +217,10 @@ export function RichEditor({
                 <button
                   key={f.id}
                   type="button"
-                  onClick={() => { setFont(f.id); setFontOpen(false); }}
+                  onClick={() => {
+                    setFont(f.id);
+                    setFontOpen(false);
+                  }}
                   className={`block w-full px-3 py-2 text-right text-sm hover:bg-surface ${f.id === font ? "text-accent" : ""}`}
                   style={{ fontFamily: f.css }}
                 >
@@ -144,7 +251,10 @@ export function RichEditor({
         <div ref={emojiRef} className="relative">
           <button
             type="button"
-            onClick={() => { setEmojiOpen((v) => !v); setFontOpen(false); }}
+            onClick={() => {
+              setEmojiOpen((v) => !v);
+              setFontOpen(false);
+            }}
             className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs hover:bg-surface"
             title="إيموجي"
           >
@@ -154,7 +264,9 @@ export function RichEditor({
             <div className="absolute z-30 mt-1 w-72 rounded-xl border border-border bg-surface-elevated p-2 shadow-lg">
               {EMOJI_GROUPS.map((g) => (
                 <div key={g.label} className="mb-2 last:mb-0">
-                  <div className="mb-1 text-[10px] font-semibold text-muted-foreground">{g.label}</div>
+                  <div className="mb-1 text-[10px] font-semibold text-muted-foreground">
+                    {g.label}
+                  </div>
                   <div className="grid grid-cols-8 gap-0.5">
                     {g.emojis.map((e) => (
                       <button

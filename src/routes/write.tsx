@@ -2,8 +2,26 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Label } from "@/components/ui";
-import { PLATFORM_META, TONE_META, DIALECT_META, type Platform, type Tone, type Dialect } from "@/lib/store";
-import { Sparkles, RefreshCw, Wand2, Hash, Send, Image as ImageIcon, Lightbulb, RotateCcw, Scissors, Maximize2 } from "lucide-react";
+import {
+  PLATFORM_META,
+  TONE_META,
+  DIALECT_META,
+  type Platform,
+  type Tone,
+  type Dialect,
+} from "@/lib/store";
+import {
+  Sparkles,
+  RefreshCw,
+  Wand2,
+  Hash,
+  Send,
+  Image as ImageIcon,
+  Lightbulb,
+  RotateCcw,
+  Scissors,
+  Maximize2,
+} from "lucide-react";
 import { usePostGenerator, useHashtags } from "@/hooks/useAI";
 import { useSmartResize } from "@/hooks/useSmartResize";
 import { AIOutput } from "@/components/AIOutput";
@@ -27,7 +45,11 @@ export const Route = createFileRoute("/write")({
   head: () => ({
     meta: [
       { title: "Post On — كتابة منشورات بالذكاء" },
-      { name: "description", content: "أنشئ منشورات مخصصة لكل منصة بنبرة الصوت المناسبة عبر Groq وTogether AI مباشرة من المتصفح." },
+      {
+        name: "description",
+        content:
+          "أنشئ منشورات مخصصة لكل منصة بنبرة الصوت المناسبة عبر Groq وTogether AI مباشرة من المتصفح.",
+      },
       { property: "og:title", content: "كتابة منشورات — Post On" },
       { property: "og:description", content: "توليد محتوى ذكي لكل منصات التواصل." },
     ],
@@ -48,11 +70,17 @@ function WritePage() {
     try {
       const saved = localStorage.getItem("poston_dialect") as Dialect | null;
       if (saved && saved in DIALECT_META) setDialect(saved);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
   const pickDialect = (d: Dialect) => {
     setDialect(d);
-    try { localStorage.setItem("poston_dialect", d); } catch { /* ignore */ }
+    try {
+      localStorage.setItem("poston_dialect", d);
+    } catch {
+      /* ignore */
+    }
   };
 
   const [output, setOutput] = useState("");
@@ -76,12 +104,14 @@ function WritePage() {
     setResizeMode(mode);
     setResizeResult(null);
     setResizeOpen(true);
-    const res = mode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
+    const res =
+      mode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
     setResizeResult(res);
   };
   const retryResize = async () => {
     setResizeResult(null);
-    const res = resizeMode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
+    const res =
+      resizeMode === "shorten" ? await shorten(output, platform) : await expand(output, platform);
     setResizeResult(res);
   };
   const applyResize = (v: string) => {
@@ -111,11 +141,16 @@ function WritePage() {
 
   const handleSave = () => {
     if (!output) return;
-    postsStore.add({ content: output, platform, tone, aiGenerated: source !== "fallback", hashtags: tags });
+    postsStore.add({
+      content: output,
+      platform,
+      tone,
+      aiGenerated: source !== "fallback",
+      hashtags: tags,
+    });
     analyticsStore.bumpPost(platform);
     setSaved(true);
   };
-
 
   const handlePublish = () => {
     if (!output) return;
@@ -126,20 +161,30 @@ function WritePage() {
   const handleGenImage = () => {
     const seed = topic || output.slice(0, 120);
     setPreviewDraft({ text: output, hashtags: tags });
-    try { sessionStorage.setItem("poston_image_prompt", seed); } catch { /* ignore */ }
+    try {
+      sessionStorage.setItem("poston_image_prompt", seed);
+    } catch {
+      /* ignore */
+    }
     navigate({ to: "/image" });
   };
 
-
   return (
     <AppLayout>
-      <PageHeader title="كتابة منشور بالذكاء" subtitle="Groq → Together AI → قالب محلي — كلها من متصفحك مباشرة" />
+      <PageHeader
+        title="كتابة منشور بالذكاء"
+        subtitle="Groq → Together AI → قالب محلي — كلها من متصفحك مباشرة"
+      />
 
-      <div className="mb-4"><RateLimitBar kind="post" /></div>
+      <div className="mb-4">
+        <RateLimitBar kind="post" />
+      </div>
 
       <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-xs">
         <Lightbulb className="h-4 w-4 shrink-0 text-accent" />
-        <div><strong className="text-foreground">هل تعلم؟</strong> {tip}</div>
+        <div>
+          <strong className="text-foreground">هل تعلم؟</strong> {tip}
+        </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -156,7 +201,9 @@ function WritePage() {
                       key={p}
                       onClick={() => setPlatform(p)}
                       className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[11px] transition ${
-                        active ? "border-accent bg-accent/10 text-foreground" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                        active
+                          ? "border-accent bg-accent/10 text-foreground"
+                          : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
                       }`}
                     >
                       <span className="text-lg">{m.emoji}</span>
@@ -175,7 +222,9 @@ function WritePage() {
                     key={t}
                     onClick={() => setTone(t)}
                     className={`rounded-xl border p-2.5 text-sm transition ${
-                      t === tone ? "border-accent bg-accent/10" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                      t === tone
+                        ? "border-accent bg-accent/10"
+                        : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
                     }`}
                   >
                     {TONE_META[t]}
@@ -196,7 +245,9 @@ function WritePage() {
                       onClick={() => pickDialect(d)}
                       title={m.hint}
                       className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[11px] transition ${
-                        active ? "border-accent bg-accent/10 text-foreground" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                        active
+                          ? "border-accent bg-accent/10 text-foreground"
+                          : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
                       }`}
                     >
                       <span className="text-lg">{m.emoji}</span>
@@ -205,25 +256,47 @@ function WritePage() {
                   );
                 })}
               </div>
-              <p className="mt-1.5 text-[11px] text-muted-foreground">{DIALECT_META[dialect].hint}</p>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">
+                {DIALECT_META[dialect].hint}
+              </p>
             </div>
 
             <div>
               <Label>الموضوع</Label>
-              <Input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="مثال: أهمية التسويق بالمحتوى للشركات الناشئة" />
+              <Input
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="مثال: أهمية التسويق بالمحتوى للشركات الناشئة"
+              />
             </div>
 
             <div>
               <Label>الجمهور المستهدف (اختياري)</Label>
-              <Input value={audience} onChange={(e) => setAudience(e.target.value)} placeholder="مثال: رواد الأعمال في الوطن العربي" />
+              <Input
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+                placeholder="مثال: رواد الأعمال في الوطن العربي"
+              />
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleGenerate} disabled={!topic.trim() || loading} className="flex-1">
-                {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              <Button
+                onClick={handleGenerate}
+                disabled={!topic.trim() || loading}
+                className="flex-1"
+              >
+                {loading ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
                 {loading ? "جاري التوليد..." : "توليد المنشور"}
               </Button>
-              <Button variant="outline" onClick={handleSuggest} disabled={!topic.trim() || tagLoading}>
+              <Button
+                variant="outline"
+                onClick={handleSuggest}
+                disabled={!topic.trim() || tagLoading}
+              >
                 <Hash className={`h-4 w-4 ${tagLoading ? "animate-spin" : ""}`} /> هاشتاقات
               </Button>
             </div>
@@ -241,30 +314,52 @@ function WritePage() {
                 {status === "ideal" && <Badge tone="success">مثالي ✅</Badge>}
                 {status === "short" && <Badge tone="warning">قصير</Badge>}
                 {status === "long" && <Badge tone="warning">طويل</Badge>}
-                <span className={overLimit ? "text-destructive font-semibold" : "text-muted-foreground"}>
-                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()} {overLimit ? "✗" : "✓"}
+                <span
+                  className={overLimit ? "text-destructive font-semibold" : "text-muted-foreground"}
+                >
+                  {PLATFORM_META[platform].emoji} {chars}/{limit.toLocaleString()}{" "}
+                  {overLimit ? "✗" : "✓"}
                 </span>
               </div>
             )}
           </div>
           {output ? (
             <>
-              <AIOutput value={output} onChange={(v) => { setOutput(v); setSaved(false); }} onSave={handleSave} source={source} saved={saved} />
+              <AIOutput
+                value={output}
+                onChange={(v) => {
+                  setOutput(v);
+                  setSaved(false);
+                }}
+                onSave={handleSave}
+                source={source}
+                saved={saved}
+              />
 
               {(overLimit || tooShortForExpand) && (
                 <div className="mt-3 flex flex-wrap gap-2 rounded-xl border border-accent/30 bg-accent/5 p-2.5">
                   {overLimit && (
-                    <Button variant="outline" onClick={() => openResize("shorten")} disabled={resizeLoading}>
+                    <Button
+                      variant="outline"
+                      onClick={() => openResize("shorten")}
+                      disabled={resizeLoading}
+                    >
                       <Scissors className="h-4 w-4" /> 🪄 اختصر ذكياً
                     </Button>
                   )}
                   {tooShortForExpand && (
-                    <Button variant="outline" onClick={() => openResize("expand")} disabled={resizeLoading}>
+                    <Button
+                      variant="outline"
+                      onClick={() => openResize("expand")}
+                      disabled={resizeLoading}
+                    >
                       <Maximize2 className="h-4 w-4" /> 📖 أطول
                     </Button>
                   )}
                   <span className="self-center text-[11px] text-muted-foreground">
-                    {overLimit ? `النص يتجاوز حد ${PLATFORM_META[platform].label}` : `أضف تفاصيل — النص أقصر من المثالي`}
+                    {overLimit
+                      ? `النص يتجاوز حد ${PLATFORM_META[platform].label}`
+                      : `أضف تفاصيل — النص أقصر من المثالي`}
                   </span>
                 </div>
               )}
@@ -274,7 +369,8 @@ function WritePage() {
                   <Send className="h-4 w-4" /> نشر الآن
                 </Button>
                 <Button variant="outline" onClick={handleGenerate} disabled={loading}>
-                  <RotateCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> توليد مرة أخرى
+                  <RotateCcw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> توليد مرة
+                  أخرى
                 </Button>
                 <Button variant="outline" onClick={handleGenImage}>
                   <ImageIcon className="h-4 w-4" /> صورة للمنشور
@@ -297,7 +393,9 @@ function WritePage() {
       </div>
 
       <div className="mt-6 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs text-muted-foreground">
-        💡 <strong className="text-foreground">وضع العميل الكامل:</strong> كل الطلبات تذهب مباشرة من متصفحك إلى Groq / Together AI / Pollinations. لا توجد خوادم وسيطة. أضف مفاتيحك من صفحة <strong>الإعدادات</strong>.
+        💡 <strong className="text-foreground">وضع العميل الكامل:</strong> كل الطلبات تذهب مباشرة من
+        متصفحك إلى Groq / Together AI / Pollinations. لا توجد خوادم وسيطة. أضف مفاتيحك من صفحة{" "}
+        <strong>الإعدادات</strong>.
       </div>
 
       <SmartResizeModal

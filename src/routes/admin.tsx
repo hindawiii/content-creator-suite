@@ -10,7 +10,11 @@ export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
       { title: "Post On — لوحة المشرف" },
-      { name: "description", content: "لوحة مشرف محمية بكلمة مرور: استخدام الموديلات، نسبة المفاتيح الخاصة، والتوليد اليومي." },
+      {
+        name: "description",
+        content:
+          "لوحة مشرف محمية بكلمة مرور: استخدام الموديلات، نسبة المفاتيح الخاصة، والتوليد اليومي.",
+      },
       { property: "og:title", content: "لوحة المشرف — Post On" },
       { property: "og:description", content: "إحصاءات الاستخدام والموديلات." },
       { property: "og:type", content: "website" },
@@ -20,7 +24,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-const PASSWORD = (import.meta.env['VITE_ADMIN_PASSWORD'] as string | undefined) ?? "poston-admin";
+const PASSWORD = (import.meta.env["VITE_ADMIN_PASSWORD"] as string | undefined) ?? "poston-admin";
 const GATE_KEY = "poston_admin_ok";
 
 function AdminPage() {
@@ -66,7 +70,12 @@ function AdminPage() {
             <span className="font-bold">أدخل كلمة مرور المشرف</span>
           </div>
           <Label>كلمة المرور</Label>
-          <Input type="password" value={pwd} onChange={(e) => setPwd(e.target.value)} placeholder="••••••••" />
+          <Input
+            type="password"
+            value={pwd}
+            onChange={(e) => setPwd(e.target.value)}
+            placeholder="••••••••"
+          />
           {err && <div className="mt-2 text-xs text-destructive">{err}</div>}
           <Button
             className="mt-4 w-full"
@@ -121,7 +130,10 @@ function AdminPage() {
               <div key={id} className="flex items-center gap-3">
                 <div className="w-40 shrink-0 text-xs">{findModel(id)?.label ?? id}</div>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-elevated">
-                  <div className="h-full gradient-primary" style={{ width: `${(count / s.totalCalls) * 100}%` }} />
+                  <div
+                    className="h-full gradient-primary"
+                    style={{ width: `${(count / s.totalCalls) * 100}%` }}
+                  />
                 </div>
                 <div className="w-10 text-left text-xs text-muted-foreground">{count}</div>
               </div>
@@ -138,13 +150,20 @@ function AdminPage() {
           <span className="font-bold">حالة المفاتيح (مجاني مقابل BYOK)</span>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge tone={s.byok ? "success" : "warning"}>{s.byok ? "مفاتيح نصية خاصة (BYOK)" : "بدون مفاتيح نصية"}</Badge>
+          <Badge tone={s.byok ? "success" : "warning"}>
+            {s.byok ? "مفاتيح نصية خاصة (BYOK)" : "بدون مفاتيح نصية"}
+          </Badge>
           <Badge tone="success">صور: Pollinations مجاني</Badge>
-          <Badge tone={s.gemini ? "success" : "default"}>{s.gemini ? "Gemini مضاف" : "Gemini غير مضاف"}</Badge>
-          <Badge tone={s.pollen ? "success" : "warning"}>{s.pollen ? "رصيد Pollen: مفتاح مضاف" : "رصيد Pollen: 5 مجانية فقط"}</Badge>
+          <Badge tone={s.gemini ? "success" : "default"}>
+            {s.gemini ? "Gemini مضاف" : "Gemini غير مضاف"}
+          </Badge>
+          <Badge tone={s.pollen ? "success" : "warning"}>
+            {s.pollen ? "رصيد Pollen: مفتاح مضاف" : "رصيد Pollen: 5 مجانية فقط"}
+          </Badge>
         </div>
         <div className="mt-3 text-[11px] text-muted-foreground">
-          التطبيق يعمل بالكامل في المتصفح — لا يوجد خادم يجمع بيانات مستخدمين، لذا الإحصاءات محلية لهذا الجهاز.
+          التطبيق يعمل بالكامل في المتصفح — لا يوجد خادم يجمع بيانات مستخدمين، لذا الإحصاءات محلية
+          لهذا الجهاز.
         </div>
       </Card>
     </AppLayout>

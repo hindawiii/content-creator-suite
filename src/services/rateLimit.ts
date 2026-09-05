@@ -21,7 +21,11 @@ function resetIfNeeded() {
   }
 }
 
-export function getQuota(): { plan: "free" | "pro"; posts: { used: number; max: number }; images: { used: number; max: number } } {
+export function getQuota(): {
+  plan: "free" | "pro";
+  posts: { used: number; max: number };
+  images: { used: number; max: number };
+} {
   resetIfNeeded();
   const s = settingsStore.get();
   const limit = LIMITS[s.plan];
@@ -46,4 +50,3 @@ export function consume(kind: "post" | "image" | "hashtag") {
   if (kind === "image") settingsStore.set({ imagesUsed: s.imagesUsed + 1 });
   else settingsStore.set({ postsUsed: s.postsUsed + 1 });
 }
-

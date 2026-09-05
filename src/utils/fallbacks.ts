@@ -11,8 +11,7 @@ const TEMPLATES: Record<Tone, string> = {
     "أنا: راح أتعلم {topic} اليوم! 💪\nأنا بعد 5 دقائق: ليش الحياة صعبة؟ 😅\n\nبس جدياً، الأمر أسهل مما تتوقعون 🎯",
   dramatic:
     "لم يكن يعلم أن قراراً واحداً سيغيّر كل شيء…\n\n{topic} — لم يبدأ كخطة، بل كإحساس داخلي بأن الوقت قد حان.\n\nوأنت؟ متى ستقرر؟ 💭",
-  calm:
-    "خذ نفساً عميقاً. 🌿\n\n{topic} لا يحتاج ضجيجاً، بل وضوحاً.\n\nخطوة صغيرة اليوم، أهم من قفزة مؤجّلة.\n\nاحفظ المنشور للمراجعة 📌",
+  calm: "خذ نفساً عميقاً. 🌿\n\n{topic} لا يحتاج ضجيجاً، بل وضوحاً.\n\nخطوة صغيرة اليوم، أهم من قفزة مؤجّلة.\n\nاحفظ المنشور للمراجعة 📌",
   friendly:
     "يا جماعة! 👋\n\nتعالوا نتكلم عن {topic} بصراحة…\n\nلو طبقتوا هذي الفكرة الصغيرة، راح تتغير أمور كثيرة ✨\n\nمين جرّب قبل؟ 💬",
   motivational:
@@ -20,11 +19,25 @@ const TEMPLATES: Record<Tone, string> = {
 };
 
 const DEFAULT_TAGS = [
-  "#تسويق_رقمي","#صناعة_محتوى","#ريادة_أعمال","#سوشيال_ميديا","#نمو",
-  "#إبداع","#محتوى_عربي","#PostOn","#marketing","#content","#growth","#branding",
+  "#تسويق_رقمي",
+  "#صناعة_محتوى",
+  "#ريادة_أعمال",
+  "#سوشيال_ميديا",
+  "#نمو",
+  "#إبداع",
+  "#محتوى_عربي",
+  "#PostOn",
+  "#marketing",
+  "#content",
+  "#growth",
+  "#branding",
 ];
 
-export function localFallback(topic: string, tone: Tone, platform: Platform): { content: string; hashtags: string[] } {
+export function localFallback(
+  topic: string,
+  tone: Tone,
+  platform: Platform,
+): { content: string; hashtags: string[] } {
   const body = TEMPLATES[tone].replace(/\{topic\}/g, topic || "الموضوع");
   const count = platform === "twitter" ? 5 : 12;
   return { content: body, hashtags: DEFAULT_TAGS.slice(0, count) };

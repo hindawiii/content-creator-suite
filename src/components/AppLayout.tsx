@@ -1,5 +1,16 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, PenSquare, Image as ImageIcon, Calendar, BarChart3, Settings, Sparkles, Send, Library, Video } from "lucide-react";
+import {
+  LayoutDashboard,
+  PenSquare,
+  Image as ImageIcon,
+  Calendar,
+  BarChart3,
+  Settings,
+  Sparkles,
+  Send,
+  Library,
+  Video,
+} from "lucide-react";
 import { type ReactNode } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
 import { useScheduleAlerts } from "@/hooks/useScheduleAlerts";
@@ -16,8 +27,19 @@ const nav = [
   { to: "/settings", label: "إعدادات", icon: Settings },
 ] as const;
 
-
-function NavItem({ to, label, Icon, active, dot }: { to: string; label: string; Icon: typeof LayoutDashboard; active: boolean; dot?: string }) {
+function NavItem({
+  to,
+  label,
+  Icon,
+  active,
+  dot,
+}: {
+  to: string;
+  label: string;
+  Icon: typeof LayoutDashboard;
+  active: boolean;
+  dot?: string;
+}) {
   return (
     <Link
       to={to}
@@ -37,7 +59,12 @@ function NavItem({ to, label, Icon, active, dot }: { to: string; label: string; 
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const keys = useKeysStatus();
-  const dot = keys.health === "ok" ? "bg-success" : keys.health === "failed" ? "bg-warning" : "bg-destructive";
+  const dot =
+    keys.health === "ok"
+      ? "bg-success"
+      : keys.health === "failed"
+        ? "bg-warning"
+        : "bg-destructive";
   useScheduleAlerts();
 
   return (
@@ -55,7 +82,14 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         </div>
         <nav className="mt-4 space-y-1 px-3">
           {nav.map((n) => (
-            <NavItem key={n.to} to={n.to} label={n.label} Icon={n.icon} active={pathname === n.to} dot={n.to === "/settings" ? dot : undefined} />
+            <NavItem
+              key={n.to}
+              to={n.to}
+              label={n.label}
+              Icon={n.icon}
+              active={pathname === n.to}
+              dot={n.to === "/settings" ? dot : undefined}
+            />
           ))}
         </nav>
         <div className="absolute inset-x-3 bottom-4 rounded-xl border border-border bg-surface-elevated p-4">
@@ -92,7 +126,11 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             const active = pathname === n.to;
             const Icon = n.icon;
             return (
-              <Link key={n.to} to={n.to} className="flex flex-col items-center gap-1 py-2.5 text-[10px]">
+              <Link
+                key={n.to}
+                to={n.to}
+                className="flex flex-col items-center gap-1 py-2.5 text-[10px]"
+              >
                 <Icon className={`h-5 w-5 ${active ? "text-accent" : "text-muted-foreground"}`} />
                 <span className={active ? "text-accent" : "text-muted-foreground"}>{n.label}</span>
               </Link>

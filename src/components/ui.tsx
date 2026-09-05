@@ -1,6 +1,21 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes, InputHTMLAttributes } from "react";
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ReactNode,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+  InputHTMLAttributes,
+} from "react";
 
-export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
+export function PageHeader({
+  title,
+  subtitle,
+  action,
+}: {
+  title: string;
+  subtitle?: string;
+  action?: ReactNode;
+}) {
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
@@ -68,20 +83,40 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
 }
 
 export function Label({ children }: { children: ReactNode }) {
-  return <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">{children}</label>;
+  return (
+    <label className="mb-1.5 block text-xs font-semibold text-muted-foreground">{children}</label>
+  );
 }
 
-export function Badge({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "success" | "warning" | "accent" }) {
+export function Badge({
+  children,
+  tone = "default",
+}: {
+  children: ReactNode;
+  tone?: "default" | "success" | "warning" | "accent";
+}) {
   const map = {
     default: "bg-surface-elevated text-muted-foreground",
     success: "bg-success/15 text-success",
     warning: "bg-warning/15 text-warning",
     accent: "bg-accent/15 text-accent",
   } as const;
-  return <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium ${map[tone]}`}>{children}</span>;
+  return (
+    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium ${map[tone]}`}>
+      {children}
+    </span>
+  );
 }
 
-export function EmptyState({ icon, title, hint }: { icon?: ReactNode; title: string; hint?: string }) {
+export function EmptyState({
+  icon,
+  title,
+  hint,
+}: {
+  icon?: ReactNode;
+  title: string;
+  hint?: string;
+}) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border py-12 text-center">
       {icon}

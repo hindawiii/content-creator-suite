@@ -11,7 +11,13 @@ export interface ChatOptions {
   model?: string;
 }
 
-export async function groqChat({ apiKey, userPrompt, system, temperature = 0.8, model }: ChatOptions): Promise<string> {
+export async function groqChat({
+  apiKey,
+  userPrompt,
+  system,
+  temperature = 0.8,
+  model,
+}: ChatOptions): Promise<string> {
   if (!apiKey) throw new Error("missing_groq_key");
   const res = await fetch(GROQ_URL, {
     method: "POST",

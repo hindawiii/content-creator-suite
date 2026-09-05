@@ -3,15 +3,17 @@ export const SYSTEM_PROMPT =
 
 const TONE_HINTS: Record<string, string> = {
   youthful: "شبابي، طاقة عالية، لغة عامية خفيفة، جُمل قصيرة جداً، ترند وميمز",
-  powerful: "قوي وحادّ ومتحدّي: عبارات ضربات قوية، مقارنة صادمة، أسلوب صارم بلا مجاملة. لا تستخدم أسلوب التشجيع الدافئ",
+  powerful:
+    "قوي وحادّ ومتحدّي: عبارات ضربات قوية، مقارنة صادمة، أسلوب صارم بلا مجاملة. لا تستخدم أسلوب التشجيع الدافئ",
   professional: "احترافي، هادئ، مبني على قيمة عملية وأرقام أو خطوات واضحة",
   humorous: "فكاهي، خفيف الظل، مبالغة طريفة، ومفاجأة/قفلة مضحكة في آخر سطر",
   dramatic: "درامي وسردي: ابدأ بقصة أو مشهد، صور بلاغية، تصعيد ثم انفراج",
   calm: "مسالم وهادئ وتأمّلي: إيقاع بطيء، بلا علامات تعجب، بلا صخب أو حماس",
-  friendly: "ودّي ومحاوِر: خاطب القارئ مباشرة بصيغة المتكلم، اسأله سؤالاً، كأنك تحكي مع صديق على القهوة",
-  motivational: "تحفيزي دافئ وإيجابي: تعاطف مع صعوبة البداية ثم دفعة أمل وخطوة عملية صغيرة تُنفَّذ اليوم",
+  friendly:
+    "ودّي ومحاوِر: خاطب القارئ مباشرة بصيغة المتكلم، اسأله سؤالاً، كأنك تحكي مع صديق على القهوة",
+  motivational:
+    "تحفيزي دافئ وإيجابي: تعاطف مع صعوبة البداية ثم دفعة أمل وخطوة عملية صغيرة تُنفَّذ اليوم",
 };
-
 
 const CTA_LIBRARY = [
   "شاركنا رأيك 👇",
@@ -30,7 +32,8 @@ const DIALECT_HINTS: Record<string, string> = {
     "اكتب باللهجة المصرية العامية (مثل: يعني، خلاص، جامد، بجد، ازاي، عشان، كده، مفيش). أسلوب خفيف وقريب من الشارع المصري.",
   gulf: "اكتب باللهجة الخليجية (مثل: وايد، شنو، عشان، زين، مره، تراك). أسلوب طبيعي غير متكلف.",
   levantine: "اكتب باللهجة الشامية (مثل: هلق، كتير، شو، منيح، ليش، بدي). أسلوب ودود وقريب.",
-  maghrebi: "اكتب باللهجة المغاربية المفهومة (مثل: بزاف، دابا، واخا، مزيان) مع إبقاء النص مفهوماً لبقية العرب.",
+  maghrebi:
+    "اكتب باللهجة المغاربية المفهومة (مثل: بزاف، دابا، واخا، مزيان) مع إبقاء النص مفهوماً لبقية العرب.",
 };
 
 export function buildPostPrompt(opts: {
@@ -43,13 +46,15 @@ export function buildPostPrompt(opts: {
 }): string {
   const { topic, platform, tone, audience, cta, dialect } = opts;
   const toneHint = TONE_HINTS[tone] ?? tone;
-  const dialectLine = dialect ? DIALECT_HINTS[dialect] ?? "" : "";
+  const dialectLine = dialect ? (DIALECT_HINTS[dialect] ?? "") : "";
   const ctaLine = cta
     ? `استخدم هذا الـ CTA حرفياً في النهاية: "${cta}".`
     : `اختر CTA مناسباً من: ${CTA_LIBRARY.join(" | ")}.`;
   return [
     `اكتب منشوراً لمنصة ${platform} بنبرة ${tone} (${toneHint}).`,
-    dialectLine ? `اللهجة المطلوبة (إلزامية): ${dialectLine} اكتب النص بالكامل — الـ HOOK والمتن والـ CTA — بهذه اللهجة.` : "",
+    dialectLine
+      ? `اللهجة المطلوبة (إلزامية): ${dialectLine} اكتب النص بالكامل — الـ HOOK والمتن والـ CTA — بهذه اللهجة.`
+      : "",
     `الموضوع: ${topic}.`,
     audience ? `الجمهور المستهدف: ${audience}.` : "",
     "الصيغة المطلوبة:",
@@ -68,7 +73,11 @@ export function buildHashtagPrompt(topic: string): string {
   return `Suggest 15 relevant hashtags in Arabic and English for: ${topic}. Sort by relevance. Return as comma-separated list.`;
 }
 
-export function buildRewritePrompt(kind: "rewrite" | "shorten" | "expand" | "cta", content: string, differentTone?: string): string {
+export function buildRewritePrompt(
+  kind: "rewrite" | "shorten" | "expand" | "cta",
+  content: string,
+  differentTone?: string,
+): string {
   switch (kind) {
     case "rewrite":
       return `Rewrite this post in a ${differentTone ?? "different"} tone: ${content}`;

@@ -5,19 +5,43 @@ import { Card, PageHeader, Badge, Button, EmptyState } from "@/components/ui";
 import { useStore, PLATFORM_META } from "@/lib/store";
 import { RateLimitBar } from "@/components/RateLimitBar";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
-import { postsStore, imagesStore, publishesStore, type PostRecord, type ImageRecord, type PublishRecord } from "@/services/storage";
 import {
-  FileText, Image as ImageIcon, CalendarClock, Send, PenSquare, Sparkles,
-  Library, BarChart3, AlertTriangle, CheckCircle2, Clock, KeyRound,
+  postsStore,
+  imagesStore,
+  publishesStore,
+  type PostRecord,
+  type ImageRecord,
+  type PublishRecord,
+} from "@/services/storage";
+import {
+  FileText,
+  Image as ImageIcon,
+  CalendarClock,
+  Send,
+  PenSquare,
+  Sparkles,
+  Library,
+  BarChart3,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  KeyRound,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Post On — لوحة التحكم" },
-      { name: "description", content: "لوحة تحكم Post On: إحصائيات محتواك، مجدولاتك القادمة، وإجراءات سريعة للكتابة والتصميم والنشر." },
+      {
+        name: "description",
+        content:
+          "لوحة تحكم Post On: إحصائيات محتواك، مجدولاتك القادمة، وإجراءات سريعة للكتابة والتصميم والنشر.",
+      },
       { property: "og:title", content: "Post On — لوحة التحكم" },
-      { property: "og:description", content: "تابع منشوراتك وصورك ومجدولاتك، وابدأ الكتابة بالذكاء الاصطناعي في ثواني." },
+      {
+        property: "og:description",
+        content: "تابع منشوراتك وصورك ومجدولاتك، وابدأ الكتابة بالذكاء الاصطناعي في ثواني.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -25,12 +49,30 @@ export const Route = createFileRoute("/")({
   component: Dashboard,
 });
 
-function Stat({ icon: Icon, label, value, tone, hint }: { icon: typeof FileText; label: string; value: string | number; tone: string; hint?: string }) {
+function Stat({
+  icon: Icon,
+  label,
+  value,
+  tone,
+  hint,
+}: {
+  icon: typeof FileText;
+  label: string;
+  value: string | number;
+  tone: string;
+  hint?: string;
+}) {
   return (
     <Card className="relative overflow-hidden">
-      <div className="absolute -left-6 -top-6 h-24 w-24 rounded-full opacity-20 blur-2xl" style={{ background: tone }} />
+      <div
+        className="absolute -left-6 -top-6 h-24 w-24 rounded-full opacity-20 blur-2xl"
+        style={{ background: tone }}
+      />
       <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl" style={{ background: `${tone}22`, color: tone }}>
+        <div
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+          style={{ background: `${tone}22`, color: tone }}
+        >
           <Icon className="h-5 w-5" />
         </div>
         <div className="min-w-0">
@@ -91,9 +133,23 @@ export function Dashboard() {
   const publishedToday = publishes.filter((r) => r.publishedAt.slice(0, 10) === today).length;
 
   const recent = useMemo(() => {
-    const a = posts.map((p) => ({ id: p.id, content: p.content, platform: p.platform as string, createdAt: p.createdAt, status: p.status }));
-    const b = lib.map((p) => ({ id: p.id, content: p.content, platform: p.platform, createdAt: p.createdAt, status: "draft" as const }));
-    return [...a, ...b].sort((x, y) => new Date(y.createdAt).getTime() - new Date(x.createdAt).getTime()).slice(0, 5);
+    const a = posts.map((p) => ({
+      id: p.id,
+      content: p.content,
+      platform: p.platform as string,
+      createdAt: p.createdAt,
+      status: p.status,
+    }));
+    const b = lib.map((p) => ({
+      id: p.id,
+      content: p.content,
+      platform: p.platform,
+      createdAt: p.createdAt,
+      status: "draft" as const,
+    }));
+    return [...a, ...b]
+      .sort((x, y) => new Date(y.createdAt).getTime() - new Date(x.createdAt).getTime())
+      .slice(0, 5);
   }, [posts, lib]);
 
   return (
@@ -103,7 +159,9 @@ export function Dashboard() {
         subtitle="مساعدك الذكي لصناعة محتوى استثنائي عبر كل المنصات"
         action={
           <Link to="/write" className="hidden md:block">
-            <Button><PenSquare className="h-4 w-4" /> منشور جديد</Button>
+            <Button>
+              <PenSquare className="h-4 w-4" /> منشور جديد
+            </Button>
           </Link>
         }
       />
@@ -114,9 +172,13 @@ export function Dashboard() {
             <KeyRound className="mt-0.5 h-5 w-5 text-warning" />
             <div className="flex-1 text-sm">
               <div className="font-semibold">فعّل مفاتيح الذكاء الاصطناعي</div>
-              <div className="text-xs text-muted-foreground">أضف مفتاح Groq أو Together لتوليد المنشورات والصور بجودة عالية.</div>
+              <div className="text-xs text-muted-foreground">
+                أضف مفتاح Groq أو Together لتوليد المنشورات والصور بجودة عالية.
+              </div>
             </div>
-            <Link to="/settings"><Button variant="outline">الإعدادات</Button></Link>
+            <Link to="/settings">
+              <Button variant="outline">الإعدادات</Button>
+            </Link>
           </div>
         </Card>
       )}
@@ -126,18 +188,39 @@ export function Dashboard() {
           <div className="flex items-center gap-3 text-sm">
             <AlertTriangle className="h-5 w-5 text-destructive" />
             <div className="flex-1">
-              <span className="font-semibold">{missed.length} منشور</span> حان وقت نشره ولم يُنشر بعد.
+              <span className="font-semibold">{missed.length} منشور</span> حان وقت نشره ولم يُنشر
+              بعد.
             </div>
-            <Link to="/schedule"><Button variant="outline">مراجعة</Button></Link>
+            <Link to="/schedule">
+              <Button variant="outline">مراجعة</Button>
+            </Link>
           </div>
         </Card>
       )}
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Stat icon={FileText} label="إجمالي المنشورات" value={totalPosts} tone="#e94560" hint={`${lib.length} في المكتبة`} />
+        <Stat
+          icon={FileText}
+          label="إجمالي المنشورات"
+          value={totalPosts}
+          tone="#e94560"
+          hint={`${lib.length} في المكتبة`}
+        />
         <Stat icon={ImageIcon} label="الصور المولّدة" value={totalImages} tone="#a855f7" />
-        <Stat icon={CalendarClock} label="مجدولة" value={scheduled.length} tone="#3b82f6" hint={missed.length ? `${missed.length} فائتة` : undefined} />
-        <Stat icon={Send} label="نُشرت اليوم" value={publishedToday} tone="#22c55e" hint={`${publishes.length} إجمالاً`} />
+        <Stat
+          icon={CalendarClock}
+          label="مجدولة"
+          value={scheduled.length}
+          tone="#3b82f6"
+          hint={missed.length ? `${missed.length} فائتة` : undefined}
+        />
+        <Stat
+          icon={Send}
+          label="نُشرت اليوم"
+          value={publishedToday}
+          tone="#22c55e"
+          hint={`${publishes.length} إجمالاً`}
+        />
       </div>
 
       <div className="mt-4 grid gap-3 md:grid-cols-2">
@@ -154,7 +237,9 @@ export function Dashboard() {
               </div>
               <div className="flex-1">
                 <div className="font-bold">اكتب منشوراً بالذكاء الاصطناعي</div>
-                <div className="mt-0.5 text-xs text-muted-foreground">اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني
+                </div>
               </div>
               <Sparkles className="h-5 w-5 text-accent transition group-hover:scale-110" />
             </div>
@@ -200,7 +285,9 @@ export function Dashboard() {
         <div className="mt-8">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-lg font-bold">المجدولات القادمة</h2>
-            <Link to="/schedule"><Button variant="ghost">الجدولة ←</Button></Link>
+            <Link to="/schedule">
+              <Button variant="ghost">الجدولة ←</Button>
+            </Link>
           </div>
           <div className="space-y-3">
             {scheduled.slice(0, 3).map((p) => {
@@ -209,7 +296,10 @@ export function Dashboard() {
               return (
                 <Card key={p.id} className={`!p-4 ${isMissed ? "border-destructive/40" : ""}`}>
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg" style={{ background: `${meta.color}22` }}>
+                    <div
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg"
+                      style={{ background: `${meta.color}22` }}
+                    >
                       {meta.emoji}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -232,7 +322,9 @@ export function Dashboard() {
       <div className="mt-8">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-lg font-bold">آخر النشاط</h2>
-          <Link to="/library"><Button variant="ghost">عرض الكل ←</Button></Link>
+          <Link to="/library">
+            <Button variant="ghost">عرض الكل ←</Button>
+          </Link>
         </div>
         {recent.length === 0 ? (
           <EmptyState
@@ -243,20 +335,41 @@ export function Dashboard() {
         ) : (
           <div className="space-y-3">
             {recent.map((p) => {
-              const meta = PLATFORM_META[p.platform as keyof typeof PLATFORM_META] ?? { label: p.platform, color: "#888", emoji: "📝" };
+              const meta = PLATFORM_META[p.platform as keyof typeof PLATFORM_META] ?? {
+                label: p.platform,
+                color: "#888",
+                emoji: "📝",
+              };
               return (
                 <Card key={p.id} className="!p-4">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg" style={{ background: `${meta.color}22` }}>
+                    <div
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg"
+                      style={{ background: `${meta.color}22` }}
+                    >
                       {meta.emoji}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold">{meta.label}</span>
-                        <Badge tone={p.status === "published" ? "success" : p.status === "scheduled" ? "accent" : "default"}>
-                          {p.status === "published" ? "منشور" : p.status === "scheduled" ? "مجدول" : "مسودة"}
+                        <Badge
+                          tone={
+                            p.status === "published"
+                              ? "success"
+                              : p.status === "scheduled"
+                                ? "accent"
+                                : "default"
+                          }
+                        >
+                          {p.status === "published"
+                            ? "منشور"
+                            : p.status === "scheduled"
+                              ? "مجدول"
+                              : "مسودة"}
                         </Badge>
-                        <span className="text-[10px] text-muted-foreground">{timeAgo(p.createdAt)}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {timeAgo(p.createdAt)}
+                        </span>
                       </div>
                       <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{p.content}</p>
                     </div>
@@ -273,7 +386,8 @@ export function Dashboard() {
           <div className="flex items-center gap-3 text-sm">
             <CheckCircle2 className="h-5 w-5 text-success" />
             <span>
-              آخر نشر يدوي: <strong>{publishes[0].platform}</strong> — {timeAgo(publishes[0].publishedAt)}
+              آخر نشر يدوي: <strong>{publishes[0].platform}</strong> —{" "}
+              {timeAgo(publishes[0].publishedAt)}
             </span>
           </div>
         </Card>
