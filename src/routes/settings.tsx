@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Badge, Label, Select } from "@/components/ui";
 import { TEXT_MODELS, BADGE_LABEL, DEFAULT_TEXT_MODEL } from "@/services/models";
@@ -21,9 +21,15 @@ import {
   Loader2,
   AlertTriangle,
   CircleAlert,
+  Upload,
 } from "lucide-react";
 import { APIKeyInput } from "@/components/APIKeyInput";
-import { settingsStore, exportAllStorage, resetAllStorage } from "@/services/storage";
+import {
+  settingsStore,
+  exportAllStorage,
+  importAllStorage,
+  resetAllStorage,
+} from "@/services/storage";
 import { toast } from "sonner";
 
 import { useKeysStatus, setKeysHealth, emitKeysChanged } from "@/hooks/useKeysStatus";
@@ -70,6 +76,7 @@ function fingerprint(key: string): string {
 function SettingsPage() {
   const { connectedAccounts, toggleAccount } = useStore();
   const status = useKeysStatus();
+  const importRef = useRef<HTMLInputElement>(null);
   const [groqKey, setGroqKey] = useState("");
   const [togetherKey, setTogetherKey] = useState("");
   const [useOwnKeys, setUseOwnKeys] = useState(true);
@@ -199,6 +206,18 @@ function SettingsPage() {
     a.click();
     URL.revokeObjectURL(url);
     toast.success("تم تصدير البيانات");
+  };
+
+  const handleImport = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const count = importAllStorage(text);
+      toast.success(`تم استيراد النسخة الاحتياطية (${count} قسم) — يتم التحديث…`);
+      setTimeout(() => window.location.reload(), 800);
+    } catch {
+      toast.error("الملف غير صالح — اختر ملف نسخة احتياطية صدّرته من التطبيق");
+    }
   };
 
   const handleReset = () => {
@@ -583,14 +602,34 @@ function SettingsPage() {
       </div>
 
       <Card>
-        <Label>إدارة البيانات المحلية</Label>
+        <Label>النسخ الاحتياطي وإدارة البيانات</Label>
+        <p className="mb-3 text-xs text-muted-foreground">
+          كل بياناتك محفوظة داخل هذا المتصفح فقط. صدّر نسخة احتياطية بشكل دوري، واستوردها على جهاز
+          آخر أو بعد مسح بيانات المتصفح.
+        </p>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4" /> تصدير البيانات (JSON)
+            <Download className="h-4 w-4" /> تصدير نسخة احتياطية
           </Button>
+          <Button variant="outline" onClick={() => importRef.current?.click()}>
+            <Upload className="h-4 w-4" /> استيراد نسخة احتياطية
+          </Button>
+          <input
+            ref={importRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              void handleImport(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
           <Button variant="outline" onClick={handleReset} className="!text-destructive">
             <Trash2 className="h-4 w-4" /> مسح كل البيانات
           </Button>
+        </div>
+        <div className="mt-3 text-[11px] text-muted-foreground">
+          ملاحظة: النسخة تحتوي مفاتيحك أيضاً — احفظها في مكان آمن ولا تشاركها.
         </div>
       </Card>
     </AppLayout>

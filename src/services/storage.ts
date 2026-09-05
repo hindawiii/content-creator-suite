@@ -212,6 +212,25 @@ export function exportAllStorage(): string {
   return JSON.stringify(dump, null, 2);
 }
 
+/** Restore a backup produced by exportAllStorage(). Returns count of restored sections. */
+export function importAllStorage(json: string): number {
+  const parsed = JSON.parse(json) as Record<string, unknown>;
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("bad-format");
+  }
+  const names = Object.keys(KEYS) as (keyof typeof KEYS)[];
+  const known = names.filter((n) => n in parsed);
+  if (!known.length) throw new Error("bad-format");
+  let restored = 0;
+  known.forEach((name) => {
+    const value = parsed[name];
+    if (value === null || value === undefined) return;
+    write(KEYS[name], value);
+    restored += 1;
+  });
+  return restored;
+}
+
 // Publishes (manual tracking)
 export const publishesStore = {
   list: (): PublishRecord[] => read(KEYS.publishes, []),
