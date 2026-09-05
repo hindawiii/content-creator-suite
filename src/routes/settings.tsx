@@ -601,14 +601,34 @@ function SettingsPage() {
       </div>
 
       <Card>
-        <Label>إدارة البيانات المحلية</Label>
+        <Label>النسخ الاحتياطي وإدارة البيانات</Label>
+        <p className="mb-3 text-xs text-muted-foreground">
+          كل بياناتك محفوظة داخل هذا المتصفح فقط. صدّر نسخة احتياطية بشكل دوري، واستوردها على جهاز
+          آخر أو بعد مسح بيانات المتصفح.
+        </p>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4" /> تصدير البيانات (JSON)
+            <Download className="h-4 w-4" /> تصدير نسخة احتياطية
           </Button>
+          <Button variant="outline" onClick={() => importRef.current?.click()}>
+            <Upload className="h-4 w-4" /> استيراد نسخة احتياطية
+          </Button>
+          <input
+            ref={importRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              void handleImport(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
           <Button variant="outline" onClick={handleReset} className="!text-destructive">
             <Trash2 className="h-4 w-4" /> مسح كل البيانات
           </Button>
+        </div>
+        <div className="mt-3 text-[11px] text-muted-foreground">
+          ملاحظة: النسخة تحتوي مفاتيحك أيضاً — احفظها في مكان آمن ولا تشاركها.
         </div>
       </Card>
     </AppLayout>
