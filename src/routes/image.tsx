@@ -139,7 +139,7 @@ function ImagePage() {
     toast.success("نُسخ رابط الصورة");
   };
 
-  const useInPost = (url: string) => {
+  const sendToPost = (url: string) => {
     const existing = getPreviewDraft();
     setPreviewDraft({
       text: existing?.text ?? "",
@@ -313,7 +313,7 @@ function ImagePage() {
                     <Button variant="outline" onClick={() => copyLink(b.url)}>
                       <LinkIcon className="h-4 w-4" /> نسخ الرابط
                     </Button>
-                    <Button variant="outline" onClick={() => useInPost(b.url)}>
+                    <Button variant="outline" onClick={() => sendToPost(b.url)}>
                       <Wand2 className="h-4 w-4" /> استخدم في المنشور
                     </Button>
                     <Button onClick={() => {
