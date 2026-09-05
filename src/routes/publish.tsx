@@ -20,11 +20,7 @@ import {
   X,
   Wand2,
 } from "lucide-react";
-import {
-  getPreviewDraft,
-  publishesStore,
-  schedulesStore,
-} from "@/services/storage";
+import { getPreviewDraft, publishesStore, schedulesStore } from "@/services/storage";
 import { useSmartResize } from "@/hooks/useSmartResize";
 import { SmartResizeModal } from "@/components/SmartResizeModal";
 import { sweetStatus, PLATFORM_LIMITS, SWEET_SPOTS } from "@/utils/platformLimits";
@@ -33,7 +29,11 @@ export const Route = createFileRoute("/publish")({
   head: () => ({
     meta: [
       { title: "Post On — النشر" },
-      { name: "description", content: "الخطوة الأخيرة: انسخ المحتوى وافتح المنصة مباشرة، أو جدوله لاحقاً بتذكير من المتصفح." },
+      {
+        name: "description",
+        content:
+          "الخطوة الأخيرة: انسخ المحتوى وافتح المنصة مباشرة، أو جدوله لاحقاً بتذكير من المتصفح.",
+      },
       { property: "og:title", content: "النشر — Post On" },
       { property: "og:description", content: "انسخ، افتح، انشر — بدون خوادم." },
     ],
@@ -46,19 +46,31 @@ function platformShareUrl(p: Platform, text: string, imageUrl?: string): string 
   const t = encodeURIComponent(text);
   const link = imageUrl ? encodeURIComponent(imageUrl) : null;
   switch (p) {
-    case "instagram": return "https://www.instagram.com/";
-    case "twitter":   return `https://twitter.com/intent/tweet?text=${t}`;
-    case "facebook":  return link ? `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}` : null;
-    case "linkedin":  return link ? `https://www.linkedin.com/sharing/share-offsite/?url=${link}` : null;
-    case "tiktok":    return "https://www.tiktok.com/upload";
-    case "youtube":   return "https://studio.youtube.com/";
-    case "whatsapp":  return `https://wa.me/?text=${t}`;
-    case "telegram":  return link ? `https://t.me/share/url?url=${link}&text=${t}` : `https://t.me/share/url?url=${encodeURIComponent("https://poston.app")}&text=${t}`;
+    case "instagram":
+      return "https://www.instagram.com/";
+    case "twitter":
+      return `https://twitter.com/intent/tweet?text=${t}`;
+    case "facebook":
+      return link ? `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}` : null;
+    case "linkedin":
+      return link ? `https://www.linkedin.com/sharing/share-offsite/?url=${link}` : null;
+    case "tiktok":
+      return "https://www.tiktok.com/upload";
+    case "youtube":
+      return "https://studio.youtube.com/";
+    case "whatsapp":
+      return `https://wa.me/?text=${t}`;
+    case "telegram":
+      return link
+        ? `https://t.me/share/url?url=${link}&text=${t}`
+        : `https://t.me/share/url?url=${encodeURIComponent("https://poston.app")}&text=${t}`;
   }
 }
 
 const NEEDS_MANUAL_PASTE: Partial<Record<Platform, boolean>> = {
-  instagram: true, tiktok: true, youtube: true,
+  instagram: true,
+  tiktok: true,
+  youtube: true,
 };
 
 const TIPS = [
@@ -120,22 +132,33 @@ function PublishPage() {
   const [resizeResult, setResizeResult] = useState<string | null>(null);
 
   const runResize = async (mode: "shorten" | "expand", p: Platform) => {
-    setResizeMode(mode); setResizePlatform(p); setResizeResult(null); setResizeOpen(true);
+    setResizeMode(mode);
+    setResizePlatform(p);
+    setResizeResult(null);
+    setResizeOpen(true);
     const res = mode === "shorten" ? await shorten(text, p) : await expand(text, p);
     setResizeResult(res);
   };
   const retryResize = async () => {
     setResizeResult(null);
-    const res = resizeMode === "shorten" ? await shorten(text, resizePlatform) : await expand(text, resizePlatform);
+    const res =
+      resizeMode === "shorten"
+        ? await shorten(text, resizePlatform)
+        : await expand(text, resizePlatform);
     setResizeResult(res);
   };
-  const applyResize = (v: string) => { setText(v); setResizeOpen(false); };
+  const applyResize = (v: string) => {
+    setText(v);
+    setResizeOpen(false);
+  };
 
   useEffect(() => {
     // Preload existing publish state for this content id
     const existing = publishesStore.listByContent(contentId);
     const map: Partial<Record<Platform, boolean>> = {};
-    existing.forEach((r) => { map[r.platform as Platform] = true; });
+    existing.forEach((r) => {
+      map[r.platform as Platform] = true;
+    });
     setPublished(map);
   }, [contentId]);
 
@@ -202,12 +225,13 @@ function PublishPage() {
     }
   };
 
-
   const copyAndOpen = async (p: Platform) => {
     await navigator.clipboard.writeText(fullText);
     const url = platformShareUrl(p, fullText, imageUrl);
     if (!url) {
-      toast.warning(`📋 نُسخ المنشور — افتح ${PLATFORM_META[p].label} يدوياً والصقه (يحتاج صورة/رابط للمشاركة المباشرة)`);
+      toast.warning(
+        `📋 نُسخ المنشور — افتح ${PLATFORM_META[p].label} يدوياً والصقه (يحتاج صورة/رابط للمشاركة المباشرة)`,
+      );
       return;
     }
     const win = window.open(url, "_blank", "noopener,noreferrer");
@@ -269,10 +293,16 @@ function PublishPage() {
         <Card>
           <div className="flex flex-col items-center gap-3 py-8 text-center">
             <Sparkles className="h-10 w-10 text-accent opacity-70" />
-            <p className="text-sm text-muted-foreground">ولّد منشوراً أو صورة أولاً ثم عد إلى هنا للنشر.</p>
+            <p className="text-sm text-muted-foreground">
+              ولّد منشوراً أو صورة أولاً ثم عد إلى هنا للنشر.
+            </p>
             <div className="flex flex-wrap justify-center gap-2">
-              <Link to="/write"><Button>كتابة منشور</Button></Link>
-              <Link to="/image"><Button variant="outline">توليد صورة</Button></Link>
+              <Link to="/write">
+                <Button>كتابة منشور</Button>
+              </Link>
+              <Link to="/image">
+                <Button variant="outline">توليد صورة</Button>
+              </Link>
             </div>
           </div>
         </Card>
@@ -288,7 +318,10 @@ function PublishPage() {
         title="النشر"
         subtitle="انسخ، افتح المنصة، الصق — أو جدول للاحقاً"
         action={
-          <button onClick={() => router.history.back()} className="text-sm text-muted-foreground hover:text-foreground">
+          <button
+            onClick={() => router.history.back()}
+            className="text-sm text-muted-foreground hover:text-foreground"
+          >
             <ArrowLeft className="inline h-4 w-4" /> رجوع
           </button>
         }
@@ -296,7 +329,9 @@ function PublishPage() {
 
       <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-xs animate-in-up">
         <Lightbulb className="h-4 w-4 shrink-0 text-accent" />
-        <div><strong className="text-foreground">نصيحة ذكية:</strong> {tip.replace(/^💡\s*/, "")}</div>
+        <div>
+          <strong className="text-foreground">نصيحة ذكية:</strong> {tip.replace(/^💡\s*/, "")}
+        </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -313,8 +348,6 @@ function PublishPage() {
             onRemove={() => setImageUrl(undefined)}
           />
 
-
-
           <Label>النص</Label>
           <Textarea
             rows={10}
@@ -329,7 +362,14 @@ function PublishPage() {
             const spotFor = (p: Platform) => {
               const s = sweetStatus(fullText, p);
               const tone = s === "ideal" ? "success" : s === "over" ? "warning" : "default";
-              const label = s === "ideal" ? "مثالي ✅" : s === "over" ? "يتجاوز ✗" : s === "short" ? "قصير" : "طويل";
+              const label =
+                s === "ideal"
+                  ? "مثالي ✅"
+                  : s === "over"
+                    ? "يتجاوز ✗"
+                    : s === "short"
+                      ? "قصير"
+                      : "طويل";
               return { tone, label } as const;
             };
             const tw = spotFor("twitter");
@@ -346,24 +386,42 @@ function PublishPage() {
                   <span>·</span>
                   <span>{words} كلمة</span>
                   <span>·</span>
-                  <span className="inline-flex items-center gap-1">🐦 {chars}/280 <Badge tone={tw.tone}>{tw.label}</Badge></span>
-                  <span className="inline-flex items-center gap-1">📷 {chars}/2200 <Badge tone={ig.tone}>{ig.label}</Badge></span>
-                  <span className="inline-flex items-center gap-1">💼 <Badge tone={li.tone}>{li.label}</Badge></span>
+                  <span className="inline-flex items-center gap-1">
+                    🐦 {chars}/280 <Badge tone={tw.tone}>{tw.label}</Badge>
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    📷 {chars}/2200 <Badge tone={ig.tone}>{ig.label}</Badge>
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    💼 <Badge tone={li.tone}>{li.label}</Badge>
+                  </span>
                 </div>
                 {(overTw || overIg || shortForLi) && (
                   <div className="mt-2 flex flex-wrap gap-2 rounded-xl border border-accent/30 bg-accent/5 p-2">
                     {overTw && (
-                      <Button variant="outline" onClick={() => runResize("shorten", "twitter")} disabled={resizeLoading}>
+                      <Button
+                        variant="outline"
+                        onClick={() => runResize("shorten", "twitter")}
+                        disabled={resizeLoading}
+                      >
                         <Scissors className="h-4 w-4" /> 🪄 اختصر لتويتر
                       </Button>
                     )}
                     {overIg && (
-                      <Button variant="outline" onClick={() => runResize("shorten", "instagram")} disabled={resizeLoading}>
+                      <Button
+                        variant="outline"
+                        onClick={() => runResize("shorten", "instagram")}
+                        disabled={resizeLoading}
+                      >
                         <Scissors className="h-4 w-4" /> 🪄 اختصر لإنستقرام
                       </Button>
                     )}
                     {shortForLi && !overTw && !overIg && (
-                      <Button variant="outline" onClick={() => runResize("expand", "linkedin")} disabled={resizeLoading}>
+                      <Button
+                        variant="outline"
+                        onClick={() => runResize("expand", "linkedin")}
+                        disabled={resizeLoading}
+                      >
                         <Maximize2 className="h-4 w-4" /> 📖 أطول للينكدإن
                       </Button>
                     )}
@@ -393,18 +451,28 @@ function PublishPage() {
 
           {imageUrl && (
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button variant="outline" onClick={downloadImage}><Download className="h-4 w-4" /> تنزيل الصورة</Button>
-              <Button variant="outline" onClick={copyImage}><Copy className="h-4 w-4" /> نسخ الصورة</Button>
+              <Button variant="outline" onClick={downloadImage}>
+                <Download className="h-4 w-4" /> تنزيل الصورة
+              </Button>
+              <Button variant="outline" onClick={copyImage}>
+                <Copy className="h-4 w-4" /> نسخ الصورة
+              </Button>
             </div>
           )}
 
-
-
           <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-3">
-            <Button onClick={copyText}><Copy className="h-4 w-4" /> نسخ النص</Button>
-            <Button variant="outline" onClick={copyAll}><Copy className="h-4 w-4" /> نسخ الكل</Button>
-            <Button variant="outline" onClick={nativeShare}><Share2 className="h-4 w-4" /> مشاركة</Button>
-            <Button variant="outline" onClick={() => setScheduleOpen(true)}><Clock className="h-4 w-4" /> جدولة لاحقاً</Button>
+            <Button onClick={copyText}>
+              <Copy className="h-4 w-4" /> نسخ النص
+            </Button>
+            <Button variant="outline" onClick={copyAll}>
+              <Copy className="h-4 w-4" /> نسخ الكل
+            </Button>
+            <Button variant="outline" onClick={nativeShare}>
+              <Share2 className="h-4 w-4" /> مشاركة
+            </Button>
+            <Button variant="outline" onClick={() => setScheduleOpen(true)}>
+              <Clock className="h-4 w-4" /> جدولة لاحقاً
+            </Button>
           </div>
         </Card>
 
@@ -414,7 +482,9 @@ function PublishPage() {
             <Share2 className="h-4 w-4 text-accent" />
             <span className="font-semibold">افتح المنصة وانشر</span>
           </div>
-          <p className="mb-3 text-xs text-muted-foreground">اضغط زر المنصة: يُنسخ المنشور تلقائياً ثم تُفتح المنصة في تبويب جديد. الصقه هناك ✨</p>
+          <p className="mb-3 text-xs text-muted-foreground">
+            اضغط زر المنصة: يُنسخ المنشور تلقائياً ثم تُفتح المنصة في تبويب جديد. الصقه هناك ✨
+          </p>
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {(Object.keys(PLATFORM_META) as Platform[]).map((p) => {
@@ -426,13 +496,17 @@ function PublishPage() {
                   onClick={() => copyAndOpen(p)}
                   title="انسخ المنشور، ثم الصقه في المنصة"
                   className={`group relative flex flex-col items-center gap-1 rounded-xl border p-3 text-[11px] transition ${
-                    done ? "border-success/50 bg-success/5" : "border-border bg-surface-elevated hover:border-accent hover:bg-accent/5"
+                    done
+                      ? "border-success/50 bg-success/5"
+                      : "border-border bg-surface-elevated hover:border-accent hover:bg-accent/5"
                   }`}
                   style={done ? undefined : { boxShadow: `inset 0 -2px 0 ${m.color}00` }}
                 >
                   <span className="text-2xl transition group-hover:scale-110">{m.emoji}</span>
                   <span className="font-semibold">{m.label}</span>
-                  {done && <CheckCircle2 className="absolute right-1.5 top-1.5 h-3.5 w-3.5 text-success" />}
+                  {done && (
+                    <CheckCircle2 className="absolute right-1.5 top-1.5 h-3.5 w-3.5 text-success" />
+                  )}
                 </button>
               );
             })}
@@ -444,7 +518,10 @@ function PublishPage() {
               const m = PLATFORM_META[p];
               const done = !!published[p];
               return (
-                <label key={p} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-surface-elevated">
+                <label
+                  key={p}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-surface-elevated"
+                >
                   <input
                     type="checkbox"
                     checked={done}
@@ -463,16 +540,28 @@ function PublishPage() {
       </div>
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs">
-        <div><strong className="text-foreground">التالي:</strong> ولّد منشوراً لمنصة أخرى؟</div>
+        <div>
+          <strong className="text-foreground">التالي:</strong> ولّد منشوراً لمنصة أخرى؟
+        </div>
         <div className="flex gap-2">
-          <Link to="/write"><Button variant="outline">منشور جديد</Button></Link>
-          <Link to="/image"><Button variant="outline">صورة جديدة</Button></Link>
+          <Link to="/write">
+            <Button variant="outline">منشور جديد</Button>
+          </Link>
+          <Link to="/image">
+            <Button variant="outline">صورة جديدة</Button>
+          </Link>
         </div>
       </div>
 
       {scheduleOpen && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in-up" onClick={() => setScheduleOpen(false)}>
-          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in-up"
+          onClick={() => setScheduleOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-surface p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="mb-4 text-lg font-bold">جدولة لاحقاً</h3>
             <div className="space-y-3">
               <div>
@@ -492,12 +581,22 @@ function PublishPage() {
               </div>
               <div>
                 <Label>التاريخ والوقت</Label>
-                <Input type="datetime-local" value={schedTime} onChange={(e) => setSchedTime(e.target.value)} />
+                <Input
+                  type="datetime-local"
+                  value={schedTime}
+                  onChange={(e) => setSchedTime(e.target.value)}
+                />
               </div>
-              <p className="text-[11px] text-muted-foreground">🔔 سنطلب إذن الإشعارات لتذكيرك في الوقت المحدد. كل شيء يعمل محلياً في متصفحك.</p>
+              <p className="text-[11px] text-muted-foreground">
+                🔔 سنطلب إذن الإشعارات لتذكيرك في الوقت المحدد. كل شيء يعمل محلياً في متصفحك.
+              </p>
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" onClick={() => setScheduleOpen(false)} className="flex-1">إلغاء</Button>
-                <Button onClick={scheduleLater} className="flex-1"><Clock className="h-4 w-4" /> جدولة</Button>
+                <Button variant="outline" onClick={() => setScheduleOpen(false)} className="flex-1">
+                  إلغاء
+                </Button>
+                <Button onClick={scheduleLater} className="flex-1">
+                  <Clock className="h-4 w-4" /> جدولة
+                </Button>
               </div>
             </div>
           </div>
@@ -587,7 +686,9 @@ function HeroImage({
   return (
     <div className="mb-4 rounded-xl border-2 border-dashed border-border bg-surface-elevated p-6 text-center">
       <ImageIcon className="mx-auto mb-2 h-8 w-8 text-muted-foreground opacity-60" />
-      <p className="mb-3 text-xs text-muted-foreground">أضف صورة رئيسية لجذب الانتباه (يزيد التفاعل بنسبة 2x)</p>
+      <p className="mb-3 text-xs text-muted-foreground">
+        أضف صورة رئيسية لجذب الانتباه (يزيد التفاعل بنسبة 2x)
+      </p>
       <div className="flex flex-wrap justify-center gap-2">
         <Button variant="outline" onClick={() => fileRef.current?.click()}>
           <Upload className="h-4 w-4" /> ارفع صورة
@@ -608,4 +709,3 @@ function HeroImage({
     </div>
   );
 }
-

@@ -26,7 +26,9 @@ export function SmartResizeModal({
   onClose: () => void;
 }) {
   const [edited, setEdited] = useState<string>(result ?? "");
-  useEffect(() => { setEdited(result ?? ""); }, [result]);
+  useEffect(() => {
+    setEdited(result ?? "");
+  }, [result]);
 
   if (!open) return null;
 
@@ -45,22 +47,32 @@ export function SmartResizeModal({
   const title = mode === "shorten" ? "اختصار ذكي" : "توسيع ذكي";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in-up" onClick={onClose}>
-      <div className="w-full max-w-4xl overflow-hidden rounded-2xl border border-border bg-surface" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in-up"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-4xl overflow-hidden rounded-2xl border border-border bg-surface"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
           <div className="flex items-center gap-2">
             <Icon className="h-4 w-4 text-accent" />
             <h3 className="text-base font-bold">{title}</h3>
             <Badge tone="accent">{platform}</Badge>
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         <div className="grid gap-4 p-5 md:grid-cols-2">
           <div>
             <div className="mb-2 flex items-center justify-between">
               <span className="text-xs font-semibold text-muted-foreground">الأصلي</span>
-              <span className="text-[11px] text-muted-foreground">{origLen}/{limit}</span>
+              <span className="text-[11px] text-muted-foreground">
+                {origLen}/{limit}
+              </span>
             </div>
             <div className="max-h-[50vh] overflow-auto rounded-xl border border-border bg-input p-3 text-sm leading-relaxed whitespace-pre-wrap">
               {original}
@@ -74,7 +86,9 @@ export function SmartResizeModal({
               </span>
               <div className="flex items-center gap-2">
                 {edited && <Badge tone={badgeMap[s].tone}>{badgeMap[s].label}</Badge>}
-                <span className={`text-[11px] ${newLen > limit ? "text-destructive" : "text-muted-foreground"}`}>
+                <span
+                  className={`text-[11px] ${newLen > limit ? "text-destructive" : "text-muted-foreground"}`}
+                >
                   {newLen}/{limit}
                 </span>
               </div>
@@ -94,7 +108,9 @@ export function SmartResizeModal({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border bg-surface-elevated/30 px-5 py-3">
-          <Button variant="ghost" onClick={onClose}>إلغاء</Button>
+          <Button variant="ghost" onClick={onClose}>
+            إلغاء
+          </Button>
           <Button variant="outline" onClick={onRetry} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> أعد المحاولة
           </Button>

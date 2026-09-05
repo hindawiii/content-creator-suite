@@ -3,7 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label, Badge, Select } from "@/components/ui";
-import { Video, Sparkles, RefreshCw, Download, AlertTriangle, Image as ImageIcon } from "lucide-react";
+import {
+  Video,
+  Sparkles,
+  RefreshCw,
+  Download,
+  AlertTriangle,
+  Image as ImageIcon,
+} from "lucide-react";
 import { pollinationsVideo } from "@/services/pollinations";
 import { puterVideo } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
@@ -12,9 +19,15 @@ export const Route = createFileRoute("/video")({
   head: () => ({
     meta: [
       { title: "Post On — توليد فيديو بالذكاء" },
-      { name: "description", content: "توليد فيديو قصير من نص أو من صورة عبر Pollinations Video أو مفتاحك الخاص." },
+      {
+        name: "description",
+        content: "توليد فيديو قصير من نص أو من صورة عبر Pollinations Video أو مفتاحك الخاص.",
+      },
       { property: "og:title", content: "توليد فيديو — Post On" },
-      { property: "og:description", content: "نص إلى فيديو وصورة إلى فيديو مع تنبيه واضح لتكاليف الرصيد." },
+      {
+        property: "og:description",
+        content: "نص إلى فيديو وصورة إلى فيديو مع تنبيه واضح لتكاليف الرصيد.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -108,11 +121,16 @@ function VideoPage() {
         <div className="text-sm">
           <div className="font-semibold text-warning">⚠️ توليد الفيديو ليس مجانياً بالكامل</div>
           <div className="mt-0.5 text-muted-foreground">
-            يحتاج رصيد Pollen أو مفتاحك الخاص. تحصل على 5 نقاط Pollen مجانية عند التسجيل. بديل: Google Veo بمفتاح Google AI Studio (يتطلب تفعيل الفواتير) أو Puter.js حيث تدفع من حسابك.
+            يحتاج رصيد Pollen أو مفتاحك الخاص. تحصل على 5 نقاط Pollen مجانية عند التسجيل. بديل:
+            Google Veo بمفتاح Google AI Studio (يتطلب تفعيل الفواتير) أو Puter.js حيث تدفع من حسابك.
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <Badge tone={hasKey ? "success" : "warning"}>{hasKey ? "مفتاح Pollinations مضاف" : "يحتاج رصيد"}</Badge>
-            <Link to="/settings" className="text-xs text-accent underline">إضافة المفاتيح</Link>
+            <Badge tone={hasKey ? "success" : "warning"}>
+              {hasKey ? "مفتاح Pollinations مضاف" : "يحتاج رصيد"}
+            </Badge>
+            <Link to="/settings" className="text-xs text-accent underline">
+              إضافة المفاتيح
+            </Link>
           </div>
         </div>
       </div>
@@ -153,7 +171,9 @@ function VideoPage() {
                     key={a}
                     onClick={() => setAspect(a)}
                     className={`flex-1 rounded-xl border p-2.5 text-sm transition ${
-                      aspect === a ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"
+                      aspect === a
+                        ? "border-accent bg-accent/10"
+                        : "border-border bg-surface-elevated"
                     }`}
                   >
                     {a}
@@ -161,14 +181,25 @@ function VideoPage() {
                 ))}
               </div>
             </div>
-            <Button onClick={handleGenerate} disabled={!prompt.trim() || loading} className="w-full">
-              {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            <Button
+              onClick={handleGenerate}
+              disabled={!prompt.trim() || loading}
+              className="w-full"
+            >
+              {loading ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
               {loading ? "جاري التوليد..." : "توليد الفيديو"}
             </Button>
             {loading && (
               <div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-surface-elevated">
-                  <div className="h-full gradient-primary transition-all" style={{ width: `${progress}%` }} />
+                  <div
+                    className="h-full gradient-primary transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
                 </div>
                 <div className="mt-1 text-center text-xs text-muted-foreground">{progress}%</div>
               </div>

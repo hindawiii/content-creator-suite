@@ -27,7 +27,10 @@ async function callChain(userPrompt: string, system?: string): Promise<string> {
 }
 
 function stripQuotes(s: string): string {
-  return s.trim().replace(/^["'`«»]+|["'`«»]+$/g, "").trim();
+  return s
+    .trim()
+    .replace(/^["'`«»]+|["'`«»]+$/g, "")
+    .trim();
 }
 
 export function useSmartResize() {

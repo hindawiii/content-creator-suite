@@ -30,10 +30,23 @@ export function collectDue(now = Date.now()): DueItem[] {
   try {
     const raw = typeof localStorage !== "undefined" ? localStorage.getItem(STORE_KEY) : null;
     if (raw) {
-      const parsed = JSON.parse(raw) as { posts?: { id: string; platform: string; status: string; scheduledAt?: string; content?: string }[] };
+      const parsed = JSON.parse(raw) as {
+        posts?: {
+          id: string;
+          platform: string;
+          status: string;
+          scheduledAt?: string;
+          content?: string;
+        }[];
+      };
       (parsed.posts ?? [])
-        .filter((p) => p.status === "scheduled" && p.scheduledAt && new Date(p.scheduledAt).getTime() <= now)
-        .forEach((p) => out.push({ id: p.id, platform: p.platform, time: p.scheduledAt!, content: p.content }));
+        .filter(
+          (p) =>
+            p.status === "scheduled" && p.scheduledAt && new Date(p.scheduledAt).getTime() <= now,
+        )
+        .forEach((p) =>
+          out.push({ id: p.id, platform: p.platform, time: p.scheduledAt!, content: p.content }),
+        );
     }
   } catch {
     /* ignore corrupted store */
@@ -63,7 +76,11 @@ export function useScheduleAlerts() {
         const body = `حان وقت نشر منشورك على ${item.platform}`;
         if (getNotifPermission() === "granted") {
           try {
-            const n = new Notification("Post On — حان وقت النشر!", { body, icon: "/icon-192.png", tag: item.id });
+            const n = new Notification("Post On — حان وقت النشر!", {
+              body,
+              icon: "/icon-192.png",
+              tag: item.id,
+            });
             n.onclick = () => {
               window.focus();
               window.location.href = "/publish";

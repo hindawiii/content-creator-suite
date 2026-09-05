@@ -11,7 +11,13 @@ export interface ChatOptions {
   model?: string;
 }
 
-export async function togetherChat({ apiKey, userPrompt, system, temperature = 0.8, model }: ChatOptions): Promise<string> {
+export async function togetherChat({
+  apiKey,
+  userPrompt,
+  system,
+  temperature = 0.8,
+  model,
+}: ChatOptions): Promise<string> {
   if (!apiKey) throw new Error("missing_together_key");
   const res = await fetch(TOGETHER_URL, {
     method: "POST",

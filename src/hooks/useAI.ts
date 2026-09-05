@@ -7,12 +7,27 @@ import { geminiImage } from "@/services/gemini";
 import { puterImage } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
 import { canGenerate, consume } from "@/services/rateLimit";
-import { FALLBACK_CHAIN, findModel, routeModel, DEFAULT_TEXT_MODEL, type Task } from "@/services/models";
-import { buildHashtagPrompt, buildPostPrompt, buildRewritePrompt, buildImagePromptRequest } from "@/utils/prompts";
+import {
+  FALLBACK_CHAIN,
+  findModel,
+  routeModel,
+  DEFAULT_TEXT_MODEL,
+  type Task,
+} from "@/services/models";
+import {
+  buildHashtagPrompt,
+  buildPostPrompt,
+  buildRewritePrompt,
+  buildImagePromptRequest,
+} from "@/utils/prompts";
 import { localFallback } from "@/utils/fallbacks";
 import type { Platform, Tone, Dialect } from "@/lib/store";
 
-async function runModel(modelId: string, userPrompt: string, system: string | undefined): Promise<string> {
+async function runModel(
+  modelId: string,
+  userPrompt: string,
+  system: string | undefined,
+): Promise<string> {
   const model = findModel(modelId);
   const provider = model?.provider ?? "groq";
   if (provider === "together") {
@@ -42,7 +57,11 @@ async function callChain(
     try {
       const text = await runModel(modelId, userPrompt, system);
       settingsStore.bumpModel(modelId);
-      return { text, source: findModel(modelId)?.provider === "together" ? "together" : "groq", model: modelId };
+      return {
+        text,
+        source: findModel(modelId)?.provider === "together" ? "together" : "groq",
+        model: modelId,
+      };
     } catch (err) {
       console.warn(`model ${modelId} failed:`, err);
       if (i < chain.length - 1) toast.message("جاري التبديل إلى موديل احتياطي...");
@@ -81,9 +100,17 @@ export function usePostGenerator() {
   const [loading, setLoading] = useState(false);
 
   const generate = useCallback(
-    async (opts: { topic: string; platform: Platform; tone: Tone; audience?: string; dialect?: Dialect }): Promise<
-      { content: string; hashtags: string[]; source: "groq" | "together" | "fallback" }
-    > => {
+    async (opts: {
+      topic: string;
+      platform: Platform;
+      tone: Tone;
+      audience?: string;
+      dialect?: Dialect;
+    }): Promise<{
+      content: string;
+      hashtags: string[];
+      source: "groq" | "together" | "fallback";
+    }> => {
       if (!canGenerate("post")) {
         toast.error("تم استهلاك الحصة اليومية — قم بالترقية للخطة Pro");
         throw new Error("quota_exceeded");
@@ -94,7 +121,10 @@ export function usePostGenerator() {
         const userPrompt = buildPostPrompt(opts);
         const { text, source } = await callChain(userPrompt);
         const parsed = tryParseJson(text);
-        const result = parsed ?? { content: text.trim(), hashtags: localFallback(opts.topic, opts.tone, opts.platform).hashtags };
+        const result = parsed ?? {
+          content: text.trim(),
+          hashtags: localFallback(opts.topic, opts.tone, opts.platform).hashtags,
+        };
         consume("post");
         toast.success("تم التوليد بنجاح", { id: toastId });
         return { ...result, source };
@@ -135,7 +165,7 @@ export function useHashtags() {
       return tags;
     } catch {
       toast.error("تعذر توليد الهاشتاقات — استُخدمت قائمة محلية", { id: toastId });
-      return ["#تسويق_رقمي","#محتوى_عربي","#سوشيال_ميديا","#نمو","#إبداع"];
+      return ["#تسويق_رقمي", "#محتوى_عربي", "#سوشيال_ميديا", "#نمو", "#إبداع"];
     } finally {
       setLoading(false);
     }
@@ -143,23 +173,33 @@ export function useHashtags() {
   return { suggest, loading };
 }
 
-
 export function useRewrite() {
   const [loading, setLoading] = useState(false);
-  const run = useCallback(async (kind: "rewrite" | "shorten" | "expand" | "cta", content: string, differentTone?: string): Promise<string> => {
-    setLoading(true);
-    const toastId = toast.loading("جاري التعديل...");
-    try {
-      const { text } = await callChain(buildRewritePrompt(kind, content, differentTone), undefined, "rewrite");
-      toast.success("تم!", { id: toastId });
-      return text.trim();
-    } catch {
-      toast.error("تعذر الاتصال — تم الإبقاء على النص الأصلي", { id: toastId });
-      return content;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const run = useCallback(
+    async (
+      kind: "rewrite" | "shorten" | "expand" | "cta",
+      content: string,
+      differentTone?: string,
+    ): Promise<string> => {
+      setLoading(true);
+      const toastId = toast.loading("جاري التعديل...");
+      try {
+        const { text } = await callChain(
+          buildRewritePrompt(kind, content, differentTone),
+          undefined,
+          "rewrite",
+        );
+        toast.success("تم!", { id: toastId });
+        return text.trim();
+      } catch {
+        toast.error("تعذر الاتصال — تم الإبقاء على النص الأصلي", { id: toastId });
+        return content;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
   return { run, loading };
 }
 
@@ -183,7 +223,10 @@ async function toEnglishPrompt(prompt: string): Promise<string> {
       "You are a concise text-to-image prompt engineer. Reply with the English prompt only.",
       "translate",
     );
-    const cleaned = text.replace(/^["'\s]+|["'\s]+$/g, "").split("\n")[0].trim();
+    const cleaned = text
+      .replace(/^["'\s]+|["'\s]+$/g, "")
+      .split("\n")[0]
+      .trim();
     if (cleaned && /[a-zA-Z]/.test(cleaned)) return cleaned.slice(0, 400);
   } catch {
     // keep the original prompt if translation fails
@@ -193,68 +236,67 @@ async function toEnglishPrompt(prompt: string): Promise<string> {
 
 export function useImageGenerator() {
   const [loading, setLoading] = useState(false);
-  const generate = useCallback(
-    async (prompt: string, opts?: ImageGenOptions) => {
-      if (!canGenerate("image")) {
-        toast.error("تم استهلاك حصة الصور اليومية — قم بالترقية للخطة Pro");
-        return [];
-      }
-      const settings = settingsStore.get();
-      const provider = opts?.provider ?? settings.imageProvider ?? "pollinations";
-      const anime = opts?.anime ?? settings.animeMode;
-      setLoading(true);
-      const toastId = toast.loading("جاري تحسين الوصف وتوليد الصور...");
+  const generate = useCallback(async (prompt: string, opts?: ImageGenOptions) => {
+    if (!canGenerate("image")) {
+      toast.error("تم استهلاك حصة الصور اليومية — قم بالترقية للخطة Pro");
+      return [];
+    }
+    const settings = settingsStore.get();
+    const provider = opts?.provider ?? settings.imageProvider ?? "pollinations";
+    const anime = opts?.anime ?? settings.animeMode;
+    setLoading(true);
+    const toastId = toast.loading("جاري تحسين الوصف وتوليد الصور...");
 
-      try {
-        const finalPrompt = await toEnglishPrompt(prompt);
+    try {
+      const finalPrompt = await toEnglishPrompt(prompt);
 
-        // BYOK providers return a single image each
-        if (provider === "gemini" || provider === "puter") {
-          const styled = [finalPrompt, opts?.styleModifier, anime ? ANIME_SUFFIX : ""].filter(Boolean).join(", ");
-          try {
-            const url =
-              provider === "gemini"
-                ? await geminiImage({ apiKey: settingsStore.getGeminiKey(), prompt: styled })
-                : await puterImage(styled);
-            consume("image");
-            toast.success("تم توليد الصورة", { id: toastId });
-            return [{ url, seed: 0 }];
-          } catch (err) {
-            console.warn(`${provider} image failed:`, err);
-            toast.message("تعذر المزوّد المختار — جاري التبديل إلى Pollinations (مجاني)...");
-          }
+      // BYOK providers return a single image each
+      if (provider === "gemini" || provider === "puter") {
+        const styled = [finalPrompt, opts?.styleModifier, anime ? ANIME_SUFFIX : ""]
+          .filter(Boolean)
+          .join(", ");
+        try {
+          const url =
+            provider === "gemini"
+              ? await geminiImage({ apiKey: settingsStore.getGeminiKey(), prompt: styled })
+              : await puterImage(styled);
+          consume("image");
+          toast.success("تم توليد الصورة", { id: toastId });
+          return [{ url, seed: 0 }];
+        } catch (err) {
+          console.warn(`${provider} image failed:`, err);
+          toast.message("تعذر المزوّد المختار — جاري التبديل إلى Pollinations (مجاني)...");
         }
-
-        const batch = pollinationsBatch(finalPrompt, opts?.count ?? 4, 
-          opts?.width && opts?.height ? { width: opts.width, height: opts.height } : undefined,
-          { anime, styleModifier: opts?.styleModifier, referenceUrl: opts?.referenceUrl },
-        );
-        // Wait for the images to actually load before clearing the spinner
-        await Promise.all(
-          batch.map(
-            (b) =>
-              new Promise<void>((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve();
-                img.onerror = () => resolve();
-                img.src = b.url;
-              }),
-          ),
-        );
-        consume("image");
-        toast.success("تم توليد الصور", { id: toastId });
-        return batch;
-      } catch (err) {
-        console.warn("image generation failed:", err);
-        toast.error("تعذر توليد الصور — حاول مرة أخرى", { id: toastId });
-        return [];
-      } finally {
-        setLoading(false);
       }
-    },
-    [],
-  );
+
+      const batch = pollinationsBatch(
+        finalPrompt,
+        opts?.count ?? 4,
+        opts?.width && opts?.height ? { width: opts.width, height: opts.height } : undefined,
+        { anime, styleModifier: opts?.styleModifier, referenceUrl: opts?.referenceUrl },
+      );
+      // Wait for the images to actually load before clearing the spinner
+      await Promise.all(
+        batch.map(
+          (b) =>
+            new Promise<void>((resolve) => {
+              const img = new Image();
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+              img.src = b.url;
+            }),
+        ),
+      );
+      consume("image");
+      toast.success("تم توليد الصور", { id: toastId });
+      return batch;
+    } catch (err) {
+      console.warn("image generation failed:", err);
+      toast.error("تعذر توليد الصور — حاول مرة أخرى", { id: toastId });
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   return { generate, loading };
 }
-
-

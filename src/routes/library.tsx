@@ -11,7 +11,10 @@ export const Route = createFileRoute("/library")({
   head: () => ({
     meta: [
       { title: "Post On — مكتبة المنشورات" },
-      { name: "description", content: "كل مسوداتك ومنشوراتك المحفوظة في مكان واحد — ابحث، انسخ، أعد النشر بضغطة زر." },
+      {
+        name: "description",
+        content: "كل مسوداتك ومنشوراتك المحفوظة في مكان واحد — ابحث، انسخ، أعد النشر بضغطة زر.",
+      },
       { property: "og:title", content: "المكتبة — Post On" },
       { property: "og:description", content: "أرشيف المنشورات المحلي داخل متصفحك." },
     ],
@@ -58,7 +61,9 @@ function LibraryPage() {
         subtitle={`${items.length} منشور محفوظ محلياً في متصفحك`}
         action={
           <Link to="/write">
-            <Button><Sparkles className="h-4 w-4" /> منشور جديد</Button>
+            <Button>
+              <Sparkles className="h-4 w-4" /> منشور جديد
+            </Button>
           </Link>
         }
       />
@@ -78,7 +83,9 @@ function LibraryPage() {
             <button
               onClick={() => setPlatform("all")}
               className={`rounded-lg border px-3 py-1.5 text-xs transition ${
-                platform === "all" ? "border-accent bg-accent/10" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                platform === "all"
+                  ? "border-accent bg-accent/10"
+                  : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
               }`}
             >
               الكل
@@ -91,7 +98,9 @@ function LibraryPage() {
                   key={p}
                   onClick={() => setPlatform(p)}
                   className={`rounded-lg border px-2.5 py-1.5 text-xs transition ${
-                    active ? "border-accent bg-accent/10" : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                    active
+                      ? "border-accent bg-accent/10"
+                      : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
                   }`}
                   title={m.label}
                 >
@@ -108,10 +117,14 @@ function LibraryPage() {
           <div className="flex flex-col items-center gap-3 py-10 text-center">
             <FileText className="h-10 w-10 text-accent opacity-60" />
             <p className="text-sm text-muted-foreground">
-              {items.length === 0 ? "لا يوجد منشورات محفوظة بعد — ابدأ بتوليد منشور." : "لا توجد نتائج مطابقة."}
+              {items.length === 0
+                ? "لا يوجد منشورات محفوظة بعد — ابدأ بتوليد منشور."
+                : "لا توجد نتائج مطابقة."}
             </p>
             {items.length === 0 && (
-              <Link to="/write"><Button>كتابة منشور</Button></Link>
+              <Link to="/write">
+                <Button>كتابة منشور</Button>
+              </Link>
             )}
           </div>
         </Card>
@@ -128,31 +141,49 @@ function LibraryPage() {
                     <span className="font-semibold">{m?.label ?? p.platform}</span>
                     <span className="text-muted-foreground">·</span>
                     <span className="text-muted-foreground">{toneLabel}</span>
-                    {p.aiGenerated ? <Badge tone="accent">AI</Badge> : <Badge tone="warning">قالب</Badge>}
+                    {p.aiGenerated ? (
+                      <Badge tone="accent">AI</Badge>
+                    ) : (
+                      <Badge tone="warning">قالب</Badge>
+                    )}
                   </div>
                   <span className="text-[10px] text-muted-foreground">
-                    {new Date(p.createdAt).toLocaleDateString("ar-EG", { day: "numeric", month: "short" })}
+                    {new Date(p.createdAt).toLocaleDateString("ar-EG", {
+                      day: "numeric",
+                      month: "short",
+                    })}
                   </span>
                 </div>
 
-                <p className="mb-3 whitespace-pre-wrap text-sm leading-7 line-clamp-6">{p.content}</p>
+                <p className="mb-3 whitespace-pre-wrap text-sm leading-7 line-clamp-6">
+                  {p.content}
+                </p>
 
                 {p.hashtags && p.hashtags.length > 0 && (
                   <div className="mb-3 flex flex-wrap gap-1">
                     {p.hashtags.slice(0, 6).map((t) => (
-                      <span key={t} className="rounded-full border border-border bg-surface-elevated px-2 py-0.5 text-[10px] text-muted-foreground">
+                      <span
+                        key={t}
+                        className="rounded-full border border-border bg-surface-elevated px-2 py-0.5 text-[10px] text-muted-foreground"
+                      >
                         {t}
                       </span>
                     ))}
                     {p.hashtags.length > 6 && (
-                      <span className="text-[10px] text-muted-foreground">+{p.hashtags.length - 6}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        +{p.hashtags.length - 6}
+                      </span>
                     )}
                   </div>
                 )}
 
                 <div className="mt-auto flex flex-wrap gap-2 border-t border-border pt-3">
-                  <Button onClick={() => publish(p)}><Send className="h-4 w-4" /> نشر</Button>
-                  <Button variant="outline" onClick={() => copy(p)}><Copy className="h-4 w-4" /> نسخ</Button>
+                  <Button onClick={() => publish(p)}>
+                    <Send className="h-4 w-4" /> نشر
+                  </Button>
+                  <Button variant="outline" onClick={() => copy(p)}>
+                    <Copy className="h-4 w-4" /> نسخ
+                  </Button>
                   <Button variant="outline" onClick={() => remove(p.id)}>
                     <Trash2 className="h-4 w-4" /> حذف
                   </Button>

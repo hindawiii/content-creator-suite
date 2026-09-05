@@ -95,7 +95,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Post On — مساعد المحتوى بالذكاء" },
-      { name: "description", content: "Post On: مساعد محتوى بالذكاء الاصطناعي لصناع المحتوى والمسوقين — اكتب، صمّم، وجدول محتواك عبر كل المنصات." },
+      {
+        name: "description",
+        content:
+          "Post On: مساعد محتوى بالذكاء الاصطناعي لصناع المحتوى والمسوقين — اكتب، صمّم، وجدول محتواك عبر كل المنصات.",
+      },
       { property: "og:title", content: "Post On — مساعد المحتوى بالذكاء" },
       { property: "og:description", content: "اكتب، صمّم، وجدول محتواك عبر كل المنصات." },
       { property: "og:type", content: "website" },
@@ -109,7 +113,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Almarai:wght@400;700;800&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Almarai:wght@400;700;800&display=swap",
+      },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },

@@ -10,7 +10,11 @@ export function emitKeysChanged() {
 }
 
 export function useKeysStatus() {
-  const [state, setState] = useState<{ hasGroq: boolean; hasTogether: boolean; health: KeysHealth }>({
+  const [state, setState] = useState<{
+    hasGroq: boolean;
+    hasTogether: boolean;
+    health: KeysHealth;
+  }>({
     hasGroq: false,
     hasTogether: false,
     health: "none",
@@ -19,7 +23,8 @@ export function useKeysStatus() {
   const refresh = useCallback(() => {
     const groq = settingsStore.getGroqKey();
     const together = settingsStore.getTogetherKey();
-    const savedHealth = (typeof localStorage !== "undefined" && localStorage.getItem("poston_keys_health")) as KeysHealth | null;
+    const savedHealth = (typeof localStorage !== "undefined" &&
+      localStorage.getItem("poston_keys_health")) as KeysHealth | null;
     const hasAny = Boolean(groq || together);
     setState({
       hasGroq: Boolean(groq),

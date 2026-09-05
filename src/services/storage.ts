@@ -120,7 +120,11 @@ export const postsStore = {
     write(KEYS.posts, [rec, ...postsStore.list()]);
     return rec;
   },
-  remove: (id: string) => write(KEYS.posts, postsStore.list().filter((p) => p.id !== id)),
+  remove: (id: string) =>
+    write(
+      KEYS.posts,
+      postsStore.list().filter((p) => p.id !== id),
+    ),
 };
 
 // Images
@@ -131,7 +135,11 @@ export const imagesStore = {
     write(KEYS.images, [rec, ...imagesStore.list()]);
     return rec;
   },
-  remove: (id: string) => write(KEYS.images, imagesStore.list().filter((i) => i.id !== id)),
+  remove: (id: string) =>
+    write(
+      KEYS.images,
+      imagesStore.list().filter((i) => i.id !== id),
+    ),
 };
 
 // Schedules
@@ -142,7 +150,11 @@ export const schedulesStore = {
     write(KEYS.schedules, [rec, ...schedulesStore.list()]);
     return rec;
   },
-  remove: (id: string) => write(KEYS.schedules, schedulesStore.list().filter((s) => s.id !== id)),
+  remove: (id: string) =>
+    write(
+      KEYS.schedules,
+      schedulesStore.list().filter((s) => s.id !== id),
+    ),
 };
 
 // Settings
@@ -160,7 +172,8 @@ export const settingsStore = {
   getGeminiKey: (): string => deobfuscate(settingsStore.get().geminiKey),
   setGeminiKey: (raw: string) => settingsStore.set({ geminiKey: raw ? obfuscate(raw) : "" }),
   getPollinationsKey: (): string => deobfuscate(settingsStore.get().pollinationsKey),
-  setPollinationsKey: (raw: string) => settingsStore.set({ pollinationsKey: raw ? obfuscate(raw) : "" }),
+  setPollinationsKey: (raw: string) =>
+    settingsStore.set({ pollinationsKey: raw ? obfuscate(raw) : "" }),
   bumpModel: (model: string) => {
     const usage = { ...settingsStore.get().modelUsage };
     usage[model] = (usage[model] ?? 0) + 1;
@@ -170,7 +183,10 @@ export const settingsStore = {
 
 // Analytics
 export const analyticsStore = {
-  get: (): AnalyticsRecord => ({ ...DEFAULT_ANALYTICS, ...read(KEYS.analytics, DEFAULT_ANALYTICS) }),
+  get: (): AnalyticsRecord => ({
+    ...DEFAULT_ANALYTICS,
+    ...read(KEYS.analytics, DEFAULT_ANALYTICS),
+  }),
   bumpPost: (platform: string) => {
     const a = analyticsStore.get();
     a.totalPosts += 1;
@@ -206,11 +222,17 @@ export const publishesStore = {
     write(KEYS.publishes, [rec, ...publishesStore.list()]);
     return rec;
   },
-  remove: (id: string) => write(KEYS.publishes, publishesStore.list().filter((r) => r.id !== id)),
+  remove: (id: string) =>
+    write(
+      KEYS.publishes,
+      publishesStore.list().filter((r) => r.id !== id),
+    ),
 };
 
 // Preview draft (content passed to /publish)
-export function setPreviewDraft(d: Omit<PreviewDraft, "id" | "createdAt"> & { id?: string }): PreviewDraft {
+export function setPreviewDraft(
+  d: Omit<PreviewDraft, "id" | "createdAt"> & { id?: string },
+): PreviewDraft {
   const rec: PreviewDraft = {
     id: d.id ?? crypto.randomUUID(),
     text: d.text,
@@ -227,4 +249,3 @@ export function getPreviewDraft(): PreviewDraft | null {
 export function clearPreviewDraft() {
   if (typeof localStorage !== "undefined") localStorage.removeItem(KEYS.previewDraft);
 }
-
