@@ -76,6 +76,7 @@ function fingerprint(key: string): string {
 function SettingsPage() {
   const { connectedAccounts, toggleAccount } = useStore();
   const status = useKeysStatus();
+  const importRef = useRef<HTMLInputElement>(null);
   const [groqKey, setGroqKey] = useState("");
   const [togetherKey, setTogetherKey] = useState("");
   const [useOwnKeys, setUseOwnKeys] = useState(true);
