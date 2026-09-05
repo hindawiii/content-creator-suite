@@ -21,9 +21,15 @@ import {
   Loader2,
   AlertTriangle,
   CircleAlert,
+  Upload,
 } from "lucide-react";
 import { APIKeyInput } from "@/components/APIKeyInput";
-import { settingsStore, exportAllStorage, resetAllStorage } from "@/services/storage";
+import {
+  settingsStore,
+  exportAllStorage,
+  importAllStorage,
+  resetAllStorage,
+} from "@/services/storage";
 import { toast } from "sonner";
 
 import { useKeysStatus, setKeysHealth, emitKeysChanged } from "@/hooks/useKeysStatus";
