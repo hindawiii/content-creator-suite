@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Badge, Label, Select } from "@/components/ui";
 import { TEXT_MODELS, BADGE_LABEL, DEFAULT_TEXT_MODEL } from "@/services/models";
