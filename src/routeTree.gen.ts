@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WriteRouteImport } from './routes/write'
 import { Route as VideoRouteImport } from './routes/video'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as PublishRouteImport } from './routes/publish'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as ImageRouteImport } from './routes/image'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
@@ -29,6 +31,11 @@ const WriteRoute = WriteRouteImport.update({
 const VideoRoute = VideoRouteImport.update({
   id: '/video',
   path: '/video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -49,6 +56,11 @@ const ScheduleRoute = ScheduleRouteImport.update({
 const PublishRoute = PublishRouteImport.update({
   id: '/publish',
   path: '/publish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibraryRoute = LibraryRouteImport.update({
@@ -83,10 +95,12 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AnalyticsRoute
   '/image': typeof ImageRoute
   '/library': typeof LibraryRoute
+  '/privacy': typeof PrivacyRoute
   '/publish': typeof PublishRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/video': typeof VideoRoute
   '/write': typeof WriteRoute
 }
@@ -96,10 +110,12 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/image': typeof ImageRoute
   '/library': typeof LibraryRoute
+  '/privacy': typeof PrivacyRoute
   '/publish': typeof PublishRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/video': typeof VideoRoute
   '/write': typeof WriteRoute
 }
@@ -110,10 +126,12 @@ export interface FileRoutesById {
   '/analytics': typeof AnalyticsRoute
   '/image': typeof ImageRoute
   '/library': typeof LibraryRoute
+  '/privacy': typeof PrivacyRoute
   '/publish': typeof PublishRoute
   '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/video': typeof VideoRoute
   '/write': typeof WriteRoute
 }
@@ -125,10 +143,12 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/image'
     | '/library'
+    | '/privacy'
     | '/publish'
     | '/schedule'
     | '/settings'
     | '/sitemap.xml'
+    | '/terms'
     | '/video'
     | '/write'
   fileRoutesByTo: FileRoutesByTo
@@ -138,10 +158,12 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/image'
     | '/library'
+    | '/privacy'
     | '/publish'
     | '/schedule'
     | '/settings'
     | '/sitemap.xml'
+    | '/terms'
     | '/video'
     | '/write'
   id:
@@ -151,10 +173,12 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/image'
     | '/library'
+    | '/privacy'
     | '/publish'
     | '/schedule'
     | '/settings'
     | '/sitemap.xml'
+    | '/terms'
     | '/video'
     | '/write'
   fileRoutesById: FileRoutesById
@@ -165,10 +189,12 @@ export interface RootRouteChildren {
   AnalyticsRoute: typeof AnalyticsRoute
   ImageRoute: typeof ImageRoute
   LibraryRoute: typeof LibraryRoute
+  PrivacyRoute: typeof PrivacyRoute
   PublishRoute: typeof PublishRoute
   ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   VideoRoute: typeof VideoRoute
   WriteRoute: typeof WriteRoute
 }
@@ -187,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/video'
       fullPath: '/video'
       preLoaderRoute: typeof VideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -215,6 +248,13 @@ declare module '@tanstack/react-router' {
       path: '/publish'
       fullPath: '/publish'
       preLoaderRoute: typeof PublishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library': {
@@ -261,10 +301,12 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyticsRoute: AnalyticsRoute,
   ImageRoute: ImageRoute,
   LibraryRoute: LibraryRoute,
+  PrivacyRoute: PrivacyRoute,
   PublishRoute: PublishRoute,
   ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   VideoRoute: VideoRoute,
   WriteRoute: WriteRoute,
 }
