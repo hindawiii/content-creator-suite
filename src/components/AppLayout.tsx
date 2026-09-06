@@ -92,12 +92,23 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             />
           ))}
         </nav>
-        <div className="absolute inset-x-3 bottom-4 rounded-xl border border-border bg-surface-elevated p-4">
-          <div className="text-xs text-muted-foreground">الخطة الحالية</div>
-          <div className="mt-1 font-bold">مجانية</div>
-          <Link to="/settings" className="mt-2 inline-block text-xs text-accent hover:underline">
-            ترقية الآن ←
-          </Link>
+        <div className="absolute inset-x-3 bottom-4">
+          <div className="rounded-xl border border-border bg-surface-elevated p-4">
+            <div className="text-xs text-muted-foreground">الخطة الحالية</div>
+            <div className="mt-1 font-bold">مجانية</div>
+            <Link to="/settings" className="mt-2 inline-block text-xs text-accent hover:underline">
+              ترقية الآن ←
+            </Link>
+          </div>
+          <div className="mt-3 flex justify-center gap-3 text-[11px] text-muted-foreground">
+            <Link to="/privacy" className="hover:text-foreground hover:underline">
+              الخصوصية
+            </Link>
+            <span>·</span>
+            <Link to="/terms" className="hover:text-foreground hover:underline">
+              الشروط
+            </Link>
+          </div>
         </div>
       </aside>
 
