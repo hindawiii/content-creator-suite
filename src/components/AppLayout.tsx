@@ -10,10 +10,13 @@ import {
   Send,
   Library,
   Video,
+  Ellipsis,
 } from "lucide-react";
-import { type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
 import { useScheduleAlerts } from "@/hooks/useScheduleAlerts";
+import { Button } from "@/components/ui";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
@@ -43,21 +46,26 @@ function NavItem({
   return (
     <Link
       to={to}
+      aria-current={active ? "page" : undefined}
       className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
         active
-          ? "gradient-primary text-white shadow-[var(--shadow-glow)]"
+          ? "gradient-primary text-primary-foreground shadow-[var(--shadow-glow)]"
           : "text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
       }`}
     >
       <Icon className="h-5 w-5" />
       <span className="flex-1">{label}</span>
-      {dot && <span className={`h-2 w-2 rounded-full ${dot} shadow-[0_0_6px_currentColor]`} />}
+      {dot && <span className={`h-2 w-2 rounded-full ${dot} `} />}
     </Link>
   );
 }
 
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [moreOpen, setMoreOpen] = useState(false);
+  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/publish"].includes(n.to));
+  const moreNav = nav.filter((n) => !primaryNav.some((item) => item.to === n.to));
+  const moreActive = moreNav.some((n) => pathname === n.to) || ["/privacy", "/terms"].includes(pathname);
   const keys = useKeysStatus();
   const dot =
     keys.health === "ok"
@@ -70,14 +78,14 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   return (
     <div dir="rtl" className="min-h-screen gradient-mesh">
       {/* Sidebar desktop */}
-      <aside className="fixed inset-y-0 right-0 hidden w-64 border-l border-border bg-surface/60 backdrop-blur-xl md:block">
+      <aside className="fixed inset-y-0 right-0 hidden w-64 flex-col overflow-y-auto border-l border-border bg-surface md:flex">
         <div className="flex h-16 items-center gap-2 px-6">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-primary">
-            <Sparkles className="h-5 w-5 text-white" />
+            <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
             <div className="text-lg font-bold">Post On</div>
-            <div className="text-[10px] text-muted-foreground">مساعد المحتوى بالذكاء</div>
+            <div className="text-sm text-muted-foreground">مساعد المحتوى بالذكاء</div>
           </div>
         </div>
         <nav className="mt-4 space-y-1 px-3">
@@ -92,15 +100,15 @@ export function AppLayout({ children }: { children?: ReactNode }) {
             />
           ))}
         </nav>
-        <div className="absolute inset-x-3 bottom-4">
+        <div className="mx-3 mt-auto pb-4 pt-8">
           <div className="rounded-xl border border-border bg-surface-elevated p-4">
-            <div className="text-xs text-muted-foreground">الخطة الحالية</div>
+            <div className="text-sm text-muted-foreground">الخطة الحالية</div>
             <div className="mt-1 font-bold">مجانية</div>
-            <Link to="/settings" className="mt-2 inline-block text-xs text-accent hover:underline">
+            <Link to="/settings" className="mt-2 inline-block text-sm text-accent hover:underline">
               ترقية الآن ←
             </Link>
           </div>
-          <div className="mt-3 flex justify-center gap-3 text-[11px] text-muted-foreground">
+          <div className="mt-3 flex justify-center gap-3 text-sm text-muted-foreground">
             <Link to="/privacy" className="hover:text-foreground hover:underline">
               الخصوصية
             </Link>
@@ -113,10 +121,10 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       </aside>
 
       {/* Mobile header */}
-      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl md:hidden">
+      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background px-4 md:hidden">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
-            <Sparkles className="h-4 w-4 text-white" />
+            <Sparkles className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="font-bold">Post On</span>
         </div>
@@ -131,24 +139,41 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       </main>
 
       {/* Bottom nav mobile */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface/90 backdrop-blur-xl md:hidden">
-        <div className="grid grid-cols-9">
-          {nav.map((n) => {
+      <nav aria-label="القائمة الرئيسية" className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
+        <div className="grid grid-cols-5">
+          {primaryNav.map((n) => {
             const active = pathname === n.to;
             const Icon = n.icon;
             return (
               <Link
                 key={n.to}
                 to={n.to}
-                className="flex flex-col items-center gap-1 py-2.5 text-[10px]"
+                aria-current={active ? "page" : undefined}
+                className="flex min-w-0 flex-col items-center gap-1 py-2.5 text-sm font-semibold"
               >
                 <Icon className={`h-5 w-5 ${active ? "text-accent" : "text-muted-foreground"}`} />
                 <span className={active ? "text-accent" : "text-muted-foreground"}>{n.label}</span>
               </Link>
             );
           })}
+          <Button variant="ghost" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen} className={`flex min-h-[72px] flex-col gap-1 rounded-none px-1 py-2.5 ${moreActive ? "!text-accent" : ""}`}>
+            <Ellipsis className="h-5 w-5" />
+            <span>المزيد</span>
+          </Button>
         </div>
       </nav>
+      <Dialog open={moreOpen} onOpenChange={setMoreOpen}>
+        <DialogContent dir="rtl" aria-describedby={undefined} className="max-h-[85dvh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-lg p-5">
+          <DialogTitle className="mb-2 text-right">المزيد</DialogTitle>
+          <nav aria-label="أقسام إضافية" className="grid gap-2" onClick={() => setMoreOpen(false)}>
+            {moreNav.map((n) => <NavItem key={n.to} to={n.to} label={n.label} Icon={n.icon} active={pathname === n.to} dot={n.to === "/settings" ? dot : undefined} />)}
+          </nav>
+          <div className="flex justify-center gap-6 border-t border-border pt-4 text-sm">
+            <Link to="/privacy" onClick={() => setMoreOpen(false)} className="text-muted-foreground hover:text-foreground">الخصوصية</Link>
+            <Link to="/terms" onClick={() => setMoreOpen(false)} className="text-muted-foreground hover:text-foreground">الشروط</Link>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

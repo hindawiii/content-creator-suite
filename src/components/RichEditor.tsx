@@ -28,7 +28,7 @@ function transform(s: string, map: Record<string, string>) {
 }
 
 export const ARABIC_FONTS = [
-  { id: "cairo", label: "Cairo — عصري", css: '"Cairo", sans-serif' },
+  { id: "cairo", label: "Cairo — عصري", css: '"Cairo Variable", "Tajawal", sans-serif' },
   { id: "tajawal", label: "Tajawal — نظيف", css: '"Tajawal", sans-serif' },
   { id: "ibm", label: "IBM Plex — تقني", css: '"IBM Plex Sans Arabic", sans-serif' },
   { id: "almarai", label: "Almarai — سميك", css: '"Almarai", sans-serif' },
@@ -170,7 +170,7 @@ export function RichEditor({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const currentFont = ARABIC_FONTS.find((f) => f.id === font)!;
+  const currentFont = ARABIC_FONTS.find((f) => f.id === font) ?? ARABIC_FONTS[0];
 
   const withSelection = (fn: (sel: string, before: string, after: string) => string) => {
     const el = ref.current;
@@ -205,7 +205,7 @@ export function RichEditor({
               setFontOpen((v) => !v);
               setEmojiOpen(false);
             }}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs hover:bg-surface"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm hover:bg-surface"
             title="الخط"
           >
             <Type className="h-3.5 w-3.5" />
@@ -234,7 +234,7 @@ export function RichEditor({
         <button
           type="button"
           onClick={applyBold}
-          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs hover:bg-surface"
+          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm hover:bg-surface"
           title="عريض (اختر النص أولاً)"
         >
           <Bold className="h-3.5 w-3.5" /> عريض
@@ -242,7 +242,7 @@ export function RichEditor({
         <button
           type="button"
           onClick={applyItalic}
-          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs hover:bg-surface"
+          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm hover:bg-surface"
           title="مائل (اختر النص أولاً)"
         >
           <Italic className="h-3.5 w-3.5" /> مائل
@@ -255,7 +255,7 @@ export function RichEditor({
               setEmojiOpen((v) => !v);
               setFontOpen(false);
             }}
-            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs hover:bg-surface"
+            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm hover:bg-surface"
             title="إيموجي"
           >
             <Smile className="h-3.5 w-3.5" /> إيموجي
@@ -264,7 +264,7 @@ export function RichEditor({
             <div className="absolute z-30 mt-1 w-72 rounded-xl border border-border bg-surface-elevated p-2 shadow-lg">
               {EMOJI_GROUPS.map((g) => (
                 <div key={g.label} className="mb-2 last:mb-0">
-                  <div className="mb-1 text-[10px] font-semibold text-muted-foreground">
+                  <div className="mb-1 text-sm font-semibold text-muted-foreground">
                     {g.label}
                   </div>
                   <div className="grid grid-cols-8 gap-0.5">
@@ -285,7 +285,7 @@ export function RichEditor({
           )}
         </div>
 
-        <span className="mr-auto text-[10px] text-muted-foreground">
+        <span className="mr-auto text-sm text-muted-foreground">
           {value.length.toLocaleString()} حرف
         </span>
       </div>
@@ -298,7 +298,7 @@ export function RichEditor({
         placeholder={placeholder}
         dir="auto"
         style={{ fontFamily: currentFont.css }}
-        className="w-full rounded-xl border border-border bg-input px-4 py-3 text-[15px] leading-[1.9] outline-none transition placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent/30"
+        className="w-full rounded-xl border border-border bg-input px-4 py-3 text-base leading-[1.9] outline-none transition placeholder:text-muted-foreground focus:border-accent focus:ring-2 focus:ring-accent/30"
       />
     </div>
   );

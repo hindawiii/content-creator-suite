@@ -17,6 +17,8 @@ export const Route = createFileRoute("/library")({
       },
       { property: "og:title", content: "المكتبة — Post On" },
       { property: "og:description", content: "أرشيف المنشورات المحلي داخل متصفحك." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: LibraryPage,
@@ -82,7 +84,7 @@ function LibraryPage() {
           <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setPlatform("all")}
-              className={`rounded-lg border px-3 py-1.5 text-xs transition ${
+              className={`rounded-lg border px-3 py-1.5 text-sm transition ${
                 platform === "all"
                   ? "border-accent bg-accent/10"
                   : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
@@ -97,7 +99,7 @@ function LibraryPage() {
                 <button
                   key={p}
                   onClick={() => setPlatform(p)}
-                  className={`rounded-lg border px-2.5 py-1.5 text-xs transition ${
+                  className={`rounded-lg border px-2.5 py-1.5 text-sm transition ${
                     active
                       ? "border-accent bg-accent/10"
                       : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
@@ -136,7 +138,7 @@ function LibraryPage() {
             return (
               <Card key={p.id} className="flex flex-col animate-in-up">
                 <div className="mb-2 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-2 text-sm">
                     <span className="text-lg">{m?.emoji ?? "📝"}</span>
                     <span className="font-semibold">{m?.label ?? p.platform}</span>
                     <span className="text-muted-foreground">·</span>
@@ -147,7 +149,7 @@ function LibraryPage() {
                       <Badge tone="warning">قالب</Badge>
                     )}
                   </div>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-sm text-muted-foreground">
                     {new Date(p.createdAt).toLocaleDateString("ar-EG", {
                       day: "numeric",
                       month: "short",
@@ -164,13 +166,13 @@ function LibraryPage() {
                     {p.hashtags.slice(0, 6).map((t) => (
                       <span
                         key={t}
-                        className="rounded-full border border-border bg-surface-elevated px-2 py-0.5 text-[10px] text-muted-foreground"
+                        className="rounded-full border border-border bg-surface-elevated px-2 py-0.5 text-sm text-muted-foreground"
                       >
                         {t}
                       </span>
                     ))}
                     {p.hashtags.length > 6 && (
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         +{p.hashtags.length - 6}
                       </span>
                     )}

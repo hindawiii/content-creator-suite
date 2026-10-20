@@ -64,21 +64,17 @@ function Stat({
 }) {
   return (
     <Card className="relative overflow-hidden">
-      <div
-        className="absolute -left-6 -top-6 h-24 w-24 rounded-full opacity-20 blur-2xl"
-        style={{ background: tone }}
-      />
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
         <div
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: `${tone}22`, color: tone }}
+          style={{ background: `color-mix(in oklab, ${tone} 15%, transparent)`, color: tone }}
         >
           <Icon className="h-5 w-5" />
         </div>
         <div className="min-w-0">
-          <div className="text-xs text-muted-foreground">{label}</div>
+          <div className="text-sm text-muted-foreground">{label}</div>
           <div className="text-2xl font-bold">{value}</div>
-          {hint && <div className="truncate text-[10px] text-muted-foreground">{hint}</div>}
+          {hint && <div className="truncate text-sm text-muted-foreground">{hint}</div>}
         </div>
       </div>
     </Card>
@@ -168,15 +164,15 @@ export function Dashboard() {
 
       {keys.health !== "ok" && (
         <Card className="mb-4 !p-4 border-warning/40">
-          <div className="flex items-start gap-3">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:flex">
             <KeyRound className="mt-0.5 h-5 w-5 text-warning" />
-            <div className="flex-1 text-sm">
+            <div className="min-w-0 text-sm">
               <div className="font-semibold">فعّل مفاتيح الذكاء الاصطناعي</div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-sm text-muted-foreground">
                 أضف مفتاح Groq أو Together لتوليد المنشورات والصور بجودة عالية.
               </div>
             </div>
-            <Link to="/settings">
+            <Link to="/settings" className="col-start-2 sm:shrink-0">
               <Button variant="outline">الإعدادات</Button>
             </Link>
           </div>
@@ -203,22 +199,22 @@ export function Dashboard() {
           icon={FileText}
           label="إجمالي المنشورات"
           value={totalPosts}
-          tone="#e94560"
+          tone="var(--primary)"
           hint={`${lib.length} في المكتبة`}
         />
-        <Stat icon={ImageIcon} label="الصور المولّدة" value={totalImages} tone="#a855f7" />
+        <Stat icon={ImageIcon} label="الصور المولّدة" value={totalImages} tone="var(--accent-2)" />
         <Stat
           icon={CalendarClock}
           label="مجدولة"
           value={scheduled.length}
-          tone="#3b82f6"
+          tone="var(--warning)"
           hint={missed.length ? `${missed.length} فائتة` : undefined}
         />
         <Stat
           icon={Send}
           label="نُشرت اليوم"
           value={publishedToday}
-          tone="#22c55e"
+          tone="var(--success)"
           hint={`${publishes.length} إجمالاً`}
         />
       </div>
@@ -233,11 +229,11 @@ export function Dashboard() {
           <Card className="group h-full cursor-pointer transition hover:border-accent">
             <div className="flex items-center gap-4">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl gradient-primary">
-                <PenSquare className="h-6 w-6 text-white" />
+                <PenSquare className="h-6 w-6 text-primary-foreground" />
               </div>
               <div className="flex-1">
                 <div className="font-bold">اكتب منشوراً بالذكاء الاصطناعي</div>
-                <div className="mt-0.5 text-xs text-muted-foreground">
+                <div className="mt-0.5 text-sm text-muted-foreground">
                   اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني
                 </div>
               </div>
@@ -253,7 +249,7 @@ export function Dashboard() {
               </div>
               <div>
                 <div className="font-bold">صمّم صورة</div>
-                <div className="text-xs text-muted-foreground">توليد صور بأبعاد مختلفة</div>
+                <div className="text-sm text-muted-foreground">توليد صور بأبعاد مختلفة</div>
               </div>
             </div>
           </Card>
@@ -264,19 +260,19 @@ export function Dashboard() {
         <Link to="/publish">
           <Card className="!p-4 text-center transition hover:border-accent">
             <Send className="mx-auto h-5 w-5 text-accent" />
-            <div className="mt-1.5 text-xs font-semibold">نشر</div>
+            <div className="mt-1.5 text-sm font-semibold">نشر</div>
           </Card>
         </Link>
         <Link to="/library">
           <Card className="!p-4 text-center transition hover:border-accent">
             <Library className="mx-auto h-5 w-5 text-accent-2" />
-            <div className="mt-1.5 text-xs font-semibold">المكتبة</div>
+            <div className="mt-1.5 text-sm font-semibold">المكتبة</div>
           </Card>
         </Link>
         <Link to="/analytics">
           <Card className="!p-4 text-center transition hover:border-accent">
             <BarChart3 className="mx-auto h-5 w-5 text-success" />
-            <div className="mt-1.5 text-xs font-semibold">تحليلات</div>
+            <div className="mt-1.5 text-sm font-semibold">تحليلات</div>
           </Card>
         </Link>
       </div>
@@ -337,7 +333,7 @@ export function Dashboard() {
             {recent.map((p) => {
               const meta = PLATFORM_META[p.platform as keyof typeof PLATFORM_META] ?? {
                 label: p.platform,
-                color: "#888",
+                color: "var(--muted-foreground)",
                 emoji: "📝",
               };
               return (
@@ -367,7 +363,7 @@ export function Dashboard() {
                               ? "مجدول"
                               : "مسودة"}
                         </Badge>
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-sm text-muted-foreground">
                           {timeAgo(p.createdAt)}
                         </span>
                       </div>

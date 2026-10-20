@@ -76,7 +76,7 @@ function AdminPage() {
             onChange={(e) => setPwd(e.target.value)}
             placeholder="••••••••"
           />
-          {err && <div className="mt-2 text-xs text-destructive">{err}</div>}
+          {err && <div className="mt-2 text-sm text-destructive">{err}</div>}
           <Button
             className="mt-4 w-full"
             onClick={() => {
@@ -88,7 +88,7 @@ function AdminPage() {
           >
             <ShieldCheck className="h-4 w-4" /> دخول
           </Button>
-          <div className="mt-3 text-[11px] text-muted-foreground">
+          <div className="mt-3 text-sm text-muted-foreground">
             تُضبط عبر متغيّر البيئة <code>VITE_ADMIN_PASSWORD</code>.
           </div>
         </Card>
@@ -113,7 +113,7 @@ function AdminPage() {
       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3">
         {cards.map((c) => (
           <Card key={c.label} className="!p-4">
-            <div className="text-xs text-muted-foreground">{c.label}</div>
+            <div className="text-sm text-muted-foreground">{c.label}</div>
             <div className="mt-1 text-2xl font-bold">{c.value}</div>
           </Card>
         ))}
@@ -128,14 +128,14 @@ function AdminPage() {
           <div className="space-y-2">
             {s.usage.map(([id, count]) => (
               <div key={id} className="flex items-center gap-3">
-                <div className="w-40 shrink-0 text-xs">{findModel(id)?.label ?? id}</div>
+                <div className="w-40 shrink-0 text-sm">{findModel(id)?.label ?? id}</div>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-elevated">
                   <div
                     className="h-full gradient-primary"
                     style={{ width: `${(count / s.totalCalls) * 100}%` }}
                   />
                 </div>
-                <div className="w-10 text-left text-xs text-muted-foreground">{count}</div>
+                <div className="w-10 text-left text-sm text-muted-foreground">{count}</div>
               </div>
             ))}
           </div>
@@ -161,7 +161,7 @@ function AdminPage() {
             {s.pollen ? "رصيد Pollen: مفتاح مضاف" : "رصيد Pollen: 5 مجانية فقط"}
           </Badge>
         </div>
-        <div className="mt-3 text-[11px] text-muted-foreground">
+        <div className="mt-3 text-sm text-muted-foreground">
           التطبيق يعمل بالكامل في المتصفح — لا يوجد خادم يجمع بيانات مستخدمين، لذا الإحصاءات محلية
           لهذا الجهاز.
         </div>

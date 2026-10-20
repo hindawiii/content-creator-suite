@@ -32,6 +32,8 @@ export const Route = createFileRoute("/schedule")({
       { name: "description", content: "خطط لمنشوراتك ونظّم تقويم المحتوى بسهولة." },
       { property: "og:title", content: "جدولة المحتوى — Post On" },
       { property: "og:description", content: "تقويم شهري لإدارة كل منشوراتك المجدولة." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SchedulePage,
@@ -128,7 +130,7 @@ function SchedulePage() {
           )}
         </div>
         {missedCount > 0 && (
-          <p className="mt-2 text-xs text-warning">
+          <p className="mt-2 text-sm text-warning">
             ⏰ لديك {missedCount} منشوراً حان وقته ولم يُنشر بعد — راجع القائمة أدناه.
           </p>
         )}
@@ -152,7 +154,7 @@ function SchedulePage() {
             <ChevronLeft className="h-4 w-4" />
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-1 text-center text-[11px] text-muted-foreground">
+        <div className="grid grid-cols-7 gap-1 text-center text-sm text-muted-foreground">
           {dow.map((d) => (
             <div key={d} className="py-1">
               {d}
@@ -168,7 +170,7 @@ function SchedulePage() {
             return (
               <div
                 key={i}
-                className={`min-h-[72px] rounded-lg border p-1.5 text-xs ${
+                className={`min-h-[72px] rounded-lg border p-1.5 text-sm ${
                   isToday ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"
                 }`}
               >
@@ -181,14 +183,14 @@ function SchedulePage() {
                   {items.slice(0, 2).map((p) => (
                     <div
                       key={p.id}
-                      className="truncate rounded px-1 py-0.5 text-[10px]"
+                      className="truncate rounded px-1 py-0.5 text-sm"
                       style={{ background: `${PLATFORM_META[p.platform].color}33` }}
                     >
                       {PLATFORM_META[p.platform].emoji} {p.content.slice(0, 20)}
                     </div>
                   ))}
                   {items.length > 2 && (
-                    <div className="text-[9px] text-muted-foreground">+{items.length - 2}</div>
+                    <div className="text-sm text-muted-foreground">+{items.length - 2}</div>
                   )}
                 </div>
               </div>
@@ -227,12 +229,12 @@ function SchedulePage() {
                           {d.toLocaleString("ar", { dateStyle: "medium", timeStyle: "short" })}
                         </Badge>
                         {isMissed && (
-                          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">
+                          <span className="rounded-full bg-warning/15 px-2 py-0.5 text-sm font-semibold text-warning">
                             حان وقته
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{p.content}</p>
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{p.content}</p>
                     </div>
                     <div className="flex items-center gap-1">
                       {isMissed && (
@@ -261,7 +263,7 @@ function SchedulePage() {
 
       {open && (
         <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-overlay/60 p-4 backdrop-blur-sm"
           onClick={() => setOpen(false)}
         >
           <div

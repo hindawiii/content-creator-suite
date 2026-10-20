@@ -48,7 +48,7 @@ export function SmartResizeModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in-up"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-overlay/60 p-4 backdrop-blur-sm animate-in-up"
       onClick={onClose}
     >
       <div
@@ -69,8 +69,8 @@ export function SmartResizeModal({
         <div className="grid gap-4 p-5 md:grid-cols-2">
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-semibold text-muted-foreground">الأصلي</span>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-sm font-semibold text-muted-foreground">الأصلي</span>
+              <span className="text-sm text-muted-foreground">
                 {origLen}/{limit}
               </span>
             </div>
@@ -81,13 +81,13 @@ export function SmartResizeModal({
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-semibold text-accent">
+              <span className="text-sm font-semibold text-accent">
                 {mode === "shorten" ? "المختصر ✨" : "الموسّع ✨"}
               </span>
               <div className="flex items-center gap-2">
                 {edited && <Badge tone={badgeMap[s].tone}>{badgeMap[s].label}</Badge>}
                 <span
-                  className={`text-[11px] ${newLen > limit ? "text-destructive" : "text-muted-foreground"}`}
+                  className={`text-sm ${newLen > limit ? "text-destructive" : "text-muted-foreground"}`}
                 >
                   {newLen}/{limit}
                 </span>

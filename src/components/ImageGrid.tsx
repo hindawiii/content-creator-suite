@@ -26,7 +26,7 @@ export function ImageGrid({ images }: { images: GridImage[] }) {
               className="aspect-square w-full object-cover transition group-hover:scale-105"
               loading="lazy"
             />
-            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/50 px-2 py-1 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
+            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-overlay/50 px-2 py-1 text-sm text-on-overlay opacity-0 transition group-hover:opacity-100">
               <span>seed {img.seed}</span>
               <span>معاينة</span>
             </div>
@@ -36,7 +36,7 @@ export function ImageGrid({ images }: { images: GridImage[] }) {
 
       {preview && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-overlay/80 p-4"
           onClick={() => setPreview(null)}
         >
           <div className="relative max-h-[90vh] max-w-3xl" onClick={(e) => e.stopPropagation()}>
