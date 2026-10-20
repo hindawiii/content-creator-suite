@@ -128,7 +128,7 @@ function VideoPage() {
             <Badge tone={hasKey ? "success" : "warning"}>
               {hasKey ? "مفتاح Pollinations مضاف" : "يحتاج رصيد"}
             </Badge>
-            <Link to="/settings" className="text-xs text-accent underline">
+            <Link to="/settings" className="text-sm text-accent underline">
               إضافة المفاتيح
             </Link>
           </div>
@@ -201,7 +201,7 @@ function VideoPage() {
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-                <div className="mt-1 text-center text-xs text-muted-foreground">{progress}%</div>
+                <div className="mt-1 text-center text-sm text-muted-foreground">{progress}%</div>
               </div>
             )}
           </div>

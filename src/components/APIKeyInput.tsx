@@ -36,7 +36,7 @@ export function APIKeyInput({
           {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
       </div>
-      {hint && <div className="mt-1 text-[11px] text-muted-foreground">{hint}</div>}
+      {hint && <div className="mt-1 text-sm text-muted-foreground">{hint}</div>}
     </div>
   );
 }

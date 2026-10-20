@@ -10,7 +10,7 @@ export function RateLimitBar({ kind = "post" }: { kind?: "post" | "image" }) {
   const nearLimit = !isInfinite && q.used / q.max >= 0.8;
 
   return (
-    <div className="rounded-xl border border-border bg-surface-elevated p-3 text-xs">
+    <div className="rounded-xl border border-border bg-surface-elevated p-3 text-sm">
       <div className="mb-1.5 flex items-center justify-between">
         <span className="text-muted-foreground">
           الحصة اليومية — {label} ({quota.plan === "pro" ? "Pro" : "Free"})
@@ -25,7 +25,7 @@ export function RateLimitBar({ kind = "post" }: { kind?: "post" | "image" }) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div className="mt-1 text-[10px] text-muted-foreground">
+      <div className="mt-1 text-sm text-muted-foreground">
         المتبقي اليوم: <strong className="text-foreground">{remaining}</strong>
       </div>
     </div>

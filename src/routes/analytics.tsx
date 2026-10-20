@@ -43,6 +43,8 @@ export const Route = createFileRoute("/analytics")({
         property: "og:description",
         content: "قِس نشاطك الحقيقي داخل التطبيق عبر كل منصات التواصل.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AnalyticsPage,
@@ -59,7 +61,7 @@ function platformLabel(p: string): string {
 }
 
 function platformColor(p: string): string {
-  return PLATFORM_META[p as Platform]?.color ?? "#a855f7";
+  return PLATFORM_META[p as Platform]?.color ?? "var(--accent-2)";
 }
 
 function AnalyticsPage() {
@@ -159,26 +161,26 @@ function AnalyticsPage() {
         <>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {[
-              { icon: FileText, label: "منشورات محفوظة", value: posts.length, color: "#3b82f6" },
-              { icon: ImageIcon, label: "صور مولّدة", value: images.length, color: "#a855f7" },
-              { icon: Send, label: "عمليات نشر", value: publishes.length, color: "#22c55e" },
+              { icon: FileText, label: "منشورات محفوظة", value: posts.length, color: "var(--primary)" },
+              { icon: ImageIcon, label: "صور مولّدة", value: images.length, color: "var(--accent-2)" },
+              { icon: Send, label: "عمليات نشر", value: publishes.length, color: "var(--success)" },
               {
                 icon: Clock,
                 label: "بانتظار الجدولة",
                 value: pendingSchedules.length,
-                color: "#e94560",
+                color: "var(--warning)",
               },
             ].map((s) => (
               <Card key={s.label}>
                 <div className="flex items-center gap-3">
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
-                    style={{ background: `${s.color}22`, color: s.color }}
+                    style={{ background: `color-mix(in oklab, ${s.color} 15%, transparent)`, color: s.color }}
                   >
                     <s.icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground">{s.label}</div>
+                    <div className="text-sm text-muted-foreground">{s.label}</div>
                     <div className="text-xl font-bold">{s.value.toLocaleString("ar")}</div>
                   </div>
                 </div>
@@ -192,9 +194,9 @@ function AnalyticsPage() {
                 <span className="font-semibold">نسبة المحتوى المُولّد بالذكاء</span>
                 <span className="font-bold text-primary">{aiShare}%</span>
               </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-border">
                 <div
-                  className="h-full rounded-full bg-gradient-to-l from-primary to-accent"
+                  className="h-full rounded-full bg-primary"
                   style={{ width: `${aiShare}%` }}
                 />
               </div>
@@ -211,14 +213,14 @@ function AnalyticsPage() {
               ) : (
                 <ResponsiveContainer width="100%" height={260}>
                   <BarChart data={byPlatform}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                    <XAxis dataKey="platform" stroke="#ffffff60" style={{ fontSize: 11 }} />
-                    <YAxis allowDecimals={false} stroke="#ffffff60" style={{ fontSize: 11 }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                    <XAxis dataKey="platform" stroke="var(--muted-foreground)" style={{ fontSize: 14 }} />
+                    <YAxis allowDecimals={false} stroke="var(--muted-foreground)" style={{ fontSize: 14 }} />
                     <Tooltip
                       contentStyle={{
-                        background: "#1a1a2e",
-                        border: "1px solid #ffffff20",
-                        borderRadius: 12,
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 8,
                       }}
                     />
                     <Bar dataKey="count" name="نشر" radius={[8, 8, 0, 0]}>
@@ -235,21 +237,21 @@ function AnalyticsPage() {
               <h3 className="mb-4 font-bold">نشاطك (آخر 7 أيام)</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={trend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                  <XAxis dataKey="day" stroke="#ffffff60" style={{ fontSize: 11 }} />
-                  <YAxis allowDecimals={false} stroke="#ffffff60" style={{ fontSize: 11 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="day" stroke="var(--muted-foreground)" style={{ fontSize: 14 }} />
+                  <YAxis allowDecimals={false} stroke="var(--muted-foreground)" style={{ fontSize: 14 }} />
                   <Tooltip
                     contentStyle={{
-                      background: "#1a1a2e",
-                      border: "1px solid #ffffff20",
-                      borderRadius: 12,
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 8,
                     }}
                   />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Legend wrapperStyle={{ fontSize: 14 }} />
                   <Line
                     type="monotone"
                     dataKey="posts"
-                    stroke="#3b82f6"
+                    stroke="var(--primary)"
                     strokeWidth={2.5}
                     dot={{ r: 3 }}
                     name="منشورات"
@@ -257,7 +259,7 @@ function AnalyticsPage() {
                   <Line
                     type="monotone"
                     dataKey="images"
-                    stroke="#a855f7"
+                    stroke="var(--accent-2)"
                     strokeWidth={2.5}
                     dot={{ r: 3 }}
                     name="صور"
@@ -265,7 +267,7 @@ function AnalyticsPage() {
                   <Line
                     type="monotone"
                     dataKey="publishes"
-                    stroke="#22c55e"
+                    stroke="var(--success)"
                     strokeWidth={2.5}
                     dot={{ r: 3 }}
                     name="نشر"
@@ -293,12 +295,12 @@ function AnalyticsPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        background: "#1a1a2e",
-                        border: "1px solid #ffffff20",
-                        borderRadius: 12,
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 8,
                       }}
                     />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Legend wrapperStyle={{ fontSize: 14 }} />
                   </PieChart>
                 </ResponsiveContainer>
               </Card>
@@ -311,7 +313,7 @@ function AnalyticsPage() {
                   {topHashtags.map(([tag, count]) => (
                     <span
                       key={tag}
-                      className="rounded-full border border-border bg-white/5 px-3 py-1 text-xs"
+                      className="rounded-full border border-border bg-surface-elevated px-3 py-1 text-sm"
                     >
                       {tag} <span className="text-muted-foreground">×{count}</span>
                     </span>
@@ -321,7 +323,7 @@ function AnalyticsPage() {
             )}
           </div>
 
-          <p className="mt-5 text-center text-xs text-muted-foreground">
+          <p className="mt-5 text-center text-sm text-muted-foreground">
             ملاحظة: الأرقام تعكس نشاطك داخل Post On فقط. أرقام الإعجابات والمشاهدات الحقيقية تحتاج
             ربطاً رسمياً بحسابات المنصات.
           </p>

@@ -45,13 +45,13 @@ function NavItem({
       to={to}
       className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
         active
-          ? "gradient-primary text-white shadow-[var(--shadow-glow)]"
+          ? "gradient-primary text-primary-foreground shadow-[var(--shadow-glow)]"
           : "text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
       }`}
     >
       <Icon className="h-5 w-5" />
       <span className="flex-1">{label}</span>
-      {dot && <span className={`h-2 w-2 rounded-full ${dot} shadow-[0_0_6px_currentColor]`} />}
+      {dot && <span className={`h-2 w-2 rounded-full ${dot} `} />}
     </Link>
   );
 }
@@ -73,11 +73,11 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       <aside className="fixed inset-y-0 right-0 hidden w-64 border-l border-border bg-surface/60 backdrop-blur-xl md:block">
         <div className="flex h-16 items-center gap-2 px-6">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-primary">
-            <Sparkles className="h-5 w-5 text-white" />
+            <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <div>
             <div className="text-lg font-bold">Post On</div>
-            <div className="text-[10px] text-muted-foreground">مساعد المحتوى بالذكاء</div>
+            <div className="text-sm text-muted-foreground">مساعد المحتوى بالذكاء</div>
           </div>
         </div>
         <nav className="mt-4 space-y-1 px-3">
@@ -94,13 +94,13 @@ export function AppLayout({ children }: { children?: ReactNode }) {
         </nav>
         <div className="absolute inset-x-3 bottom-4">
           <div className="rounded-xl border border-border bg-surface-elevated p-4">
-            <div className="text-xs text-muted-foreground">الخطة الحالية</div>
+            <div className="text-sm text-muted-foreground">الخطة الحالية</div>
             <div className="mt-1 font-bold">مجانية</div>
-            <Link to="/settings" className="mt-2 inline-block text-xs text-accent hover:underline">
+            <Link to="/settings" className="mt-2 inline-block text-sm text-accent hover:underline">
               ترقية الآن ←
             </Link>
           </div>
-          <div className="mt-3 flex justify-center gap-3 text-[11px] text-muted-foreground">
+          <div className="mt-3 flex justify-center gap-3 text-sm text-muted-foreground">
             <Link to="/privacy" className="hover:text-foreground hover:underline">
               الخصوصية
             </Link>
@@ -116,7 +116,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-xl md:hidden">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
-            <Sparkles className="h-4 w-4 text-white" />
+            <Sparkles className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="font-bold">Post On</span>
         </div>
@@ -140,7 +140,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               <Link
                 key={n.to}
                 to={n.to}
-                className="flex flex-col items-center gap-1 py-2.5 text-[10px]"
+                className="flex flex-col items-center gap-1 py-2.5 text-sm"
               >
                 <Icon className={`h-5 w-5 ${active ? "text-accent" : "text-muted-foreground"}`} />
                 <span className={active ? "text-accent" : "text-muted-foreground"}>{n.label}</span>

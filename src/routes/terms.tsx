@@ -15,6 +15,8 @@ export const Route = createFileRoute("/terms")({
         property: "og:description",
         content: "القواعد التي تحكم استخدامك لتطبيق Post On لتوليد ونشر المحتوى.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TermsPage,

@@ -16,6 +16,8 @@ export const Route = createFileRoute("/privacy")({
         property: "og:description",
         content: "بياناتك تبقى على جهازك: لا خوادم، لا حسابات، لا تتبّع إعلاني.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: PrivacyPage,

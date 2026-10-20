@@ -44,6 +44,8 @@ export const Route = createFileRoute("/settings")({
       },
       { property: "og:title", content: "الإعدادات — Post On" },
       { property: "og:description", content: "خطط اشتراك مرنة وإدارة كاملة للمفاتيح والبيانات." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SettingsPage,
@@ -246,11 +248,11 @@ function SettingsPage() {
       <Card className="mb-6">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-full gradient-primary">
-            <User className="h-6 w-6 text-white" />
+            <User className="h-6 w-6 text-primary-foreground" />
           </div>
           <div className="flex-1">
             <div className="font-bold">مستخدم Post On</div>
-            <div className="text-xs text-muted-foreground">وضع العميل الكامل — بدون خادم</div>
+            <div className="text-sm text-muted-foreground">وضع العميل الكامل — بدون خادم</div>
           </div>
           <Badge tone="accent">{plan === "pro" ? "Pro" : "Free"}</Badge>
         </div>
@@ -275,10 +277,10 @@ function SettingsPage() {
             <KeyRound className="h-4 w-4 text-accent" />
             <h2 className="text-lg font-bold">مفاتيح API</h2>
             <span
-              className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor} shadow-[0_0_8px_currentColor]`}
+              className={`inline-block h-2.5 w-2.5 rounded-full ${dotColor} `}
               aria-label={dotLabel}
             />
-            <span className="text-xs text-muted-foreground">{dotLabel}</span>
+            <span className="text-sm text-muted-foreground">{dotLabel}</span>
           </div>
         </div>
 
@@ -294,10 +296,10 @@ function SettingsPage() {
                     ✅ متصل بـ{" "}
                     {groqKey && togetherKey ? "Groq + Together" : groqKey ? "Groq" : "Together"}
                   </div>
-                  <div className="mt-0.5 text-xs text-muted-foreground">
+                  <div className="mt-0.5 text-sm text-muted-foreground">
                     المفاتيح محفوظة بأمان في متصفحك
                   </div>
-                  <div className="mt-3 space-y-1.5 text-xs font-mono">
+                  <div className="mt-3 space-y-1.5 text-sm font-mono">
                     {groqKey && (
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">Groq:</span>
@@ -336,7 +338,7 @@ function SettingsPage() {
             </div>
 
             {status.health === "failed" && (
-              <div className="flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 p-3 text-xs">
+              <div className="flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 p-3 text-sm">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
                 <span>آخر اختبار اتصال فشل. عدّل المفتاح وأعد الحفظ لإعادة الاختبار.</span>
               </div>
@@ -358,11 +360,11 @@ function SettingsPage() {
                 type="checkbox"
                 checked={useOwnKeys}
                 onChange={(e) => setUseOwnKeys(e.target.checked)}
-                className="h-4 w-4 accent-[hsl(var(--accent))]"
+                className="h-4 w-4 accent-primary"
               />
               <div className="flex-1">
                 <div className="font-semibold">استخدم مفاتيحي الخاصة</div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-sm text-muted-foreground">
                   {useOwnKeys
                     ? "الطلبات تذهب من متصفحك مباشرة بمفاتيحك."
                     : "وضع تجريبي — سيُستخدم القالب المحلي فقط."}
@@ -408,7 +410,7 @@ function SettingsPage() {
           </div>
         )}
 
-        <div className="mt-4 flex items-start gap-2 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
+        <div className="mt-4 flex items-start gap-2 rounded-lg bg-surface-elevated/50 p-3 text-sm text-muted-foreground">
           <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
           <div>
             🔒 المفاتيح تُخزَّن محلياً في متصفحك فقط — لا تُرسل إلى أي خادم تابع لنا. الطلبات تذهب
@@ -435,7 +437,7 @@ function SettingsPage() {
             <div
               key={m.id}
               title={m.desc}
-              className={`flex flex-wrap items-center gap-2 rounded-lg border p-2.5 text-xs ${
+              className={`flex flex-wrap items-center gap-2 rounded-lg border p-2.5 text-sm ${
                 textModel === m.id
                   ? "border-accent bg-accent/10"
                   : "border-border bg-surface-elevated"
@@ -453,7 +455,7 @@ function SettingsPage() {
             </div>
           ))}
         </div>
-        <div className="mt-3 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
+        <div className="mt-3 rounded-lg bg-surface-elevated/50 p-3 text-sm text-muted-foreground">
           🔁 عند فشل الموديل المختار (حد الاستخدام أو عدم توفره) يتم التبديل تلقائياً إلى Llama 3.3
           70B ثم Llama 3.1 8B. كذلك يوجّه التطبيق المهام تلقائياً: الهاشتاقات → 8B السريع، الترجمة
           ووصف الصور → Qwen 3.
@@ -508,7 +510,7 @@ function SettingsPage() {
             <Badge tone="warning">الفيديو: يحتاج رصيد</Badge>
             <Badge tone="accent">Puter.js: تدفع من حسابك</Badge>
           </div>
-          <div className="flex items-start gap-2 rounded-lg bg-surface-elevated/50 p-3 text-[11px] text-muted-foreground">
+          <div className="flex items-start gap-2 rounded-lg bg-surface-elevated/50 p-3 text-sm text-muted-foreground">
             <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success" />
             <div>🔒 المفاتيح تُخزَّن محلياً على جهازك فقط — لا تُرسل لأي خادم تابع لنا.</div>
           </div>
@@ -532,7 +534,7 @@ function SettingsPage() {
                   </div>
                   <div className="flex-1">
                     <div className="text-sm font-semibold">{m.label}</div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-sm text-muted-foreground">
                       {connected ? "متصل (محاكاة)" : "غير متصل"}
                     </div>
                   </div>
@@ -565,14 +567,14 @@ function SettingsPage() {
             return (
               <Card key={pl.key} className={`relative ${pl.popular ? "border-accent" : ""}`}>
                 {pl.popular && (
-                  <div className="absolute -top-3 right-4 rounded-full gradient-primary px-2.5 py-0.5 text-[10px] font-bold text-white">
+                  <div className="absolute -top-3 right-4 rounded-full gradient-primary px-2.5 py-0.5 text-sm font-bold text-primary-foreground">
                     الأكثر شعبية
                   </div>
                 )}
                 <div className="text-sm text-muted-foreground">{pl.name}</div>
                 <div className="mt-1 flex items-baseline gap-1">
                   <span className="text-3xl font-bold">{pl.price}</span>
-                  <span className="text-xs text-muted-foreground">/ {pl.period}</span>
+                  <span className="text-sm text-muted-foreground">/ {pl.period}</span>
                 </div>
                 <ul className="mt-4 space-y-2 text-sm">
                   {pl.features.map((f) => (
@@ -603,7 +605,7 @@ function SettingsPage() {
 
       <Card>
         <Label>النسخ الاحتياطي وإدارة البيانات</Label>
-        <p className="mb-3 text-xs text-muted-foreground">
+        <p className="mb-3 text-sm text-muted-foreground">
           كل بياناتك محفوظة داخل هذا المتصفح فقط. صدّر نسخة احتياطية بشكل دوري، واستوردها على جهاز
           آخر أو بعد مسح بيانات المتصفح.
         </p>
@@ -628,7 +630,7 @@ function SettingsPage() {
             <Trash2 className="h-4 w-4" /> مسح كل البيانات
           </Button>
         </div>
-        <div className="mt-3 text-[11px] text-muted-foreground">
+        <div className="mt-3 text-sm text-muted-foreground">
           ملاحظة: النسخة تحتوي مفاتيحك أيضاً — احفظها في مكان آمن ولا تشاركها.
         </div>
       </Card>

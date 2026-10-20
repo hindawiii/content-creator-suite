@@ -247,7 +247,7 @@ function ImagePage() {
                 className={`h-5 w-9 rounded-full p-0.5 transition ${anime ? "bg-accent" : "bg-border"}`}
               >
                 <span
-                  className={`block h-4 w-4 rounded-full bg-white transition ${anime ? "translate-x-0" : "translate-x-4"}`}
+                  className={`block h-4 w-4 rounded-full bg-foreground transition ${anime ? "translate-x-0" : "translate-x-4"}`}
                 />
               </span>
             </button>
@@ -257,7 +257,7 @@ function ImagePage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setStyle("")}
-                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                  className={`rounded-full border px-3 py-1.5 text-sm transition ${
                     style === ""
                       ? "border-accent bg-accent/10"
                       : "border-border bg-surface-elevated"
@@ -270,7 +270,7 @@ function ImagePage() {
                     key={s.key}
                     onClick={() => setStyle(s.key)}
                     title={s.modifier}
-                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                    className={`rounded-full border px-3 py-1.5 text-sm transition ${
                       style === s.key
                         ? "border-accent bg-accent/10"
                         : "border-border bg-surface-elevated hover:border-accent/50"
@@ -298,7 +298,7 @@ function ImagePage() {
                 </div>
                 <div>
                   <Label>أو ارفع صورة (يُستخدم وصفها في المطالبة)</Label>
-                  <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-border p-3 text-xs text-muted-foreground hover:border-accent/50">
+                  <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-border p-3 text-sm text-muted-foreground hover:border-accent/50">
                     <Upload className="h-4 w-4" />
                     اختر صورة من جهازك
                     <input
@@ -335,7 +335,7 @@ function ImagePage() {
                     }`}
                   >
                     <div className="font-semibold">{a.key}</div>
-                    <div className="text-xs text-muted-foreground">{a.label}</div>
+                    <div className="text-sm text-muted-foreground">{a.label}</div>
                   </button>
                 ))}
               </div>
@@ -374,7 +374,7 @@ function ImagePage() {
                     key={b.url}
                     className="flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-surface-elevated p-2"
                   >
-                    <span className="ml-1 text-xs font-semibold text-muted-foreground">
+                    <span className="ml-1 text-sm font-semibold text-muted-foreground">
                       صورة {i + 1}
                     </span>
                     <Button variant="outline" onClick={() => downloadImg(b.url)}>
@@ -422,16 +422,16 @@ function ImagePage() {
                   className="aspect-square w-full object-cover"
                   loading="lazy"
                 />
-                <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-black/60 p-1.5 opacity-0 transition group-hover:opacity-100">
+                <div className="absolute inset-x-0 bottom-0 flex justify-between gap-1 bg-overlay/60 p-1.5 opacity-0 transition group-hover:opacity-100">
                   <button
                     onClick={() => downloadImg(img.url)}
-                    className="flex items-center gap-1 rounded px-2 text-[11px] text-white"
+                    className="flex items-center gap-1 rounded px-2 text-sm text-on-overlay"
                   >
                     <Download className="h-3.5 w-3.5" /> تنزيل
                   </button>
                   <button
                     onClick={() => removeImage(img.id)}
-                    className="flex items-center gap-1 rounded px-2 text-[11px] text-white"
+                    className="flex items-center gap-1 rounded px-2 text-sm text-on-overlay"
                   >
                     <Trash2 className="h-3.5 w-3.5" /> حذف
                   </button>

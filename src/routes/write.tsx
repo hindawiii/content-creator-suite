@@ -52,6 +52,8 @@ export const Route = createFileRoute("/write")({
       },
       { property: "og:title", content: "كتابة منشورات — Post On" },
       { property: "og:description", content: "توليد محتوى ذكي لكل منصات التواصل." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: WritePage,
@@ -180,7 +182,7 @@ function WritePage() {
         <RateLimitBar kind="post" />
       </div>
 
-      <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-xs">
+      <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-sm">
         <Lightbulb className="h-4 w-4 shrink-0 text-accent" />
         <div>
           <strong className="text-foreground">هل تعلم؟</strong> {tip}
@@ -200,7 +202,7 @@ function WritePage() {
                     <button
                       key={p}
                       onClick={() => setPlatform(p)}
-                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[11px] transition ${
+                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-sm transition ${
                         active
                           ? "border-accent bg-accent/10 text-foreground"
                           : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
@@ -244,7 +246,7 @@ function WritePage() {
                       key={d}
                       onClick={() => pickDialect(d)}
                       title={m.hint}
-                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-[11px] transition ${
+                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-sm transition ${
                         active
                           ? "border-accent bg-accent/10 text-foreground"
                           : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
@@ -256,7 +258,7 @@ function WritePage() {
                   );
                 })}
               </div>
-              <p className="mt-1.5 text-[11px] text-muted-foreground">
+              <p className="mt-1.5 text-sm text-muted-foreground">
                 {DIALECT_META[dialect].hint}
               </p>
             </div>
@@ -310,7 +312,7 @@ function WritePage() {
               <span className="font-semibold">النتيجة</span>
             </div>
             {output && (
-              <div className="flex items-center gap-2 text-[11px]">
+              <div className="flex items-center gap-2 text-sm">
                 {status === "ideal" && <Badge tone="success">مثالي ✅</Badge>}
                 {status === "short" && <Badge tone="warning">قصير</Badge>}
                 {status === "long" && <Badge tone="warning">طويل</Badge>}
@@ -356,7 +358,7 @@ function WritePage() {
                       <Maximize2 className="h-4 w-4" /> 📖 أطول
                     </Button>
                   )}
-                  <span className="self-center text-[11px] text-muted-foreground">
+                  <span className="self-center text-sm text-muted-foreground">
                     {overLimit
                       ? `النص يتجاوز حد ${PLATFORM_META[platform].label}`
                       : `أضف تفاصيل — النص أقصر من المثالي`}
@@ -392,7 +394,7 @@ function WritePage() {
         </Card>
       </div>
 
-      <div className="mt-6 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs text-muted-foreground">
+      <div className="mt-6 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-sm text-muted-foreground">
         💡 <strong className="text-foreground">وضع العميل الكامل:</strong> كل الطلبات تذهب مباشرة من
         متصفحك إلى Groq / Together AI / Pollinations. لا توجد خوادم وسيطة. أضف مفاتيحك من صفحة{" "}
         <strong>الإعدادات</strong>.

@@ -36,6 +36,8 @@ export const Route = createFileRoute("/publish")({
       },
       { property: "og:title", content: "النشر — Post On" },
       { property: "og:description", content: "انسخ، افتح، انشر — بدون خوادم." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: PublishPage,
@@ -91,7 +93,7 @@ function Confetti({ show }: { show: boolean }) {
         const delay = Math.random() * 0.3;
         const duration = 1.2 + Math.random() * 1.2;
         const rot = Math.floor(Math.random() * 360);
-        const colors = ["#e94560", "#7c3aed", "#22c55e", "#f59e0b", "#38bdf8"];
+        const colors = ["var(--primary)", "var(--accent-2)", "var(--success)", "var(--warning)", "var(--foreground)"];
         const bg = colors[i % colors.length];
         return (
           <span
@@ -327,7 +329,7 @@ function PublishPage() {
         }
       />
 
-      <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-xs animate-in-up">
+      <div className="mb-4 flex items-start gap-2 rounded-xl border border-accent/30 bg-accent/5 p-3 text-sm animate-in-up">
         <Lightbulb className="h-4 w-4 shrink-0 text-accent" />
         <div>
           <strong className="text-foreground">نصيحة ذكية:</strong> {tip.replace(/^💡\s*/, "")}
@@ -381,7 +383,7 @@ function PublishPage() {
             const shortForLi = chars > 0 && chars < liRange[0];
             return (
               <>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                   <span>⏱ {mins} د قراءة</span>
                   <span>·</span>
                   <span>{words} كلمة</span>
@@ -440,7 +442,7 @@ function PublishPage() {
                     key={t}
                     onClick={() => removeTag(t)}
                     title="اضغط للحذف"
-                    className="rounded-full border border-border bg-surface-elevated px-2.5 py-1 text-[11px] hover:border-destructive hover:text-destructive"
+                    className="rounded-full border border-border bg-surface-elevated px-2.5 py-1 text-sm hover:border-destructive hover:text-destructive"
                   >
                     {t}
                   </button>
@@ -482,7 +484,7 @@ function PublishPage() {
             <Share2 className="h-4 w-4 text-accent" />
             <span className="font-semibold">افتح المنصة وانشر</span>
           </div>
-          <p className="mb-3 text-xs text-muted-foreground">
+          <p className="mb-3 text-sm text-muted-foreground">
             اضغط زر المنصة: يُنسخ المنشور تلقائياً ثم تُفتح المنصة في تبويب جديد. الصقه هناك ✨
           </p>
 
@@ -495,7 +497,7 @@ function PublishPage() {
                   key={p}
                   onClick={() => copyAndOpen(p)}
                   title="انسخ المنشور، ثم الصقه في المنصة"
-                  className={`group relative flex flex-col items-center gap-1 rounded-xl border p-3 text-[11px] transition ${
+                  className={`group relative flex flex-col items-center gap-1 rounded-xl border p-3 text-sm transition ${
                     done
                       ? "border-success/50 bg-success/5"
                       : "border-border bg-surface-elevated hover:border-accent hover:bg-accent/5"
@@ -513,21 +515,21 @@ function PublishPage() {
           </div>
 
           <div className="mt-4 space-y-2 border-t border-border pt-3">
-            <div className="text-xs font-semibold text-muted-foreground">تتبع النشر يدوياً</div>
+            <div className="text-sm font-semibold text-muted-foreground">تتبع النشر يدوياً</div>
             {(Object.keys(PLATFORM_META) as Platform[]).map((p) => {
               const m = PLATFORM_META[p];
               const done = !!published[p];
               return (
                 <label
                   key={p}
-                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-surface-elevated"
+                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-surface-elevated"
                 >
                   <input
                     type="checkbox"
                     checked={done}
                     onChange={() => markPublished(p)}
                     disabled={done}
-                    className="h-4 w-4 accent-[hsl(var(--accent))]"
+                    className="h-4 w-4 accent-primary"
                   />
                   <span className="text-lg">{m.emoji}</span>
                   <span>تم النشر على {m.label}</span>
@@ -539,7 +541,7 @@ function PublishPage() {
         </Card>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-xs">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-accent/40 bg-accent/5 p-4 text-sm">
         <div>
           <strong className="text-foreground">التالي:</strong> ولّد منشوراً لمنصة أخرى؟
         </div>
@@ -555,7 +557,7 @@ function PublishPage() {
 
       {scheduleOpen && (
         <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in-up"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-overlay/60 p-4 backdrop-blur-sm animate-in-up"
           onClick={() => setScheduleOpen(false)}
         >
           <div
@@ -571,7 +573,7 @@ function PublishPage() {
                     <button
                       key={p}
                       onClick={() => setSchedPlatform(p)}
-                      className={`rounded-lg border p-2 text-xs transition ${schedPlatform === p ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"}`}
+                      className={`rounded-lg border p-2 text-sm transition ${schedPlatform === p ? "border-accent bg-accent/10" : "border-border bg-surface-elevated"}`}
                     >
                       <div className="text-lg">{PLATFORM_META[p].emoji}</div>
                       <div>{PLATFORM_META[p].label}</div>
@@ -587,7 +589,7 @@ function PublishPage() {
                   onChange={(e) => setSchedTime(e.target.value)}
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 🔔 سنطلب إذن الإشعارات لتذكيرك في الوقت المحدد. كل شيء يعمل محلياً في متصفحك.
               </p>
               <div className="flex gap-2 pt-2">
@@ -648,18 +650,18 @@ function HeroImage({
     return (
       <div className="group relative mb-4 overflow-hidden rounded-xl border border-border">
         <img src={imageUrl} alt="preview" className="w-full max-h-[380px] object-cover" />
-        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/70 to-transparent p-2 opacity-0 transition group-hover:opacity-100">
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-overlay/90 text-on-overlay p-2 opacity-0 transition group-hover:opacity-100">
           <div className="flex gap-1.5">
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[11px] font-semibold text-black hover:bg-white"
+              className="inline-flex items-center gap-1 rounded-lg bg-foreground px-2 py-1 text-sm font-semibold text-background hover:bg-muted-foreground"
             >
               <Upload className="h-3 w-3" /> تغيير
             </button>
             <Link
               to="/image"
-              className="inline-flex items-center gap-1 rounded-lg bg-white/90 px-2 py-1 text-[11px] font-semibold text-black hover:bg-white"
+              className="inline-flex items-center gap-1 rounded-lg bg-foreground px-2 py-1 text-sm font-semibold text-background hover:bg-muted-foreground"
             >
               <Wand2 className="h-3 w-3" /> توليد جديدة
             </Link>
@@ -667,7 +669,7 @@ function HeroImage({
           <button
             type="button"
             onClick={onRemove}
-            className="inline-flex items-center gap-1 rounded-lg bg-destructive/90 px-2 py-1 text-[11px] font-semibold text-white hover:bg-destructive"
+            className="inline-flex items-center gap-1 rounded-lg bg-destructive px-2 py-1 text-sm font-semibold text-destructive-foreground hover:bg-destructive"
           >
             <X className="h-3 w-3" /> إزالة
           </button>
@@ -686,7 +688,7 @@ function HeroImage({
   return (
     <div className="mb-4 rounded-xl border-2 border-dashed border-border bg-surface-elevated p-6 text-center">
       <ImageIcon className="mx-auto mb-2 h-8 w-8 text-muted-foreground opacity-60" />
-      <p className="mb-3 text-xs text-muted-foreground">
+      <p className="mb-3 text-sm text-muted-foreground">
         أضف صورة رئيسية لجذب الانتباه (يزيد التفاعل بنسبة 2x)
       </p>
       <div className="flex flex-wrap justify-center gap-2">
