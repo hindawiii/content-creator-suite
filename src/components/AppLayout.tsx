@@ -63,7 +63,7 @@ function NavItem({
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [moreOpen, setMoreOpen] = useState(false);
-  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/publish"].includes(n.to));
+  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/video", "/library", "/publish"].includes(n.to));
   const moreNav = nav.filter((n) => !primaryNav.some((item) => item.to === n.to));
   const moreActive = moreNav.some((n) => pathname === n.to) || ["/privacy", "/terms"].includes(pathname);
   const keys = useKeysStatus();
@@ -140,7 +140,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Bottom nav mobile */}
       <nav aria-label="القائمة الرئيسية" className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-7">
           {primaryNav.map((n) => {
             const active = pathname === n.to;
             const Icon = n.icon;
