@@ -63,7 +63,7 @@ function NavItem({
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [moreOpen, setMoreOpen] = useState(false);
-  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/publish"].includes(n.to));
+  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/video", "/library", "/publish"].includes(n.to));
   const moreNav = nav.filter((n) => !primaryNav.some((item) => item.to === n.to));
   const moreActive = moreNav.some((n) => pathname === n.to) || ["/privacy", "/terms"].includes(pathname);
   const keys = useKeysStatus();
@@ -140,7 +140,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Bottom nav mobile */}
       <nav aria-label="القائمة الرئيسية" className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-7">
           {primaryNav.map((n) => {
             const active = pathname === n.to;
             const Icon = n.icon;
@@ -149,14 +149,14 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                 key={n.to}
                 to={n.to}
                 aria-current={active ? "page" : undefined}
-                className="flex min-w-0 flex-col items-center gap-1 py-2.5 text-sm font-semibold"
+                className="flex min-w-0 flex-col items-center gap-1 py-2 text-xs font-semibold"
               >
                 <Icon className={`h-5 w-5 ${active ? "text-accent" : "text-muted-foreground"}`} />
-                <span className={active ? "text-accent" : "text-muted-foreground"}>{n.label}</span>
+                <span className={`max-w-full truncate ${active ? "text-accent" : "text-muted-foreground"}`}>{n.label}</span>
               </Link>
             );
           })}
-          <Button variant="ghost" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen} className={`flex min-h-[72px] flex-col gap-1 rounded-none px-1 py-2.5 ${moreActive ? "!text-accent" : ""}`}>
+          <Button variant="ghost" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen} className={`flex min-h-[72px] flex-col gap-1 rounded-none px-1 py-2 text-xs font-semibold ${moreActive ? "!text-accent" : ""}`}>
             <Ellipsis className="h-5 w-5" />
             <span>المزيد</span>
           </Button>
