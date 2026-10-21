@@ -156,7 +156,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
               </Link>
             );
           })}
-          <Button variant="ghost" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen} className={`flex min-h-[72px] flex-col gap-1 rounded-none px-1 py-2.5 ${moreActive ? "!text-accent" : ""}`}>
+          <Button variant="ghost" onClick={() => setMoreOpen(true)} aria-haspopup="dialog" aria-expanded={moreOpen} className={`flex min-h-[72px] flex-col gap-1 rounded-none px-1 py-2 text-xs font-semibold ${moreActive ? "!text-accent" : ""}`}>
             <Ellipsis className="h-5 w-5" />
             <span>المزيد</span>
           </Button>
