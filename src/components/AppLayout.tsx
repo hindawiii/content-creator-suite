@@ -149,10 +149,10 @@ export function AppLayout({ children }: { children?: ReactNode }) {
                 key={n.to}
                 to={n.to}
                 aria-current={active ? "page" : undefined}
-                className="flex min-w-0 flex-col items-center gap-1 py-2.5 text-sm font-semibold"
+                className="flex min-w-0 flex-col items-center gap-1 py-2 text-xs font-semibold"
               >
                 <Icon className={`h-5 w-5 ${active ? "text-accent" : "text-muted-foreground"}`} />
-                <span className={active ? "text-accent" : "text-muted-foreground"}>{n.label}</span>
+                <span className={`max-w-full truncate ${active ? "text-accent" : "text-muted-foreground"}`}>{n.label}</span>
               </Link>
             );
           })}
