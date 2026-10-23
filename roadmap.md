@@ -6,6 +6,7 @@
 
 # Approved Post On logo
 
-- [ ] Install the selected content-and-publish-arrow logo in the shared layout and app icons.
-- [ ] Prepare and inspect a 1200×630 branded sharing image.
-- [ ] Verify the logo and icons; connect absolute social image metadata once a public published domain exists.
+- [x] Install the selected content-and-publish-arrow logo in the shared layout and app icons.
+- [x] Prepare and inspect a 1200×630 branded sharing image.
+- [x] Verify desktop/mobile branding, icon requests, and error-free rendering.
+- [ ] Connect absolute leaf social-image metadata; blocked until publishing supplies a public domain (publishing requires user permission).
