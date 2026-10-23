@@ -194,21 +194,27 @@ function WritePage() {
           <div className="space-y-4">
             <div>
               <Label>المنصة</Label>
-              <div className="grid grid-cols-4 gap-2">
+              <div
+                role="radiogroup"
+                aria-label="المنصة"
+                className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]"
+              >
                 {(Object.keys(PLATFORM_META) as Platform[]).map((p) => {
                   const m = PLATFORM_META[p];
                   const active = p === platform;
                   return (
                     <button
                       key={p}
+                      role="radio"
+                      aria-checked={active}
                       onClick={() => setPlatform(p)}
-                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-sm transition ${
+                      className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold transition ${
                         active
-                          ? "border-accent bg-accent/10 text-foreground"
-                          : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                          ? "bg-primary text-primary-foreground shadow-[0_0_18px_-4px_var(--primary)]"
+                          : "bg-surface-elevated/60 text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
                       }`}
                     >
-                      <span className="text-lg">{m.emoji}</span>
+                      <span className="text-base">{m.emoji}</span>
                       <span>{m.label}</span>
                     </button>
                   );
@@ -216,17 +222,19 @@ function WritePage() {
               </div>
             </div>
 
-            <div>
+            <div className="border-t border-border/50 pt-4">
               <Label>نبرة الصوت</Label>
-              <div className="grid grid-cols-2 gap-2">
+              <div role="radiogroup" aria-label="نبرة الصوت" className="flex flex-wrap gap-2">
                 {(Object.keys(TONE_META) as Tone[]).map((t) => (
                   <button
                     key={t}
+                    role="radio"
+                    aria-checked={t === tone}
                     onClick={() => setTone(t)}
-                    className={`rounded-xl border p-2.5 text-sm transition ${
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                       t === tone
-                        ? "border-accent bg-accent/10"
-                        : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                        ? "bg-primary/15 text-foreground ring-1 ring-primary/70 shadow-[inset_0_0_12px_-4px_var(--primary)]"
+                        : "text-muted-foreground ring-1 ring-border/50 hover:text-foreground hover:ring-primary/40"
                     }`}
                   >
                     {TONE_META[t]}
@@ -235,24 +243,30 @@ function WritePage() {
               </div>
             </div>
 
-            <div>
+            <div className="border-t border-border/50 pt-4">
               <Label>اللهجة</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div
+                role="radiogroup"
+                aria-label="اللهجة"
+                className="flex rounded-full bg-surface-elevated/60 p-1"
+              >
                 {(Object.keys(DIALECT_META) as Dialect[]).map((d) => {
                   const m = DIALECT_META[d];
                   const active = d === dialect;
                   return (
                     <button
                       key={d}
+                      role="radio"
+                      aria-checked={active}
                       onClick={() => pickDialect(d)}
                       title={m.hint}
-                      className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-sm transition ${
+                      className={`flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-sm font-semibold transition ${
                         active
-                          ? "border-accent bg-accent/10 text-foreground"
-                          : "border-border bg-surface-elevated text-muted-foreground hover:border-accent/50"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      <span className="text-lg">{m.emoji}</span>
+                      <span>{m.emoji}</span>
                       <span>{m.label}</span>
                     </button>
                   );
