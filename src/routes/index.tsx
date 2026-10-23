@@ -63,21 +63,14 @@ function Stat({
   hint?: string;
 }) {
   return (
-    <Card className="relative overflow-hidden">
-      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-        <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ background: `color-mix(in oklab, ${tone} 15%, transparent)`, color: tone }}
-        >
-          <Icon className="h-5 w-5" />
-        </div>
-        <div className="min-w-0">
-          <div className="text-sm text-muted-foreground">{label}</div>
-          <div className="text-2xl font-bold">{value}</div>
-          {hint && <div className="truncate text-sm text-muted-foreground">{hint}</div>}
-        </div>
+    <div className="min-w-0 px-4 py-3">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Icon className="h-4 w-4 shrink-0" style={{ color: tone }} />
+        <span className="truncate">{label}</span>
       </div>
-    </Card>
+      <div className="mt-1 text-3xl font-bold tracking-tight">{value}</div>
+      {hint && <div className="truncate text-sm text-muted-foreground">{hint}</div>}
+    </div>
   );
 }
 
