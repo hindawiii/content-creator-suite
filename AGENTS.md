@@ -13,3 +13,4 @@
 - Self-host the interface variable font through package CSS; keep editor font choices independent so interface reliability does not restrict content styling.
 - Express interface colors and text sizes through global semantic tokens; chart and overlay styling must reference the same tokens to avoid page-specific palette drift.
 - Keep primary mobile destinations and an accessible More dialog in the shared layout; preserve access to every section without shrinking navigation labels.
+- Derive header branding and browser/PWA icons from the same approved logo; keep a lightweight 1200×630 public sharing rendition and add its absolute URL only to leaf metadata after the published origin is known.

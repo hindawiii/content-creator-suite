@@ -6,7 +6,6 @@ import {
   Calendar,
   BarChart3,
   Settings,
-  Sparkles,
   Send,
   Library,
   Video,
@@ -17,6 +16,7 @@ import { useKeysStatus } from "@/hooks/useKeysStatus";
 import { useScheduleAlerts } from "@/hooks/useScheduleAlerts";
 import { Button } from "@/components/ui";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import logo from "@/assets/post-on-logo.png";
 
 const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
@@ -79,15 +79,9 @@ export function AppLayout({ children }: { children?: ReactNode }) {
     <div dir="rtl" className="min-h-screen gradient-mesh">
       {/* Sidebar desktop */}
       <aside className="fixed inset-y-0 right-0 hidden w-64 flex-col overflow-y-auto border-l border-border bg-surface md:flex">
-        <div className="flex h-16 items-center gap-2 px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-primary">
-            <Sparkles className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div>
-            <div className="text-lg font-bold">Post On</div>
-            <div className="text-sm text-muted-foreground">مساعد المحتوى بالذكاء</div>
-          </div>
-        </div>
+        <Link to="/" aria-label="Post On — الرئيسية" className="flex h-20 shrink-0 items-center px-6">
+          <img src={logo} alt="Post On" width={1367} height={412} className="h-auto w-full object-contain" />
+        </Link>
         <nav className="mt-4 space-y-1 px-3">
           {nav.map((n) => (
             <NavItem
@@ -122,12 +116,9 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Mobile header */}
       <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background px-4 md:hidden">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <span className="font-bold">Post On</span>
-        </div>
+        <Link to="/" aria-label="Post On — الرئيسية" className="flex h-10 w-36 items-center">
+          <img src={logo} alt="Post On" width={1367} height={412} className="h-auto w-full object-contain" />
+        </Link>
       </header>
 
       <main className="md:mr-64">
