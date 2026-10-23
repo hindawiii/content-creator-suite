@@ -187,7 +187,7 @@ export function Dashboard() {
         </Card>
       )}
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 divide-border border-y border-border md:grid-cols-4 md:divide-x md:divide-x-reverse [&>*:nth-child(odd)]:border-l [&>*:nth-child(-n+2)]:border-b md:[&>*]:!border-b-0 md:[&>*]:border-l-0">
         <Stat
           icon={FileText}
           label="إجمالي المنشورات"
@@ -217,58 +217,39 @@ export function Dashboard() {
         <RateLimitBar kind="image" />
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <Link to="/write" className="md:col-span-2">
-          <Card className="group h-full cursor-pointer transition hover:border-accent">
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl gradient-primary">
-                <PenSquare className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div className="flex-1">
-                <div className="font-bold">اكتب منشوراً بالذكاء الاصطناعي</div>
-                <div className="mt-0.5 text-sm text-muted-foreground">
-                  اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني
-                </div>
-              </div>
-              <Sparkles className="h-5 w-5 text-accent transition group-hover:scale-110" />
+      <section className="mt-6 overflow-hidden rounded-3xl border border-border bg-surface">
+        <Link to="/write" className="group flex items-center gap-4 p-5 transition hover:bg-surface-elevated">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full gradient-primary">
+            <PenSquare className="h-6 w-6 text-primary-foreground" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-lg font-bold">اكتب منشوراً بالذكاء الاصطناعي</div>
+            <div className="mt-0.5 text-sm text-muted-foreground">
+              اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني
             </div>
-          </Card>
+          </div>
+          <Sparkles className="h-5 w-5 shrink-0 text-accent transition group-hover:scale-110" />
         </Link>
-        <Link to="/image">
-          <Card className="h-full cursor-pointer transition hover:border-accent">
-            <div className="flex items-center gap-3">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent-2/20 text-accent-2">
-                <ImageIcon className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="font-bold">صمّم صورة</div>
-                <div className="text-sm text-muted-foreground">توليد صور بأبعاد مختلفة</div>
-              </div>
-            </div>
-          </Card>
-        </Link>
-      </div>
-
-      <div className="mt-3 grid grid-cols-3 gap-3">
-        <Link to="/publish">
-          <Card className="!p-4 text-center transition hover:border-accent">
-            <Send className="mx-auto h-5 w-5 text-accent" />
-            <div className="mt-1.5 text-sm font-semibold">نشر</div>
-          </Card>
-        </Link>
-        <Link to="/library">
-          <Card className="!p-4 text-center transition hover:border-accent">
-            <Library className="mx-auto h-5 w-5 text-accent-2" />
-            <div className="mt-1.5 text-sm font-semibold">المكتبة</div>
-          </Card>
-        </Link>
-        <Link to="/analytics">
-          <Card className="!p-4 text-center transition hover:border-accent">
-            <BarChart3 className="mx-auto h-5 w-5 text-success" />
-            <div className="mt-1.5 text-sm font-semibold">تحليلات</div>
-          </Card>
-        </Link>
-      </div>
+        <div className="grid grid-cols-2 border-t border-border md:grid-cols-4">
+          {[
+            { to: "/image", label: "صمّم صورة", icon: ImageIcon, cls: "text-accent-2" },
+            { to: "/publish", label: "نشر", icon: Send, cls: "text-accent" },
+            { to: "/library", label: "المكتبة", icon: Library, cls: "text-accent-2" },
+            { to: "/analytics", label: "تحليلات", icon: BarChart3, cls: "text-success" },
+          ].map((a, i) => (
+            <Link
+              key={a.to}
+              to={a.to}
+              className={`flex items-center justify-center gap-2 px-3 py-4 text-sm font-semibold transition hover:bg-surface-elevated ${
+                i % 2 === 0 ? "border-l border-border" : ""
+              } ${i < 2 ? "border-b border-border md:border-b-0" : ""} ${i === 1 ? "md:border-l" : ""}`}
+            >
+              <a.icon className={`h-5 w-5 ${a.cls}`} />
+              {a.label}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {scheduled.length > 0 && (
         <div className="mt-8">
