@@ -64,7 +64,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [moreOpen, setMoreOpen] = useState(false);
   const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/video", "/library", "/publish"].includes(n.to));
-  const moreNav = nav.filter((n) => !primaryNav.some((item) => item.to === n.to));
+  const moreNav = nav.filter((n) => n.to !== "/settings" && !primaryNav.some((item) => item.to === n.to));
   const moreActive = moreNav.some((n) => pathname === n.to) || ["/privacy", "/terms"].includes(pathname);
   const keys = useKeysStatus();
   const dot =
@@ -118,6 +118,17 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background px-4 md:hidden">
         <Link to="/" aria-label="Post On — الرئيسية" className="flex h-10 w-36 items-center">
           <img src={logo} alt="Post On" width={1367} height={412} className="h-auto w-full object-contain" />
+        </Link>
+        <Link
+          to="/settings"
+          aria-label={keys.health === "ok" ? "الإعدادات — المفاتيح متصلة" : "الإعدادات — أضف مفاتيح الذكاء الاصطناعي"}
+          aria-current={pathname === "/settings" ? "page" : undefined}
+          className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-border transition-colors ${
+            pathname === "/settings" ? "bg-surface-elevated text-accent" : "text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
+          }`}
+        >
+          <Settings className="h-5 w-5" />
+          <span className={`absolute -top-0.5 -left-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-background ${dot}`} />
         </Link>
       </header>
 
