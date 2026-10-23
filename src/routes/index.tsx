@@ -187,7 +187,7 @@ export function Dashboard() {
         </Card>
       )}
 
-      <div className="grid grid-cols-2 divide-border border-y border-border md:grid-cols-4 md:divide-x md:divide-x-reverse [&>*:nth-child(odd)]:border-l [&>*:nth-child(-n+2)]:border-b md:[&>*]:!border-b-0 md:[&>*]:border-l-0">
+      <div className="grid grid-cols-2 gap-px overflow-hidden border-y border-border bg-border md:grid-cols-4 [&>*]:bg-background">
         <Stat
           icon={FileText}
           label="إجمالي المنشورات"
