@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Input, Badge } from "@/components/ui";
-import { Copy, Send, Trash2, Search, Sparkles, FileText } from "lucide-react";
+import { Copy, Send, Trash2, Search, FileText , PenLine } from "lucide-react";
 import { postsStore, setPreviewDraft, type PostRecord } from "@/services/storage";
 import { PLATFORM_META, TONE_META, type Platform, type Tone } from "@/lib/store";
 
@@ -64,7 +64,7 @@ function LibraryPage() {
         action={
           <Link to="/write">
             <Button>
-              <Sparkles className="h-4 w-4" /> منشور جديد
+              <PenLine className="h-4 w-4" /> منشور جديد
             </Button>
           </Link>
         }

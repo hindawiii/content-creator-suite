@@ -11,9 +11,8 @@ import {
   type Dialect,
 } from "@/lib/store";
 import {
-  Sparkles,
   RefreshCw,
-  Wand2,
+  PenLine,
   Hash,
   Send,
   Image as ImageIcon,
@@ -197,7 +196,7 @@ function WritePage() {
               <div
                 role="radiogroup"
                 aria-label="المنصة"
-                className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]"
+                className="grid grid-cols-4 gap-2"
               >
                 {(Object.keys(PLATFORM_META) as Platform[]).map((p) => {
                   const m = PLATFORM_META[p];
@@ -208,14 +207,14 @@ function WritePage() {
                       role="radio"
                       aria-checked={active}
                       onClick={() => setPlatform(p)}
-                      className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-semibold transition ${
+                      className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl p-1 text-center text-xs font-semibold transition sm:text-sm ${
                         active
                           ? "bg-primary text-primary-foreground shadow-[0_0_18px_-4px_var(--primary)]"
                           : "bg-surface-elevated/60 text-muted-foreground hover:bg-surface-elevated hover:text-foreground"
                       }`}
                     >
-                      <span className="text-base">{m.emoji}</span>
-                      <span>{m.label}</span>
+                      <span className="text-2xl">{m.emoji}</span>
+                      <span className="leading-tight">{m.label}</span>
                     </button>
                   );
                 })}
@@ -304,7 +303,7 @@ function WritePage() {
                 {loading ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Sparkles className="h-4 w-4" />
+                  <PenLine className="h-4 w-4" />
                 )}
                 {loading ? "جاري التوليد..." : "توليد المنشور"}
               </Button>
@@ -322,7 +321,7 @@ function WritePage() {
         <Card>
           <div className="mb-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Wand2 className="h-4 w-4 text-accent" />
+              <PenLine className="h-4 w-4 text-accent" />
               <span className="font-semibold">النتيجة</span>
             </div>
             {output && (
@@ -395,7 +394,7 @@ function WritePage() {
             </>
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
-              <Sparkles className="h-8 w-8 opacity-40" />
+              <PenLine className="h-8 w-8 opacity-40" />
               <div>سيظهر المنشور المُولّد هنا</div>
             </div>
           )}
