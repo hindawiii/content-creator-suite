@@ -21,7 +21,7 @@ export function AspectPicker({
   onChange,
   label,
 }: {
-  options: Option[];
+  options: readonly Option[];
   value: string;
   onChange: (key: string) => void;
   label: string;
