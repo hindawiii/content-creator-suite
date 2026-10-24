@@ -10,7 +10,6 @@ import {
   Share2,
   CheckCircle2,
   Clock,
-  Sparkles,
   Lightbulb,
   ArrowLeft,
   Scissors,
@@ -294,7 +293,7 @@ function PublishPage() {
         <PageHeader title="النشر" subtitle="لا يوجد محتوى جاهز للنشر بعد" />
         <Card>
           <div className="flex flex-col items-center gap-3 py-8 text-center">
-            <Sparkles className="h-10 w-10 text-accent opacity-70" />
+            <Wand2 className="h-10 w-10 text-accent opacity-70" />
             <p className="text-sm text-muted-foreground">
               ولّد منشوراً أو صورة أولاً ثم عد إلى هنا للنشر.
             </p>
@@ -340,7 +339,7 @@ function PublishPage() {
         {/* Preview */}
         <Card className="animate-in-up">
           <div className="mb-3 flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-accent" />
+            <Wand2 className="h-4 w-4 text-accent" />
             <span className="font-semibold">معاينة المنشور</span>
           </div>
 
@@ -485,7 +484,7 @@ function PublishPage() {
             <span className="font-semibold">افتح المنصة وانشر</span>
           </div>
           <p className="mb-3 text-sm text-muted-foreground">
-            اضغط زر المنصة: يُنسخ المنشور تلقائياً ثم تُفتح المنصة في تبويب جديد. الصقه هناك ✨
+            اضغط زر المنصة: يُنسخ المنشور تلقائياً ثم تُفتح المنصة في تبويب جديد. الصقه هناك
           </p>
 
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">

@@ -7,7 +7,6 @@ import { Card, PageHeader, Button, Textarea, Label, Badge, Select } from "@/comp
 import { useStore } from "@/lib/store";
 import {
   Image as ImageIcon,
-  Sparkles,
   RefreshCw,
   Trash2,
   Send,
@@ -241,7 +240,7 @@ function ImagePage() {
               }`}
             >
               <span className="flex items-center gap-2 font-semibold">
-                ✨ وضع الأنمي
+                وضع الأنمي
                 <Badge tone="accent">أنمي</Badge>
               </span>
               <span
@@ -340,7 +339,7 @@ function ImagePage() {
               {loading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
               ) : (
-                <Sparkles className="h-4 w-4" />
+                <Wand2 className="h-4 w-4" />
               )}
               {loading
                 ? "جاري التوليد..."

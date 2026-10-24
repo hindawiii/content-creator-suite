@@ -19,14 +19,13 @@ import {
   CalendarClock,
   Send,
   PenSquare,
-  Sparkles,
   Library,
   BarChart3,
   AlertTriangle,
   CheckCircle2,
   Clock,
   KeyRound,
-} from "lucide-react";
+, Wand2 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -228,7 +227,7 @@ export function Dashboard() {
               اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني
             </div>
           </div>
-          <Sparkles className="h-5 w-5 shrink-0 text-accent transition group-hover:scale-110" />
+          <Wand2 className="h-5 w-5 shrink-0 text-accent transition group-hover:scale-110" />
         </Link>
         <div className="grid grid-cols-2 border-t border-border md:grid-cols-4">
           {[

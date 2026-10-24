@@ -40,7 +40,6 @@ const EMOJI_GROUPS: { label: string; emojis: string[] }[] = [
     label: "شائع",
     emojis: [
       "🔥",
-      "✨",
       "💡",
       "🚀",
       "🎯",

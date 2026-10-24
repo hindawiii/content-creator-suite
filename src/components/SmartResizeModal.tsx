@@ -82,7 +82,7 @@ export function SmartResizeModal({
           <div>
             <div className="mb-2 flex items-center justify-between">
               <span className="text-sm font-semibold text-accent">
-                {mode === "shorten" ? "المختصر ✨" : "الموسّع ✨"}
+                {mode === "shorten" ? "المختصر" : "الموسّع"}
               </span>
               <div className="flex items-center gap-2">
                 {edited && <Badge tone={badgeMap[s].tone}>{badgeMap[s].label}</Badge>}

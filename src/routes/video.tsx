@@ -6,12 +6,11 @@ import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Textarea, Label, Badge, Select } from "@/components/ui";
 import {
   Video,
-  Sparkles,
   RefreshCw,
   Download,
   AlertTriangle,
   Image as ImageIcon,
-} from "lucide-react";
+, Wand2 } from "lucide-react";
 import { pollinationsVideo } from "@/services/pollinations";
 import { puterVideo } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
@@ -181,7 +180,7 @@ function VideoPage() {
               {loading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
               ) : (
-                <Sparkles className="h-4 w-4" />
+                <Wand2 className="h-4 w-4" />
               )}
               {loading ? "جاري التوليد..." : "توليد الفيديو"}
             </Button>
