@@ -12,7 +12,7 @@ import {
   Send,
   Download,
   Link as LinkIcon,
-  Wand2,
+  PenLine,
   Upload,
   Video,
 } from "lucide-react";
@@ -339,7 +339,7 @@ function ImagePage() {
               {loading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
               ) : (
-                <Wand2 className="h-4 w-4" />
+                <PenLine className="h-4 w-4" />
               )}
               {loading
                 ? "جاري التوليد..."
@@ -374,7 +374,7 @@ function ImagePage() {
                       <LinkIcon className="h-4 w-4" /> نسخ الرابط
                     </Button>
                     <Button variant="outline" onClick={() => sendToPost(b.url)}>
-                      <Wand2 className="h-4 w-4" /> استخدم في المنشور
+                      <PenLine className="h-4 w-4" /> استخدم في المنشور
                     </Button>
                     <Button
                       onClick={() => {

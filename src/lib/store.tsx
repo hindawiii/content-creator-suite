@@ -15,7 +15,6 @@ export type Tone =
   | "professional"
   | "humorous"
   | "dramatic"
-  | "calm"
   | "friendly"
   | "motivational";
 

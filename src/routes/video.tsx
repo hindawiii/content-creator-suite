@@ -10,7 +10,8 @@ import {
   Download,
   AlertTriangle,
   Image as ImageIcon,
-, Wand2 } from "lucide-react";
+  PenLine,
+} from "lucide-react";
 import { pollinationsVideo } from "@/services/pollinations";
 import { puterVideo } from "@/services/puter";
 import { settingsStore } from "@/services/storage";
@@ -180,7 +181,7 @@ function VideoPage() {
               {loading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
               ) : (
-                <Wand2 className="h-4 w-4" />
+                <PenLine className="h-4 w-4" />
               )}
               {loading ? "جاري التوليد..." : "توليد الفيديو"}
             </Button>

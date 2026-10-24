@@ -25,7 +25,8 @@ import {
   CheckCircle2,
   Clock,
   KeyRound,
-, Wand2 } from "lucide-react";
+  PenLine,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -227,7 +228,7 @@ export function Dashboard() {
               اختر المنصة والنبرة واللهجة، واحصل على منشور جاهز في ثواني
             </div>
           </div>
-          <Wand2 className="h-5 w-5 shrink-0 text-accent transition group-hover:scale-110" />
+          <PenLine className="h-5 w-5 shrink-0 text-accent transition group-hover:scale-110" />
         </Link>
         <div className="grid grid-cols-2 border-t border-border md:grid-cols-4">
           {[

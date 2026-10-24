@@ -12,7 +12,7 @@ import {
 } from "@/lib/store";
 import {
   RefreshCw,
-  Wand2,
+  PenLine,
   Hash,
   Send,
   Image as ImageIcon,
@@ -303,7 +303,7 @@ function WritePage() {
                 {loading ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Wand2 className="h-4 w-4" />
+                  <PenLine className="h-4 w-4" />
                 )}
                 {loading ? "جاري التوليد..." : "توليد المنشور"}
               </Button>
@@ -321,7 +321,7 @@ function WritePage() {
         <Card>
           <div className="mb-3 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Wand2 className="h-4 w-4 text-accent" />
+              <PenLine className="h-4 w-4 text-accent" />
               <span className="font-semibold">النتيجة</span>
             </div>
             {output && (
@@ -394,7 +394,7 @@ function WritePage() {
             </>
           ) : (
             <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground">
-              <Wand2 className="h-8 w-8 opacity-40" />
+              <PenLine className="h-8 w-8 opacity-40" />
               <div>سيظهر المنشور المُولّد هنا</div>
             </div>
           )}
