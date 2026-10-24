@@ -165,21 +165,12 @@ function VideoPage() {
             </div>
             <div>
               <Label>الأبعاد</Label>
-              <div className="flex gap-2">
-                {ASPECTS.map((a) => (
-                  <button
-                    key={a}
-                    onClick={() => setAspect(a)}
-                    className={`flex-1 rounded-xl border p-2.5 text-sm transition ${
-                      aspect === a
-                        ? "border-accent bg-accent/10"
-                        : "border-border bg-surface-elevated"
-                    }`}
-                  >
-                    {a}
-                  </button>
-                ))}
-              </div>
+              <AspectPicker
+                label="الأبعاد"
+                options={ASPECTS.map((a) => ({ key: a }))}
+                value={aspect}
+                onChange={(k) => setAspect(k as (typeof ASPECTS)[number])}
+              />
             </div>
             <Button
               onClick={handleGenerate}

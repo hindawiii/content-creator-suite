@@ -323,22 +323,12 @@ function ImagePage() {
 
             <div>
               <Label>نسبة الأبعاد</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {ASPECTS.map((a) => (
-                  <button
-                    key={a.key}
-                    onClick={() => setAspect(a.key)}
-                    className={`rounded-xl border p-3 text-right text-sm transition ${
-                      aspect === a.key
-                        ? "border-accent bg-accent/10"
-                        : "border-border bg-surface-elevated hover:border-accent/50"
-                    }`}
-                  >
-                    <div className="font-semibold">{a.key}</div>
-                    <div className="text-sm text-muted-foreground">{a.label}</div>
-                  </button>
-                ))}
-              </div>
+              <AspectPicker
+                label="نسبة الأبعاد"
+                options={ASPECTS}
+                value={aspect}
+                onChange={(k) => setAspect(k as AspectKey)}
+              />
             </div>
 
             <Button
