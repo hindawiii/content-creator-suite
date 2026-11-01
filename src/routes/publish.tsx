@@ -280,6 +280,7 @@ function PublishPage() {
       platform: schedPlatform,
       scheduledTime: new Date(schedTime).toISOString(),
       status: "pending",
+      content: text,
     });
     toast.success("تمت الجدولة! سيصلك تذكير في الوقت المحدد");
     setScheduleOpen(false);

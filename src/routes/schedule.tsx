@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import {
   Card,
@@ -12,7 +12,8 @@ import {
   Badge,
   EmptyState,
 } from "@/components/ui";
-import { PLATFORM_META, useStore, type Platform } from "@/lib/store";
+import { PLATFORM_META, type Platform } from "@/lib/store";
+import { schedulesStore, type ScheduleRecord } from "@/services/storage";
 import {
   Calendar as CalIcon,
   Plus,
@@ -39,8 +40,17 @@ export const Route = createFileRoute("/schedule")({
   component: SchedulePage,
 });
 
+interface SchedItem {
+  id: string;
+  platform: Platform;
+  scheduledAt: string;
+  content: string;
+}
+
 function SchedulePage() {
-  const { posts, addPost, removePost, updatePost } = useStore();
+  const [records, setRecords] = useState<ScheduleRecord[]>([]);
+  const refresh = () => setRecords(schedulesStore.list());
+  useEffect(refresh, []);
   const [month, setMonth] = useState(() => new Date());
   const [open, setOpen] = useState(false);
   const [content, setContent] = useState("");
@@ -48,12 +58,26 @@ function SchedulePage() {
   const [datetime, setDatetime] = useState("");
   const { permission, request } = useNotifPermission();
 
-  const scheduled = posts
-    .filter((p) => p.status === "scheduled" && p.scheduledAt)
-    .sort((a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime());
+  const scheduled: SchedItem[] = records
+    .filter((s) => s.status === "pending" && s.platform in PLATFORM_META)
+    .map((s) => ({
+      id: s.id,
+      platform: s.platform as Platform,
+      scheduledAt: s.scheduledTime,
+      content: s.content ?? "",
+    }))
+    .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
   const missedCount = scheduled.filter(
     (p) => new Date(p.scheduledAt!).getTime() <= Date.now(),
   ).length;
+  const removePost = (id: string) => {
+    schedulesStore.remove(id);
+    refresh();
+  };
+  const updatePost = (id: string, _p: { status: "published" }) => {
+    schedulesStore.update(id, { status: "sent" });
+    refresh();
+  };
 
   const grid = useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -65,7 +89,7 @@ function SchedulePage() {
   }, [month]);
 
   const postsByDay = useMemo(() => {
-    const map = new Map<string, typeof posts>();
+    const map = new Map<string, SchedItem[]>();
     for (const p of scheduled) {
       const d = new Date(p.scheduledAt!);
       const k = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
@@ -76,14 +100,15 @@ function SchedulePage() {
 
   const handleAdd = () => {
     if (!content.trim() || !datetime) return;
-    addPost({
-      content,
+    const id = crypto.randomUUID();
+    schedulesStore.add({
+      postId: id,
       platform,
-      tone: "professional",
-      topic: "",
-      status: "scheduled",
-      scheduledAt: new Date(datetime).toISOString(),
+      scheduledTime: new Date(datetime).toISOString(),
+      status: "pending",
+      content,
     });
+    refresh();
     setContent("");
     setDatetime("");
     setOpen(false);
