@@ -130,25 +130,20 @@ export function Dashboard() {
   const today = new Date().toISOString().slice(0, 10);
   const publishedToday = publishes.filter((r) => r.publishedAt.slice(0, 10) === today).length;
 
-  const recent = useMemo(() => {
-    const a = posts.map((p) => ({
-      id: p.id,
-      content: p.content,
-      platform: p.platform as string,
-      createdAt: p.createdAt,
-      status: p.status,
-    }));
-    const b = lib.map((p) => ({
-      id: p.id,
-      content: p.content,
-      platform: p.platform,
-      createdAt: p.createdAt,
-      status: "draft" as const,
-    }));
-    return [...a, ...b]
-      .sort((x, y) => new Date(y.createdAt).getTime() - new Date(x.createdAt).getTime())
-      .slice(0, 5);
-  }, [posts, lib]);
+  const recent = useMemo(
+    () =>
+      lib
+        .map((p) => ({
+          id: p.id,
+          content: p.content,
+          platform: p.platform,
+          createdAt: p.createdAt,
+          status: "draft" as "draft" | "scheduled" | "published",
+        }))
+        .sort((x, y) => new Date(y.createdAt).getTime() - new Date(x.createdAt).getTime())
+        .slice(0, 5),
+    [lib],
+  );
 
   return (
     <AppLayout>
