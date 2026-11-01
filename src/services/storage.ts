@@ -108,9 +108,78 @@ function read<T>(key: string, fallback: T): T {
   }
 }
 
+export const STORAGE_CHANGED_EVENT = "poston:storage-changed";
+
 function write<T>(key: string, value: T): void {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(STORAGE_CHANGED_EVENT));
+}
+
+/** Keys mirrored to the cloud account. API keys never leave this device. */
+const SYNC_KEYS = {
+  posts: KEYS.posts,
+  images: KEYS.images,
+  schedules: KEYS.schedules,
+  settings: KEYS.settings,
+  analytics: KEYS.analytics,
+  publishes: KEYS.publishes,
+  videos: "poston_videos",
+} as const;
+const SECRET_SETTING_FIELDS = ["groqKey", "togetherKey", "geminiKey", "pollinationsKey"] as const;
+
+export type CloudSnapshot = Partial<Record<keyof typeof SYNC_KEYS, unknown>>;
+
+/** Builds the cloud payload from local data, stripping API keys from settings. */
+export function buildCloudSnapshot(): CloudSnapshot {
+  const out: CloudSnapshot = {};
+  (Object.keys(SYNC_KEYS) as (keyof typeof SYNC_KEYS)[]).forEach((name) => {
+    const v = read<unknown>(SYNC_KEYS[name], null);
+    if (v === null) return;
+    if (name === "settings" && typeof v === "object") {
+      const copy = { ...(v as Record<string, unknown>) };
+      SECRET_SETTING_FIELDS.forEach((f) => delete copy[f]);
+      out[name] = copy;
+    } else out[name] = v;
+  });
+  return out;
+}
+
+function mergeById(local: unknown, remote: unknown): unknown[] {
+  const a = Array.isArray(local) ? local : [];
+  const b = Array.isArray(remote) ? remote : [];
+  const map = new Map<string, unknown>();
+  [...b, ...a].forEach((item) => {
+    const id = (item as { id?: string })?.id;
+    if (id) map.set(id, item);
+  });
+  return [...map.values()].sort((x, y) => {
+    const t = (o: unknown) => {
+      const r = o as { createdAt?: string; scheduledTime?: string; publishedAt?: string };
+      return r.createdAt ?? r.publishedAt ?? r.scheduledTime ?? "";
+    };
+    return t(y).localeCompare(t(x));
+  });
+}
+
+/** Merges a cloud snapshot into local data: lists union by id, local API keys preserved. */
+export function applyCloudSnapshot(remote: CloudSnapshot): void {
+  (Object.keys(SYNC_KEYS) as (keyof typeof SYNC_KEYS)[]).forEach((name) => {
+    const r = remote[name];
+    if (r === undefined || r === null) return;
+    const key = SYNC_KEYS[name];
+    const local = read<unknown>(key, null);
+    if (name === "settings") {
+      const l = (local ?? {}) as Record<string, unknown>;
+      const merged: Record<string, unknown> = { ...(r as Record<string, unknown>) };
+      SECRET_SETTING_FIELDS.forEach((f) => (merged[f] = l[f] ?? ""));
+      localStorage.setItem(key, JSON.stringify({ ...DEFAULT_SETTINGS, ...merged }));
+    } else if (name === "analytics") {
+      if (local === null) localStorage.setItem(key, JSON.stringify(r));
+    } else {
+      localStorage.setItem(key, JSON.stringify(mergeById(local, r)));
+    }
+  });
 }
 
 // Posts
