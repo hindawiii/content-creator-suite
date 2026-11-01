@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { pollinationsVideo } from "@/services/pollinations";
 import { puterVideo } from "@/services/puter";
-import { settingsStore } from "@/services/storage";
+import { settingsStore, videosStore } from "@/services/storage";
 
 export const Route = createFileRoute("/video")({
   head: () => ({
@@ -51,6 +51,8 @@ function VideoPage() {
 
   useEffect(() => {
     setHasKey(Boolean(settingsStore.getPollinationsKey()));
+    const last = videosStore.list()[0];
+    if (last) setVideoUrl(last.url);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
@@ -86,6 +88,7 @@ function VideoPage() {
             });
       setProgress(100);
       setVideoUrl(url);
+      if (/^https?:/.test(url)) videosStore.add({ url, prompt: prompt.trim() });
       toast.success("تم توليد الفيديو", { id: toastId });
     } catch (err) {
       const msg = String(err);
