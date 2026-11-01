@@ -2,16 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Badge, Button, EmptyState } from "@/components/ui";
-import { useStore, PLATFORM_META } from "@/lib/store";
+import { PLATFORM_META } from "@/lib/store";
 import { RateLimitBar } from "@/components/RateLimitBar";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
 import {
   postsStore,
   imagesStore,
   publishesStore,
+  schedulesStore,
   type PostRecord,
   type ImageRecord,
   type PublishRecord,
+  type ScheduleRecord,
 } from "@/services/storage";
 import {
   FileText,
@@ -95,28 +97,35 @@ function untilLabel(iso: string) {
 }
 
 export function Dashboard() {
-  const { posts, images } = useStore();
   const keys = useKeysStatus();
   const [lib, setLib] = useState<PostRecord[]>([]);
   const [libImages, setLibImages] = useState<ImageRecord[]>([]);
   const [publishes, setPublishes] = useState<PublishRecord[]>([]);
+  const [schedules, setSchedules] = useState<ScheduleRecord[]>([]);
 
   useEffect(() => {
     setLib(postsStore.list());
     setLibImages(imagesStore.list());
     setPublishes(publishesStore.list());
+    setSchedules(schedulesStore.list());
   }, []);
 
   const scheduled = useMemo(
     () =>
-      posts
-        .filter((p) => p.status === "scheduled" && p.scheduledAt)
-        .sort((a, b) => new Date(a.scheduledAt!).getTime() - new Date(b.scheduledAt!).getTime()),
-    [posts],
+      schedules
+        .filter((s) => s.status === "pending" && s.platform in PLATFORM_META)
+        .map((s) => ({
+          id: s.id,
+          platform: s.platform as keyof typeof PLATFORM_META,
+          scheduledAt: s.scheduledTime,
+          content: s.content ?? "",
+        }))
+        .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()),
+    [schedules],
   );
   const missed = scheduled.filter((p) => new Date(p.scheduledAt!).getTime() <= Date.now());
-  const totalPosts = posts.length + lib.length;
-  const totalImages = images.length + libImages.length;
+  const totalPosts = lib.length;
+  const totalImages = libImages.length;
 
   const today = new Date().toISOString().slice(0, 10);
   const publishedToday = publishes.filter((r) => r.publishedAt.slice(0, 10) === today).length;
