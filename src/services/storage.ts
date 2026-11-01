@@ -49,6 +49,7 @@ export interface ScheduleRecord {
   platform: string;
   scheduledTime: string;
   status: "pending" | "sent" | "failed";
+  content?: string;
 }
 
 export interface SettingsRecord {
@@ -142,18 +143,78 @@ export const imagesStore = {
     ),
 };
 
-// Schedules
+// Schedules — single source of truth for /publish, /schedule, dashboard and alerts.
 export const schedulesStore = {
-  list: (): ScheduleRecord[] => read(KEYS.schedules, []),
+  list: (): ScheduleRecord[] => {
+    migrateLegacySchedules();
+    return read(KEYS.schedules, []);
+  },
   add: (s: Omit<ScheduleRecord, "id">): ScheduleRecord => {
     const rec: ScheduleRecord = { ...s, id: crypto.randomUUID() };
     write(KEYS.schedules, [rec, ...schedulesStore.list()]);
     return rec;
   },
+  update: (id: string, patch: Partial<ScheduleRecord>) =>
+    write(
+      KEYS.schedules,
+      schedulesStore.list().map((s) => (s.id === id ? { ...s, ...patch } : s)),
+    ),
   remove: (id: string) =>
     write(
       KEYS.schedules,
       schedulesStore.list().filter((s) => s.id !== id),
+    ),
+};
+
+/** One-time move of scheduled posts from the legacy app store into poston_schedules. */
+function migrateLegacySchedules() {
+  if (typeof localStorage === "undefined") return;
+  const LEGACY = "postmind:v1";
+  try {
+    const raw = localStorage.getItem(LEGACY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as {
+      posts?: { id: string; platform: string; status: string; scheduledAt?: string; content?: string }[];
+    };
+    const legacy = (parsed.posts ?? []).filter((p) => p.status === "scheduled" && p.scheduledAt);
+    if (!legacy.length) return;
+    const existing = read<ScheduleRecord[]>(KEYS.schedules, []);
+    const moved: ScheduleRecord[] = legacy
+      .filter((p) => !existing.some((e) => e.id === p.id))
+      .map((p) => ({
+        id: p.id,
+        postId: p.id,
+        platform: p.platform,
+        scheduledTime: p.scheduledAt!,
+        status: "pending",
+        content: p.content,
+      }));
+    write(KEYS.schedules, [...moved, ...existing]);
+    parsed.posts = (parsed.posts ?? []).filter((p) => p.status !== "scheduled");
+    localStorage.setItem(LEGACY, JSON.stringify(parsed));
+  } catch {
+    /* ignore corrupted legacy store */
+  }
+}
+
+// Videos — persisted so generated clips survive reloads.
+export interface VideoRecord {
+  id: string;
+  url: string;
+  prompt: string;
+  createdAt: string;
+}
+export const videosStore = {
+  list: (): VideoRecord[] => read("poston_videos", []),
+  add: (v: Omit<VideoRecord, "id" | "createdAt">): VideoRecord => {
+    const rec: VideoRecord = { ...v, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
+    write("poston_videos", [rec, ...videosStore.list()].slice(0, 30));
+    return rec;
+  },
+  remove: (id: string) =>
+    write(
+      "poston_videos",
+      videosStore.list().filter((v) => v.id !== id),
     ),
 };
 
