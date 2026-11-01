@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { schedulesStore } from "@/services/storage";
 
 const FIRED_KEY = "poston_notified_ids";
-const STORE_KEY = "postmind:v1";
 
 export type NotifPermission = "unsupported" | "default" | "granted" | "denied";
 
@@ -25,32 +24,8 @@ export function collectDue(now = Date.now()): DueItem[] {
   schedulesStore
     .list()
     .filter((s) => s.status === "pending" && new Date(s.scheduledTime).getTime() <= now)
-    .forEach((s) => out.push({ id: s.id, platform: s.platform, time: s.scheduledTime }));
+    .forEach((s) => out.push({ id: s.id, platform: s.platform, time: s.scheduledTime, content: s.content }));
 
-  try {
-    const raw = typeof localStorage !== "undefined" ? localStorage.getItem(STORE_KEY) : null;
-    if (raw) {
-      const parsed = JSON.parse(raw) as {
-        posts?: {
-          id: string;
-          platform: string;
-          status: string;
-          scheduledAt?: string;
-          content?: string;
-        }[];
-      };
-      (parsed.posts ?? [])
-        .filter(
-          (p) =>
-            p.status === "scheduled" && p.scheduledAt && new Date(p.scheduledAt).getTime() <= now,
-        )
-        .forEach((p) =>
-          out.push({ id: p.id, platform: p.platform, time: p.scheduledAt!, content: p.content }),
-        );
-    }
-  } catch {
-    /* ignore corrupted store */
-  }
   return out;
 }
 
