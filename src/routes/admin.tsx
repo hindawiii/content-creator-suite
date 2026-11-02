@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
-import { Card, PageHeader, Button, Label, Badge, Input } from "@/components/ui";
+import { Card, PageHeader, Button, Badge } from "@/components/ui";
+import { supabase } from "@/integrations/supabase/client";
 import { ShieldCheck, BarChart3, KeyRound, Lock } from "lucide-react";
 import { postsStore, imagesStore, publishesStore, settingsStore } from "@/services/storage";
 import { findModel } from "@/services/models";
@@ -24,16 +25,18 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-const PASSWORD = (import.meta.env["VITE_ADMIN_PASSWORD"] as string | undefined) ?? "poston-admin";
-const GATE_KEY = "poston_admin_ok";
-
 function AdminPage() {
   const [ok, setOk] = useState(false);
-  const [pwd, setPwd] = useState("");
-  const [err, setErr] = useState("");
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    setOk(sessionStorage.getItem(GATE_KEY) === "1");
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return setChecking(false);
+      const { data } = await supabase.rpc("has_role", { _user_id: u.user.id, _role: "admin" });
+      setOk(data === true);
+      setChecking(false);
+    })();
   }, []);
 
   const stats = useMemo(() => {
@@ -63,34 +66,24 @@ function AdminPage() {
   if (!ok) {
     return (
       <AppLayout>
-        <PageHeader title="لوحة المشرف" subtitle="محمية بكلمة مرور" />
-        <Card className="mx-auto max-w-md">
-          <div className="mb-4 flex items-center gap-2">
-            <Lock className="h-4 w-4 text-accent" />
-            <span className="font-bold">أدخل كلمة مرور المشرف</span>
+        <PageHeader title="لوحة المشرف" subtitle="للحسابات التي تملك صلاحية المشرف فقط" />
+        <Card className="mx-auto max-w-md text-center">
+          <Lock className="mx-auto mb-3 h-6 w-6 text-accent" />
+          <div className="font-bold">
+            {checking ? "جارٍ التحقق من الصلاحية…" : "هذه الصفحة للمشرفين فقط"}
           </div>
-          <Label>كلمة المرور</Label>
-          <Input
-            type="password"
-            value={pwd}
-            onChange={(e) => setPwd(e.target.value)}
-            placeholder="••••••••"
-          />
-          {err && <div className="mt-2 text-sm text-destructive">{err}</div>}
-          <Button
-            className="mt-4 w-full"
-            onClick={() => {
-              if (pwd === PASSWORD) {
-                sessionStorage.setItem(GATE_KEY, "1");
-                setOk(true);
-              } else setErr("كلمة مرور غير صحيحة");
-            }}
-          >
-            <ShieldCheck className="h-4 w-4" /> دخول
-          </Button>
-          <div className="mt-3 text-sm text-muted-foreground">
-            تُضبط عبر متغيّر البيئة <code>VITE_ADMIN_PASSWORD</code>.
-          </div>
+          {!checking && (
+            <div className="mt-2 text-sm text-muted-foreground">
+              سجّل الدخول بحساب يملك صلاحية المشرف.
+            </div>
+          )}
+          {!checking && (
+            <Link to="/auth">
+              <Button className="mt-4 w-full">
+                <ShieldCheck className="h-4 w-4" /> تسجيل الدخول
+              </Button>
+            </Link>
+          )}
         </Card>
       </AppLayout>
     );
