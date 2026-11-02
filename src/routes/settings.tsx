@@ -33,6 +33,7 @@ import {
 import { toast } from "sonner";
 
 import { useKeysStatus, setKeysHealth, emitKeysChanged } from "@/hooks/useKeysStatus";
+import { AccountCard } from "@/components/AccountCard";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -245,18 +246,7 @@ function SettingsPage() {
         subtitle="مفاتيح API، الاشتراك، وإدارة البيانات — كلها في متصفحك"
       />
 
-      <Card className="mb-6">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full gradient-primary">
-            <User className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <div className="flex-1">
-            <div className="font-bold">مستخدم Post On</div>
-            <div className="text-sm text-muted-foreground">وضع العميل الكامل — بدون خادم</div>
-          </div>
-          <Badge tone="accent">{plan === "pro" ? "Pro" : "Free"}</Badge>
-        </div>
-      </Card>
+      <AccountCard plan={plan} />
 
       {status.health === "none" && (
         <div className="mb-6 flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4 animate-fade-in">
