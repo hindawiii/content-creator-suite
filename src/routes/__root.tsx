@@ -14,6 +14,7 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { StoreProvider } from "../lib/store";
+import { CloudSync } from "../components/CloudSync";
 
 function NotFoundComponent() {
   const links = [
@@ -150,6 +151,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
         <Outlet />
+        <CloudSync />
         <Toaster position="top-center" richColors theme="dark" dir="rtl" />
       </StoreProvider>
     </QueryClientProvider>
