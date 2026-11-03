@@ -11,10 +11,14 @@ import {
   AlertTriangle,
   Image as ImageIcon,
   PenLine,
+  Trash2,
+  Cloud,
+  HardDrive,
 } from "lucide-react";
 import { pollinationsVideo } from "@/services/pollinations";
 import { puterVideo } from "@/services/puter";
-import { settingsStore, videosStore } from "@/services/storage";
+import { settingsStore, videosStore, type VideoRecord } from "@/services/storage";
+import { saveVideo, resolveVideoUrl, deleteVideo } from "@/services/videoVault";
 
 export const Route = createFileRoute("/video")({
   head: () => ({
@@ -47,12 +51,22 @@ function VideoPage() {
   const [progress, setProgress] = useState(0);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [hasKey, setHasKey] = useState(false);
+  const [saved, setSaved] = useState<VideoRecord[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const play = async (rec: VideoRecord) => {
+    setActiveId(rec.id);
+    const url = await resolveVideoUrl(rec);
+    if (url) setVideoUrl(url);
+    else toast.error("هذا الفيديو لم يعد متاحًا");
+  };
 
   useEffect(() => {
     setHasKey(Boolean(settingsStore.getPollinationsKey()));
-    const last = videosStore.list()[0];
-    if (last) setVideoUrl(last.url);
+    const list = videosStore.list();
+    setSaved(list);
+    if (list[0]) void play(list[0]);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
@@ -87,9 +101,18 @@ function VideoPage() {
               aspect,
             });
       setProgress(100);
-      setVideoUrl(url);
-      if (/^https?:/.test(url)) videosStore.add({ url, prompt: prompt.trim() });
-      toast.success("تم توليد الفيديو", { id: toastId });
+      setVideoUrl(typeof url === "string" ? url : URL.createObjectURL(url));
+      const { record, local, cloud } = await saveVideo(url, prompt.trim());
+      setActiveId(record.id);
+      setSaved(videosStore.list());
+      toast.success(
+        cloud
+          ? "تم توليد الفيديو وحفظه في حسابك"
+          : local
+            ? "تم توليد الفيديو وحفظه على هذا الجهاز"
+            : "تم توليد الفيديو — نزّله الآن، فلم نتمكن من حفظ نسخة منه",
+        { id: toastId },
+      );
     } catch (err) {
       const msg = String(err);
       if (msg.includes("needs_credits")) {
@@ -125,8 +148,8 @@ function VideoPage() {
         <div className="text-sm">
           <div className="font-semibold text-warning">⚠️ توليد الفيديو ليس مجانياً بالكامل</div>
           <div className="mt-0.5 text-muted-foreground">
-            يحتاج رصيد Pollen أو مفتاحك الخاص. تحصل على 5 نقاط Pollen مجانية عند التسجيل. بديل:
-            Google Veo بمفتاح Google AI Studio (يتطلب تفعيل الفواتير) أو Puter.js حيث تدفع من حسابك.
+            يحتاج مفتاح Pollinations برصيد Pollen (أنشئه من enter.pollinations.ai وأضفه في الإعدادات)،
+            أو Puter.js حيث تدفع من حسابك. كل فيديو تولّده يُحفظ تلقائيًا ولا يضيع بعد إغلاق الصفحة.
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge tone={hasKey ? "success" : "warning"}>
@@ -163,7 +186,7 @@ function VideoPage() {
             <div>
               <Label>المحرّك</Label>
               <Select value={engine} onChange={(e) => setEngine(e.target.value as typeof engine)}>
-                <option value="pollinations">Pollinations Video (Alpha) — يحتاج رصيد</option>
+                <option value="pollinations">Pollinations — Veo 3.1 Fast (4 ثوانٍ) — يحتاج مفتاح</option>
                 <option value="puter">Puter.js — تدفع من حسابك</option>
               </Select>
             </div>
@@ -224,6 +247,49 @@ function VideoPage() {
           )}
         </Card>
       </div>
+
+      {saved.length > 0 && (
+        <Card className="mt-5">
+          <div className="mb-3 font-semibold">فيديوهاتك المحفوظة ({saved.length})</div>
+          <ul className="divide-y divide-border">
+            {saved.map((v) => (
+              <li key={v.id} className="flex items-center gap-3 py-2.5">
+                <button
+                  type="button"
+                  onClick={() => play(v)}
+                  className={`min-w-0 flex-1 text-start ${activeId === v.id ? "text-primary" : ""}`}
+                >
+                  <div className="truncate text-sm font-medium">{v.prompt}</div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    {v.storagePath ? (
+                      <>
+                        <Cloud className="h-3.5 w-3.5" /> في حسابك
+                      </>
+                    ) : (
+                      <>
+                        <HardDrive className="h-3.5 w-3.5" /> على هذا الجهاز
+                      </>
+                    )}
+                    <span>· {new Date(v.createdAt).toLocaleDateString("ar")}</span>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  aria-label="حذف الفيديو"
+                  className="rounded-lg p-2 text-muted-foreground hover:text-destructive"
+                  onClick={async () => {
+                    await deleteVideo(v);
+                    setSaved(videosStore.list());
+                    if (activeId === v.id) setVideoUrl(null);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
     </AppLayout>
   );
 }
