@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import {
@@ -25,7 +25,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { usePushReminders } from "@/hooks/usePushReminders";
-import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/schedule")({
