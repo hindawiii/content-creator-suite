@@ -16,3 +16,4 @@
 - Derive header branding and browser/PWA icons from the same approved logo; keep a lightweight 1200×630 public sharing rendition and add its absolute URL only to leaf metadata after the published origin is known.
 - Cloud sync: localStorage stays the working store; signed-in users get a merged JSON snapshot in `user_snapshots` (CloudSync component, debounced push on `poston:storage-changed`). API keys are stripped before upload. Why: app must keep working signed out.
 - Admin access is checked with the `has_role` database function on the signed-in user, never a client-side password.
+- Background schedule reminders: devices subscribe via Web Push (`public/push-sw.js`, `push_subscriptions`); a managed 10-minute HTTP schedule calls `/api/public/jobs/send-reminders`, which reads schedules from `user_snapshots` and records `reminders_sent`. VAPID keys derive from the `VAPID_SEED` secret. Why: only signed-in users' schedules are visible to the server.

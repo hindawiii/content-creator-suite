@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import {
@@ -24,7 +24,8 @@ import {
   BellOff,
   CheckCircle2,
 } from "lucide-react";
-import { useNotifPermission } from "@/hooks/useScheduleAlerts";
+import { usePushReminders } from "@/hooks/usePushReminders";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/schedule")({
   head: () => ({
@@ -56,7 +57,7 @@ function SchedulePage() {
   const [content, setContent] = useState("");
   const [platform, setPlatform] = useState<Platform>("instagram");
   const [datetime, setDatetime] = useState("");
-  const { permission, request } = useNotifPermission();
+  const push = usePushReminders();
 
   const scheduled: SchedItem[] = records
     .filter((s) => s.status === "pending" && s.platform in PLATFORM_META)
@@ -131,26 +132,47 @@ function SchedulePage() {
 
       <Card className="!p-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-sm">
-            {permission === "granted" ? (
-              <>
-                <Bell className="h-4 w-4 text-success" />
-                <span>التنبيهات مفعّلة — سنذكّرك عند موعد كل منشور مجدول.</span>
-              </>
+          <div className="flex min-w-0 flex-1 items-center gap-2 text-sm">
+            {push.state === "on" ? (
+              <Bell className="h-4 w-4 shrink-0 text-success" />
             ) : (
-              <>
-                <BellOff className="h-4 w-4 text-warning" />
-                <span>
-                  {permission === "denied"
-                    ? "التنبيهات محجوبة من المتصفح — فعّلها من إعدادات الموقع لتصلك التذكيرات."
-                    : "فعّل تنبيهات المتصفح لتصلك تذكيرات عند موعد النشر (حتى لو كان التطبيق مفتوحاً في تبويب آخر)."}
-                </span>
-              </>
+              <BellOff className="h-4 w-4 shrink-0 text-warning" />
             )}
+            <span>
+              {push.state === "on"
+                ? "التذكيرات مفعّلة على هذا الجهاز — تصلك عند موعد كل منشور حتى لو كان التطبيق مغلقًا."
+                : push.state === "signed-out"
+                  ? "سجّل الدخول لتصلك التذكيرات حتى والتطبيق مغلق. الآن تصلك فقط أثناء فتح التطبيق."
+                  : push.state === "denied"
+                    ? "التنبيهات محجوبة من المتصفح — فعّلها من إعدادات الموقع لتصلك التذكيرات."
+                    : push.state === "unsupported"
+                      ? "متصفحك لا يدعم التذكيرات في الخلفية. على آيفون: أضف التطبيق إلى الشاشة الرئيسية أولًا."
+                      : "فعّل التذكيرات لتصلك عند موعد كل منشور حتى لو كان التطبيق مغلقًا."}
+            </span>
           </div>
-          {permission !== "granted" && permission !== "denied" && (
-            <Button variant="outline" onClick={request}>
-              <Bell className="h-4 w-4" /> تفعيل التنبيهات
+          {push.state === "signed-out" && (
+            <Link to="/auth">
+              <Button variant="outline">تسجيل الدخول</Button>
+            </Link>
+          )}
+          {push.state === "off" && (
+            <Button
+              variant="outline"
+              disabled={push.busy}
+              onClick={async () => {
+                try {
+                  if (await push.enable()) toast.success("تم تفعيل التذكيرات على هذا الجهاز");
+                } catch {
+                  toast.error("تعذّر تفعيل التذكيرات — حاول مرة أخرى");
+                }
+              }}
+            >
+              <Bell className="h-4 w-4" /> تفعيل التذكيرات
+            </Button>
+          )}
+          {push.state === "on" && (
+            <Button variant="ghost" disabled={push.busy} onClick={() => push.disable()}>
+              إيقاف
             </Button>
           )}
         </div>
