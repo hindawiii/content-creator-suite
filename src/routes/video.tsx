@@ -290,8 +290,6 @@ function VideoPage() {
           </ul>
         </Card>
       )}
-      <div className="hidden">
-      </div>
     </AppLayout>
   );
 }
