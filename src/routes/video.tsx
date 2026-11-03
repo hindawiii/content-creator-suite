@@ -148,8 +148,8 @@ function VideoPage() {
         <div className="text-sm">
           <div className="font-semibold text-warning">⚠️ توليد الفيديو ليس مجانياً بالكامل</div>
           <div className="mt-0.5 text-muted-foreground">
-            يحتاج رصيد Pollen أو مفتاحك الخاص. تحصل على 5 نقاط Pollen مجانية عند التسجيل. بديل:
-            Google Veo بمفتاح Google AI Studio (يتطلب تفعيل الفواتير) أو Puter.js حيث تدفع من حسابك.
+            يحتاج مفتاح Pollinations برصيد Pollen (أنشئه من enter.pollinations.ai وأضفه في الإعدادات)،
+            أو Puter.js حيث تدفع من حسابك. كل فيديو تولّده يُحفظ تلقائيًا ولا يضيع بعد إغلاق الصفحة.
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             <Badge tone={hasKey ? "success" : "warning"}>
@@ -186,7 +186,7 @@ function VideoPage() {
             <div>
               <Label>المحرّك</Label>
               <Select value={engine} onChange={(e) => setEngine(e.target.value as typeof engine)}>
-                <option value="pollinations">Pollinations Video (Alpha) — يحتاج رصيد</option>
+                <option value="pollinations">Pollinations — Veo 3.1 Fast (4 ثوانٍ) — يحتاج مفتاح</option>
                 <option value="puter">Puter.js — تدفع من حسابك</option>
               </Select>
             </div>
