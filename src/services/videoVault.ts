@@ -74,9 +74,9 @@ export async function saveVideo(
     }
   }
   if (!local && !cloud && !remoteUrl) videosStore.remove(record.id);
-  return { record: { ...record, storagePath: cloud ? `${u2(record)}` : undefined }, local, cloud };
+  const saved = videosStore.list().find((v) => v.id === record.id) ?? record;
+  return { record: saved, local, cloud };
 }
-const u2 = (r: VideoRecord) => videosStore.list().find((v) => v.id === r.id)?.storagePath ?? "";
 
 /** Resolves a playable URL: device copy first, then the cloud copy, then the original link. */
 export async function resolveVideoUrl(rec: VideoRecord): Promise<string | null> {

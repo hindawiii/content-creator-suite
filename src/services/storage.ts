@@ -272,6 +272,8 @@ export interface VideoRecord {
   url: string;
   prompt: string;
   createdAt: string;
+  /** Path in the signed-in user's private cloud folder, when uploaded. */
+  storagePath?: string;
 }
 export const videosStore = {
   list: (): VideoRecord[] => read("poston_videos", []),
@@ -280,6 +282,11 @@ export const videosStore = {
     write("poston_videos", [rec, ...videosStore.list()].slice(0, 30));
     return rec;
   },
+  update: (id: string, patch: Partial<VideoRecord>) =>
+    write(
+      "poston_videos",
+      videosStore.list().map((v) => (v.id === id ? { ...v, ...patch } : v)),
+    ),
   remove: (id: string) =>
     write(
       "poston_videos",

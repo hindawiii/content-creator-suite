@@ -102,7 +102,7 @@ export async function pollinationsVideo(opts: {
   token?: string;
   imageUrl?: string;
   aspect?: "16:9" | "9:16" | "1:1";
-}): Promise<string> {
+}): Promise<Blob> {
   const params = new URLSearchParams({ model: "veo", aspect: opts.aspect ?? "16:9" });
   if (opts.imageUrl) params.set("image", opts.imageUrl);
   if (opts.token) params.set("token", opts.token);
@@ -115,5 +115,5 @@ export async function pollinationsVideo(opts: {
   }
   const blob = await res.blob();
   if (!blob.type.startsWith("video")) throw new Error("video_needs_credits");
-  return URL.createObjectURL(blob);
+  return blob;
 }
