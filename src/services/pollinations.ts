@@ -1,5 +1,6 @@
 const BASE = "https://image.pollinations.ai/prompt";
-const VIDEO_BASE = "https://video.pollinations.ai/prompt";
+const VIDEO_BASE = "https://gen.pollinations.ai/video";
+export const VIDEO_MODEL = "google/veo-3.1-fast";
 
 const STYLE_SUFFIX =
   "high quality photograph, professional social media visual, cinematic lighting, sharp details, no text, no letters, no watermark, no logo";
@@ -103,10 +104,16 @@ export async function pollinationsVideo(opts: {
   imageUrl?: string;
   aspect?: "16:9" | "9:16" | "1:1";
 }): Promise<Blob> {
-  const params = new URLSearchParams({ model: "veo", aspect: opts.aspect ?? "16:9" });
+  const params = new URLSearchParams({
+    model: VIDEO_MODEL,
+    aspectRatio: opts.aspect ?? "16:9",
+    duration: "4",
+  });
   if (opts.imageUrl) params.set("image", opts.imageUrl);
-  if (opts.token) params.set("token", opts.token);
-  const res = await fetch(`${VIDEO_BASE}/${encodeURIComponent(opts.prompt)}?${params.toString()}`);
+  if (!opts.token) throw new Error("video_needs_credits");
+  const res = await fetch(`${VIDEO_BASE}/${encodeURIComponent(opts.prompt)}?${params.toString()}`, {
+    headers: { Authorization: `Bearer ${opts.token}` },
+  });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     if (res.status === 401 || res.status === 402 || res.status === 403)
