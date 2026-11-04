@@ -15,6 +15,7 @@ import {
   PenLine,
   Upload,
   Video,
+  Wand2,
 } from "lucide-react";
 import { useImageGenerator } from "@/hooks/useAI";
 import { ImageGrid, type GridImage } from "@/components/ImageGrid";
@@ -185,11 +186,18 @@ function ImagePage() {
         title="تصميم صور بالذكاء"
         subtitle="Pollinations Flux مجاني بلا حدود — أو استخدم مفتاحك الخاص"
         action={
-          <Link to="/video">
-            <Button variant="outline">
-              <Video className="h-4 w-4" /> فيديو
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link to="/tools">
+              <Button variant="outline">
+                <Wand2 className="h-4 w-4" /> أدوات
+              </Button>
+            </Link>
+            <Link to="/video">
+              <Button variant="outline">
+                <Video className="h-4 w-4" /> فيديو
+              </Button>
+            </Link>
+          </div>
         }
       />
 
