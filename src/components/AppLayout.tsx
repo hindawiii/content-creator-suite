@@ -10,6 +10,7 @@ import {
   Library,
   Video,
   Ellipsis,
+  Wand2,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useKeysStatus } from "@/hooks/useKeysStatus";
@@ -23,6 +24,7 @@ const nav = [
   { to: "/write", label: "كتابة", icon: PenSquare },
   { to: "/image", label: "صور", icon: ImageIcon },
   { to: "/video", label: "فيديو", icon: Video },
+  { to: "/tools", label: "أدوات الصور", icon: Wand2 },
   { to: "/library", label: "المكتبة", icon: Library },
   { to: "/publish", label: "نشر", icon: Send },
   { to: "/schedule", label: "جدولة", icon: Calendar },
