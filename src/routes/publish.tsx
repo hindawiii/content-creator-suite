@@ -52,9 +52,11 @@ function platformShareUrl(p: Platform, text: string, imageUrl?: string): string 
     case "twitter":
       return `https://twitter.com/intent/tweet?text=${t}`;
     case "facebook":
-      return link ? `https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${t}` : null;
+      return link
+        ? `https://www.facebook.com/sharer/sharer.php?u=${link}`
+        : "https://www.facebook.com/";
     case "linkedin":
-      return link ? `https://www.linkedin.com/sharing/share-offsite/?url=${link}` : null;
+      return `https://www.linkedin.com/feed/?shareActive=true&text=${t}`;
     case "tiktok":
       return "https://www.tiktok.com/upload";
     case "youtube":
@@ -64,11 +66,12 @@ function platformShareUrl(p: Platform, text: string, imageUrl?: string): string 
     case "telegram":
       return link
         ? `https://t.me/share/url?url=${link}&text=${t}`
-        : `https://t.me/share/url?url=${encodeURIComponent("https://poston.app")}&text=${t}`;
+        : `https://t.me/share/url?url=${encodeURIComponent(window.location.origin)}&text=${t}`;
   }
 }
 
 const NEEDS_MANUAL_PASTE: Partial<Record<Platform, boolean>> = {
+  facebook: true,
   instagram: true,
   tiktok: true,
   youtube: true,
@@ -189,7 +192,7 @@ function PublishPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `postmind-${Date.now()}.png`;
+      a.download = `post-on-${Date.now()}.png`;
       a.click();
       URL.revokeObjectURL(url);
       toast.success("تم تنزيل الصورة");

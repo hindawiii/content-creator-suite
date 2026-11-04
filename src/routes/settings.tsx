@@ -5,10 +5,9 @@ import { AppLayout } from "@/components/AppLayout";
 import { Card, PageHeader, Button, Badge, Label, Select } from "@/components/ui";
 import { TEXT_MODELS, BADGE_LABEL, DEFAULT_TEXT_MODEL } from "@/services/models";
 import { testGeminiKey } from "@/services/gemini";
-import { useStore, PLATFORM_META, type Platform } from "@/lib/store";
+import { PLATFORM_META, type Platform } from "@/lib/store";
 import {
   Check,
-  Link2,
   User,
   KeyRound,
   Download,
@@ -70,6 +69,17 @@ const PLANS = [
   },
 ];
 
+const PUBLISH_HOW: Record<Platform, string> = {
+  twitter: "يفتح نافذة تغريدة والنص جاهز فيها",
+  whatsapp: "يفتح واتساب والنص جاهز لاختيار المحادثة",
+  telegram: "يفتح تلغرام والنص جاهز لاختيار المحادثة",
+  linkedin: "يفتح منشورًا جديدًا والنص جاهز فيه",
+  facebook: "يُنسخ النص ويفتح فيسبوك لتلصقه",
+  instagram: "يُنسخ النص ويفتح انستقرام لتلصقه مع صورتك",
+  tiktok: "يُنسخ النص ويفتح صفحة الرفع لتلصقه مع الفيديو",
+  youtube: "يُنسخ النص ويفتح استوديو يوتيوب لتلصقه",
+};
+
 function fingerprint(key: string): string {
   if (!key) return "";
   const prefix = key.startsWith("gsk_") ? "gsk_" : key.slice(0, 4);
@@ -77,7 +87,6 @@ function fingerprint(key: string): string {
 }
 
 function SettingsPage() {
-  const { connectedAccounts, toggleAccount } = useStore();
   const status = useKeysStatus();
   const importRef = useRef<HTMLInputElement>(null);
   const [groqKey, setGroqKey] = useState("");
@@ -508,40 +517,27 @@ function SettingsPage() {
       </Card>
 
       <div className="mb-6">
-        <h2 className="mb-3 text-lg font-bold">حسابات التواصل الاجتماعي</h2>
+        <h2 className="mb-1 text-lg font-bold">كيف يتم النشر على المنصات</h2>
+        <p className="mb-3 text-sm text-muted-foreground">
+          لا يحتاج Post On إلى ربط حساباتك. من شاشة «النشر» يُنسخ المنشور تلقائيًا ثم تُفتح المنصة،
+          وأنت من يضغط «نشر» داخلها. هكذا تبقى حساباتك تحت سيطرتك الكاملة.
+        </p>
         <div className="grid gap-2 md:grid-cols-2">
           {(Object.keys(PLATFORM_META) as Platform[]).map((p) => {
             const m = PLATFORM_META[p];
-            const connected = connectedAccounts[p];
             return (
               <Card key={p} className="!p-3">
                 <div className="flex items-center gap-3">
                   <div
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-lg"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg"
                     style={{ background: `${m.color}22` }}
                   >
                     {m.emoji}
                   </div>
                   <div className="flex-1">
                     <div className="text-sm font-semibold">{m.label}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {connected ? "متصل (محاكاة)" : "غير متصل"}
-                    </div>
+                    <div className="text-sm text-muted-foreground">{PUBLISH_HOW[p]}</div>
                   </div>
-                  <Button
-                    variant={connected ? "outline" : "primary"}
-                    onClick={() => toggleAccount(p)}
-                  >
-                    {connected ? (
-                      <>
-                        <Check className="h-4 w-4" /> متصل
-                      </>
-                    ) : (
-                      <>
-                        <Link2 className="h-4 w-4" /> ربط
-                      </>
-                    )}
-                  </Button>
                 </div>
               </Card>
             );

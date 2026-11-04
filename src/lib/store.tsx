@@ -41,14 +41,12 @@ export interface GeneratedImage {
 interface StoreState {
   posts: Post[];
   images: GeneratedImage[];
-  connectedAccounts: Partial<Record<Platform, boolean>>;
   plan: "free" | "pro" | "business";
   addPost: (p: Omit<Post, "id" | "createdAt">) => Post;
   updatePost: (id: string, patch: Partial<Post>) => void;
   removePost: (id: string) => void;
   addImage: (i: Omit<GeneratedImage, "id" | "createdAt">) => GeneratedImage;
   removeImage: (id: string) => void;
-  toggleAccount: (p: Platform) => void;
   setPlan: (p: "free" | "pro" | "business") => void;
 }
 
@@ -58,7 +56,6 @@ const KEY = "postmind:v1";
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [images, setImages] = useState<GeneratedImage[]>([]);
-  const [connectedAccounts, setConnected] = useState<Partial<Record<Platform, boolean>>>({});
   const [plan, setPlan] = useState<"free" | "pro" | "business">("free");
   const [hydrated, setHydrated] = useState(false);
 
@@ -73,7 +70,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         );
         setPosts(clean);
         setImages(s.images ?? []);
-        setConnected(s.connectedAccounts ?? {});
         setPlan(s.plan ?? "free");
       }
     } catch {
@@ -84,13 +80,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    localStorage.setItem(KEY, JSON.stringify({ posts, images, connectedAccounts, plan }));
-  }, [posts, images, connectedAccounts, plan, hydrated]);
+    localStorage.setItem(KEY, JSON.stringify({ posts, images, plan }));
+  }, [posts, images, plan, hydrated]);
 
   const value: StoreState = {
     posts,
     images,
-    connectedAccounts,
     plan,
     addPost: (p) => {
       const post: Post = { ...p, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
@@ -110,7 +105,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return img;
     },
     removeImage: (id) => setImages((prev) => prev.filter((i) => i.id !== id)),
-    toggleAccount: (p) => setConnected((prev) => ({ ...prev, [p]: !prev[p] })),
     setPlan,
   };
 
