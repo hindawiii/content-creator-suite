@@ -81,8 +81,12 @@ function ToolsPage() {
   const [maxSide, setMaxSide] = useState(0);
 
   // Free object URLs when they are replaced.
-  useEffect(() => () => source && URL.revokeObjectURL(source.url), [source]);
-  useEffect(() => () => result && URL.revokeObjectURL(result.url), [result]);
+  useEffect(() => () => {
+    if (source) URL.revokeObjectURL(source.url);
+  }, [source]);
+  useEffect(() => () => {
+    if (result) URL.revokeObjectURL(result.url);
+  }, [result]);
 
   const pickFile = (file?: File) => {
     if (!file) return;
