@@ -73,8 +73,14 @@ export async function convertImage(
 
 /* ---------------- Background removal (on-device AI) ---------------- */
 
-const BG_MODEL = "onnx-community/BiRefNet_lite-ONNX"; // MIT license
-const CPU_SIZE = 640;
+// Best quality on devices with a usable GPU (MIT license, ~115 MB, fixed 1024px input).
+const GPU_MODEL = "onnx-community/BiRefNet_lite-ONNX";
+// Lighter model for CPU-only devices; BiRefNet runs out of WebAssembly memory there
+// (Apache-2.0 license, ~44 MB).
+const CPU_MODEL = "onnx-community/ormbg-ONNX";
+
+/** Which engine runs on this device, for the size hint shown to the user. */
+export let bgEngine: "gpu" | "cpu" | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let segmenterPromise: Promise<any> | null = null;
 
@@ -103,14 +109,12 @@ function getSegmenter(onProgress?: (p: ModelProgress) => void) {
         }
       };
       const onCpu = async () => {
-        const seg = await pipeline("background-removal", BG_MODEL, {
+        bgEngine = "cpu";
+        return pipeline("background-removal", CPU_MODEL, {
           device: "wasm",
-          dtype: "fp16",
+          dtype: "uint8",
           progress_callback,
         });
-        // 1024px runs out of WebAssembly memory on CPU → work at a smaller size.
-        seg.processor.image_processor.size = { width: CPU_SIZE, height: CPU_SIZE };
-        return seg;
       };
       if (!hasGpu) return onCpu();
       try {
@@ -118,11 +122,13 @@ function getSegmenter(onProgress?: (p: ModelProgress) => void) {
           navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }
         ).gpu.requestAdapter();
         if (!adapter) return onCpu();
-        return await pipeline("background-removal", BG_MODEL, {
+        const seg = await pipeline("background-removal", GPU_MODEL, {
           device: "webgpu",
           dtype: "fp16",
           progress_callback,
         });
+        bgEngine = "gpu";
+        return seg;
       } catch {
         // WebGPU can be listed but unusable on some phones → retry on CPU.
         return onCpu();
