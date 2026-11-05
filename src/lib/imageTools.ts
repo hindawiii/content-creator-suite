@@ -73,13 +73,20 @@ export async function convertImage(
 
 /* ---------------- Background removal (on-device AI) ---------------- */
 
-const BG_MODEL = "onnx-community/BiRefNet_lite-ONNX"; // MIT license
+// Best quality on devices with a usable GPU (MIT license, ~115 MB, fixed 1024px input).
+const GPU_MODEL = "onnx-community/BiRefNet_lite-ONNX";
+// Lighter model for CPU-only devices; BiRefNet runs out of WebAssembly memory there
+// (Apache-2.0 license, ~44 MB).
+const CPU_MODEL = "onnx-community/ormbg-ONNX";
+
+/** Which engine is loaded on this device. */
+let bgEngine: "gpu" | "cpu" | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let segmenterPromise: Promise<any> | null = null;
 
 export type ModelProgress = { loaded: number; total: number };
 
-function getSegmenter(onProgress?: (p: ModelProgress) => void) {
+function getSegmenter(onProgress?: (p: ModelProgress) => void, forceCpu = false) {
   if (!segmenterPromise) {
     segmenterPromise = (async () => {
       const { pipeline, env } = await import("@huggingface/transformers");
@@ -101,20 +108,30 @@ function getSegmenter(onProgress?: (p: ModelProgress) => void) {
           });
         }
       };
-      try {
-        return await pipeline("background-removal", BG_MODEL, {
-          device: hasGpu ? "webgpu" : "wasm",
-          dtype: "fp16",
-          progress_callback,
-        });
-      } catch (err) {
-        if (!hasGpu) throw err;
-        // WebGPU can be listed but unusable on some phones → retry on CPU.
-        return await pipeline("background-removal", BG_MODEL, {
+      const onCpu = async () => {
+        bgEngine = "cpu";
+        return pipeline("background-removal", CPU_MODEL, {
           device: "wasm",
+          dtype: "uint8",
+          progress_callback,
+        });
+      };
+      if (!hasGpu || forceCpu) return onCpu();
+      try {
+        const adapter = await (
+          navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }
+        ).gpu.requestAdapter();
+        if (!adapter) return onCpu();
+        const seg = await pipeline("background-removal", GPU_MODEL, {
+          device: "webgpu",
           dtype: "fp16",
           progress_callback,
         });
+        bgEngine = "gpu";
+        return seg;
+      } catch {
+        // WebGPU can be listed but unusable on some phones → retry on CPU.
+        return onCpu();
       }
     })();
     segmenterPromise.catch(() => {
@@ -126,15 +143,22 @@ function getSegmenter(onProgress?: (p: ModelProgress) => void) {
 
 /** Returns a transparent PNG of the main subject. Runs fully on the device. */
 export async function removeBackground(src: string, onProgress?: (p: ModelProgress) => void) {
-  const segmenter = await getSegmenter(onProgress);
   const original = await loadImage(src);
   // The model works at 1024px internally; feed a capped copy to save memory.
   const { canvas: input } = drawToCanvas(original, 2048);
-  const result = await segmenter(input.toDataURL("image/png"));
+  const dataUrl = input.toDataURL("image/png");
+  let result;
+  try {
+    result = await (await getSegmenter(onProgress))(dataUrl);
+  } catch (err) {
+    if (bgEngine !== "gpu") throw err;
+    // GPU loaded but failed while running → switch to the CPU engine once.
+    segmenterPromise = null;
+    result = await (await getSegmenter(onProgress, true))(dataUrl);
+  }
   const raw = Array.isArray(result) ? result[0] : result;
-  const out: HTMLCanvasElement = raw.toCanvas();
-  const blob = await canvasToBlob(out, "image/png");
-  return { blob, width: out.width, height: out.height };
+  const blob: Blob = await raw.toBlob("image/png");
+  return { blob, width: raw.width as number, height: raw.height as number };
 }
 
 /* ---------------- Vectorize to SVG ---------------- */
