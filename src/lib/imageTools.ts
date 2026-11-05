@@ -79,14 +79,14 @@ const GPU_MODEL = "onnx-community/BiRefNet_lite-ONNX";
 // (Apache-2.0 license, ~44 MB).
 const CPU_MODEL = "onnx-community/ormbg-ONNX";
 
-/** Which engine runs on this device, for the size hint shown to the user. */
-export let bgEngine: "gpu" | "cpu" | null = null;
+/** Which engine is loaded on this device. */
+let bgEngine: "gpu" | "cpu" | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let segmenterPromise: Promise<any> | null = null;
 
 export type ModelProgress = { loaded: number; total: number };
 
-function getSegmenter(onProgress?: (p: ModelProgress) => void) {
+function getSegmenter(onProgress?: (p: ModelProgress) => void, forceCpu = false) {
   if (!segmenterPromise) {
     segmenterPromise = (async () => {
       const { pipeline, env } = await import("@huggingface/transformers");
@@ -116,7 +116,7 @@ function getSegmenter(onProgress?: (p: ModelProgress) => void) {
           progress_callback,
         });
       };
-      if (!hasGpu) return onCpu();
+      if (!hasGpu || forceCpu) return onCpu();
       try {
         const adapter = await (
           navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }
@@ -143,11 +143,19 @@ function getSegmenter(onProgress?: (p: ModelProgress) => void) {
 
 /** Returns a transparent PNG of the main subject. Runs fully on the device. */
 export async function removeBackground(src: string, onProgress?: (p: ModelProgress) => void) {
-  const segmenter = await getSegmenter(onProgress);
   const original = await loadImage(src);
   // The model works at 1024px internally; feed a capped copy to save memory.
   const { canvas: input } = drawToCanvas(original, 2048);
-  const result = await segmenter(input.toDataURL("image/png"));
+  const dataUrl = input.toDataURL("image/png");
+  let result;
+  try {
+    result = await (await getSegmenter(onProgress))(dataUrl);
+  } catch (err) {
+    if (bgEngine !== "gpu") throw err;
+    // GPU loaded but failed while running → switch to the CPU engine once.
+    segmenterPromise = null;
+    result = await (await getSegmenter(onProgress, true))(dataUrl);
+  }
   const raw = Array.isArray(result) ? result[0] : result;
   const out: HTMLCanvasElement = raw.toCanvas();
   const blob = await canvasToBlob(out, "image/png");

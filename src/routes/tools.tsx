@@ -261,7 +261,7 @@ function ToolsPage() {
             {/* Options */}
             {tool === "bg" && (
               <div className="rounded-xl border border-border bg-surface-elevated p-3 text-sm text-muted-foreground">
-                أول استخدام ينزّل محرك التفريغ (حوالي 115 ميجابايت) ويُحفظ في المتصفح، بعدها يعمل
+                أول استخدام ينزّل محرك التفريغ (بين 45 و115 ميجابايت حسب جهازك) ويُحفظ في المتصفح، بعدها يعمل
                 فوراً وبدون إنترنت تقريباً. الأفضل لصور المنتجات والأشخاص بخلفية واضحة.
               </div>
             )}
