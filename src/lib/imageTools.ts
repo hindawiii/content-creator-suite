@@ -157,9 +157,8 @@ export async function removeBackground(src: string, onProgress?: (p: ModelProgre
     result = await (await getSegmenter(onProgress, true))(dataUrl);
   }
   const raw = Array.isArray(result) ? result[0] : result;
-  const out: HTMLCanvasElement = raw.toCanvas();
-  const blob = await canvasToBlob(out, "image/png");
-  return { blob, width: out.width, height: out.height };
+  const blob: Blob = await raw.toBlob("image/png");
+  return { blob, width: raw.width as number, height: raw.height as number };
 }
 
 /* ---------------- Vectorize to SVG ---------------- */
