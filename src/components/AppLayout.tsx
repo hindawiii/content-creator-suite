@@ -22,7 +22,7 @@ import logo from "@/assets/post-on-logo.png";
 const nav = [
   { to: "/", label: "الرئيسية", icon: LayoutDashboard },
   { to: "/write", label: "كتابة", icon: PenSquare },
-  { to: "/image", label: "صور", icon: ImageIcon },
+  { to: "/image", label: "التصميم", icon: ImageIcon },
   { to: "/video", label: "فيديو", icon: Video },
   { to: "/tools", label: "أدوات الصور", icon: Wand2 },
   { to: "/library", label: "المكتبة", icon: Library },
@@ -65,9 +65,9 @@ function NavItem({
 export function AppLayout({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [moreOpen, setMoreOpen] = useState(false);
-  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/video", "/library", "/publish"].includes(n.to));
+  const primaryNav = nav.filter((n) => ["/", "/write", "/image", "/video", "/library"].includes(n.to));
   const moreNav = nav.filter((n) => n.to !== "/settings" && !primaryNav.some((item) => item.to === n.to));
-  const moreActive = moreNav.some((n) => pathname === n.to) || ["/privacy", "/terms"].includes(pathname);
+  const moreActive = moreNav.some((n) => n.to !== "/tools" && pathname === n.to) || ["/privacy", "/terms"].includes(pathname);
   const keys = useKeysStatus();
   const dot =
     keys.health === "ok"
@@ -144,9 +144,9 @@ export function AppLayout({ children }: { children?: ReactNode }) {
 
       {/* Bottom nav mobile */}
       <nav aria-label="القائمة الرئيسية" className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-6">
           {primaryNav.map((n) => {
-            const active = pathname === n.to;
+            const active = pathname === n.to || (n.to === "/image" && pathname === "/tools");
             const Icon = n.icon;
             return (
               <Link
