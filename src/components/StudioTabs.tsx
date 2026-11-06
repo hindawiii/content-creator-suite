@@ -1,9 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Image as ImageIcon, Wand2 } from "lucide-react";
+import { Image as ImageIcon, Type, Wand2 } from "lucide-react";
 
 const tabs = [
   { to: "/image", label: "توليد بالذكاء", icon: ImageIcon },
-  { to: "/tools", label: "أدوات الصور", icon: Wand2 },
+  { to: "/tools", label: "أدوات", icon: Wand2 },
+  { to: "/editor", label: "المحرر", icon: Type },
 ] as const;
 
 /** Shared switcher that joins image generation and image tools into one Design Studio. */

@@ -146,7 +146,7 @@ export function AppLayout({ children }: { children?: ReactNode }) {
       <nav aria-label="القائمة الرئيسية" className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden">
         <div className="grid grid-cols-6">
           {primaryNav.map((n) => {
-            const active = pathname === n.to || (n.to === "/image" && pathname === "/tools");
+            const active = pathname === n.to || (n.to === "/image" && ["/tools", "/editor"].includes(pathname));
             const Icon = n.icon;
             return (
               <Link
