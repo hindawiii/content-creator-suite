@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Download, Eraser, FileImage, RefreshCw, Shapes, Upload, X } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { StudioTabs } from "@/components/StudioTabs";
 import { Badge, Button, Card, Label, PageHeader } from "@/components/ui";
 import {
   FORMAT_META,
@@ -162,6 +163,7 @@ function ToolsPage() {
 
   return (
     <AppLayout>
+      <StudioTabs />
       <PageHeader
         title="أدوات الصور"
         subtitle="مجانية بالكامل وتعمل داخل جهازك — صورك لا تُرفع لأي خادم"
