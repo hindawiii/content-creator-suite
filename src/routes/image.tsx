@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppLayout } from "@/components/AppLayout";
+import { StudioTabs } from "@/components/StudioTabs";
 import { Card, PageHeader, Button, Textarea, Label, Badge, Select } from "@/components/ui";
 import { useStore } from "@/lib/store";
 import {
@@ -182,16 +183,12 @@ function ImagePage() {
 
   return (
     <AppLayout>
+      <StudioTabs />
       <PageHeader
         title="تصميم صور بالذكاء"
         subtitle="Pollinations Flux مجاني بلا حدود — أو استخدم مفتاحك الخاص"
         action={
           <div className="flex gap-2">
-            <Link to="/tools">
-              <Button variant="outline">
-                <Wand2 className="h-4 w-4" /> أدوات
-              </Button>
-            </Link>
             <Link to="/video">
               <Button variant="outline">
                 <Video className="h-4 w-4" /> فيديو
