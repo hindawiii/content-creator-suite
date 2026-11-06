@@ -3,7 +3,7 @@
 - [x] Phase 2: keep generated videos permanently (Puter temp links), test real video generation
 - [x] Phase 3: schedule reminders that fire with the app closed
 - [x] Phase 4: publishing UX — remove fake "connected accounts" toggles, fix share links, update privacy/terms
-- [ ] Studio Phase 1: free image tools page — background removal (PNG), vectorize to SVG, format convert/compress
+- [x] Studio Phase 1: free image tools page — background removal (PNG), vectorize to SVG, format convert/compress
 - [ ] Studio Phase 2: Canva-like layer editor (Arabic text, badges) — awaits approval
 - [ ] Studio Phase 3: product ad studio (2–4 ad images) — awaits approval
 - [ ] Studio Phase 4: ghost mannequin studio — awaits approval
